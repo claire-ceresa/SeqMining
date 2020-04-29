@@ -33,7 +33,40 @@ class Request(QMainWindow, Ui_MainWindow):
             print(e)
 
     def button_create_clicked(self):
-        return
+        request = self.create_request()
+        self.edit_request.setText(request)
+
+    def create_request(self):
+        request_parts = []
+        request = ""
+        for layout in self.list_layout_widget:
+            dict_value = {"link": "", "field": "", "value": ""}
+            number_widget = layout.count()
+
+            for number in reversed(range(number_widget)):
+                widget = layout.itemAt(number).widget()
+                if isinstance(widget, QtWidgets.QComboBox):
+                    if "field" in widget.objectName():
+                        field = "[" + widget.currentText() + "]"
+                        dict_value["field"] = field
+                    elif "link" in widget.objectName():
+                        link = widget.currentText()
+                        dict_value["link"] = link
+                    else:
+                        continue
+                elif isinstance(widget, QtWidgets.QLineEdit):
+                    value = widget.text()
+                    dict_value["value"] = value
+                else:
+                    continue
+
+            request_parts.append(dict_value)
+
+        for dict_parts in request_parts:
+            part = dict_parts["link"] + " " + dict_parts["value"] + " " + dict_parts["field"] + " "
+            request = request + part
+
+        return request
 
     def add_layout_filter(self, position):
         layout = QtWidgets.QHBoxLayout()
