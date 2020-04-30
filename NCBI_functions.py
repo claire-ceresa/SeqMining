@@ -1,4 +1,4 @@
-from Bio import Entrez
+from Bio import Entrez, SeqIO
 
 
 def get_field_list(database_name):
@@ -10,3 +10,27 @@ def get_field_list(database_name):
     for field in field_list_sorted:
         list.append(field["FullName"])
     return list
+
+
+def get_list_ids(request):
+    result = Entrez.esearch(db="nucleotide", term=request, idtype="acc", retmax=2500, usehistory='y')
+    print(result)
+    list = Entrez.read(result)
+    print(list)
+    if 'ErrorList' in list:
+        ids = []
+    else:
+        ids = list["IdList"]
+    return ids
+
+
+def get_sequence(id):
+    fiche = Entrez.efetch(db="nucleotide", id=id, rettype="gb", retmode="text")
+    sequence = SeqIO.read(fiche, "genbank")
+    return sequence
+
+
+def get_summary(id):
+    handle = Entrez.esummary(db="nucleotide", id=id)
+    record = Entrez.read(handle)
+    return record

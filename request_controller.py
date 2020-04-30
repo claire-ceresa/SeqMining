@@ -1,12 +1,12 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QWidget, QMainWindow
 from request_view import Ui_MainWindow
 from NCBI_functions import *
 from graphics_function import *
 from functools import partial
+from result_controller import Result
 
 
-class Request(QMainWindow, Ui_MainWindow):
+class Request(QtWidgets.QMainWindow, Ui_MainWindow):
     """
     controlling class for request_view
     """
@@ -14,8 +14,10 @@ class Request(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super(Request, self).__init__(parent)
         self.setupUi(self)
+        self.setWindowTitle("Rechercher")
         self.field_list_nucleotide = get_field_list("nucleotide")
         self.list_layout_widget = [self.layout_widget_0]
+        self.window_result = None
         self.init_ui()
 
     def init_ui(self):
@@ -35,6 +37,11 @@ class Request(QMainWindow, Ui_MainWindow):
     def button_create_clicked(self):
         request = self.create_request()
         self.edit_request.setText(request)
+
+    def button_search_clicked(self):
+        request = self.edit_request.text()
+        self.window_result = Result(request=request)
+        self.window_result.show()
 
     def create_request(self):
         request_parts = []
