@@ -36,6 +36,14 @@ class Ui_NCBI_Result(object):
         self.label_result.setAlignment(QtCore.Qt.AlignCenter)
         self.label_result.setObjectName("label_result")
         self.verticalLayout.addWidget(self.label_result)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.checkbox_selectall = QtWidgets.QCheckBox(self.centralwidget)
+        self.checkbox_selectall.setObjectName("checkbox_selectall")
+        self.horizontalLayout.addWidget(self.checkbox_selectall)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.verticalLayout.addLayout(self.horizontalLayout)
         self.table = QtWidgets.QTableWidget(self.centralwidget)
         self.table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
@@ -56,12 +64,15 @@ class Ui_NCBI_Result(object):
 
         self.retranslateUi(NCBI_Result)
         self.button_search.clicked.connect(NCBI_Result.button_search_clicked)
+        self.checkbox_selectall.clicked.connect(NCBI_Result.checkbox_selectall_clicked)
         QtCore.QMetaObject.connectSlotsByName(NCBI_Result)
 
     def retranslateUi(self, NCBI_Result):
         _translate = QtCore.QCoreApplication.translate
         NCBI_Result.setWindowTitle(_translate("NCBI_Result", "MainWindow"))
         self.button_search.setText(_translate("NCBI_Result", "Rechercher"))
+        self.checkbox_selectall.setText(_translate("NCBI_Result", "Tout sélectionner"))
+        self.table.setSortingEnabled(True)
         item = self.table.horizontalHeaderItem(0)
         item.setText(_translate("NCBI_Result", "Accession"))
         item = self.table.horizontalHeaderItem(1)

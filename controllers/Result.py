@@ -28,6 +28,13 @@ class Result(QtWidgets.QMainWindow, Ui_NCBI_Result):
         else:
             self.label_result.setText("Aucun resultat trouvé !")
 
+    def checkbox_selectall_clicked(self):
+        number_row = self.table.rowCount()
+        for row in range(number_row):
+            state = self.checkbox_selectall.checkState()
+            widget = self.table.item(row, 0)
+            widget.setCheckState(state)
+
     def fill_in_result_table(self, list_ids):
         number_row = len(list_ids)
         self.label_result.setText(str(number_row) + " resultats trouvés !")
