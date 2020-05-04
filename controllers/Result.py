@@ -17,6 +17,10 @@ class Result(QtWidgets.QMainWindow, Ui_NCBI_Result):
     def init_ui(self,request):
         self.edit_request.setText(request)
         self.button_search_clicked()
+        self.label_selectall.mouseReleaseEvent = self.select_all
+        self.label_deselectall.mouseReleaseEvent = self.deselect_all
+        self.label_help.mouseReleaseEvent = self.open_help
+
 
     def button_search_clicked(self):
         self.table.clearContents()
@@ -27,13 +31,6 @@ class Result(QtWidgets.QMainWindow, Ui_NCBI_Result):
             self.fill_in_result_table(list_ids)
         else:
             self.label_result.setText("Aucun resultat trouvé !")
-
-    def checkbox_selectall_clicked(self):
-        number_row = self.table.rowCount()
-        for row in range(number_row):
-            state = self.checkbox_selectall.checkState()
-            widget = self.table.item(row, 0)
-            widget.setCheckState(state)
 
     def fill_in_result_table(self, list_ids):
         number_row = len(list_ids)
@@ -48,3 +45,18 @@ class Result(QtWidgets.QMainWindow, Ui_NCBI_Result):
             title = QtWidgets.QTableWidgetItem(id["Title"])
             self.table.setItem(row, 0, accession)
             self.table.setItem(row, 1, title)
+
+    def select_all(self, event):
+        number_row = self.table.rowCount()
+        for row in range(number_row):
+            widget = self.table.item(row, 0)
+            widget.setCheckState(Qt.Checked)
+
+    def deselect_all(self, event):
+        number_row = self.table.rowCount()
+        for row in range(number_row):
+            widget = self.table.item(row, 0)
+            widget.setCheckState(Qt.Unchecked)
+
+    def open_help(self, event):
+        print("open help")
