@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication
-from request_controller import Request
+from controllers.Request import Request
 from Bio import Entrez
 
 Entrez.email = "claire.ceresa@hotmail.fr"

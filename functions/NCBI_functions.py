@@ -14,9 +14,7 @@ def get_field_list(database_name):
 
 def get_list_ids(request):
     result = Entrez.esearch(db="nucleotide", term=request, idtype="acc", retmax=2500, usehistory='y')
-    print(result)
     list = Entrez.read(result)
-    print(list)
     if 'ErrorList' in list:
         ids = []
     else:

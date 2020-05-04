@@ -1,9 +1,9 @@
 from PyQt5 import QtWidgets
-from request_view import Ui_MainWindow
-from NCBI_functions import *
-from graphics_function import *
+from views.request_view import Ui_MainWindow
+from functions.NCBI_functions import *
+from functions.graphics_function import *
 from functools import partial
-from result_controller import Result
+from controllers.Result import Result
 
 
 class Request(QtWidgets.QMainWindow, Ui_MainWindow):

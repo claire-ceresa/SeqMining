@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets
 from PyQt5.Qt import Qt
-from result_view import Ui_NCBI_Result
-from NCBI_functions import *
+from views.result_view import Ui_NCBI_Result
+from functions.NCBI_functions import *
 
 class Result(QtWidgets.QMainWindow, Ui_NCBI_Result):
     """
@@ -16,19 +16,17 @@ class Result(QtWidgets.QMainWindow, Ui_NCBI_Result):
 
     def init_ui(self,request):
         self.edit_request.setText(request)
+        self.button_search_clicked()
 
     def button_search_clicked(self):
         self.table.clearContents()
         self.table.setRowCount(0)
-        try:
-            request = self.edit_request.text()
-            list_ids = get_list_ids(request=request)
-            if len(list_ids) > 0:
-                self.fill_in_result_table(list_ids)
-            else:
-                self.label_result.setText("Aucun resultat trouvé !")
-        except Exception as e:
-            print(e)
+        request = self.edit_request.text()
+        list_ids = get_list_ids(request=request)
+        if len(list_ids) > 0:
+            self.fill_in_result_table(list_ids)
+        else:
+            self.label_result.setText("Aucun resultat trouvé !")
 
     def fill_in_result_table(self, list_ids):
         number_row = len(list_ids)
