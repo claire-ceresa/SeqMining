@@ -1,11 +1,19 @@
 import xlsxwriter as x
+import datetime as d
 
 class Excel:
 
-    def __init__(self, title):
-        self.title = title
+    def __init__(self, title=None):
+        self.title = self.set_title(title)
         self.workbook = x.Workbook(self.title)
         self.worksheets = []
+
+    def set_title(self, title):
+        if title is None:
+            now = d.datetime.now()
+            return now.strftime("%Y%m%d_%H%M%S.xlsx")
+        else:
+            return title
 
     def add_worksheet(self, title=None):
         """Add a worksheet to the workbook"""
@@ -23,15 +31,11 @@ class Excel:
         :param worksheet : Worksheet object
         :param datas : dictionnary {'column_names':[], 'rows':[[]]}
         """
-        title = worksheet.get_name()
         columns_name = datas["column_names"]
-
-        worksheet.merge_range(0, 0, 0, len(columns_name), title)
         format_columns_name = self.workbook.add_format({'bold':True, 'valign':'center'})
-        worksheet.write_row(1, 0, columns_name)
-
+        worksheet.write_row(0, 0, columns_name)
         worksheet.set_row(0, None, format_columns_name)
-        worksheet.set_row(1, None, format_columns_name)
 
         for row, row_data in enumerate(datas["rows"]):
-            worksheet.write_row(row+2, 0, row_data)
+            worksheet.write_row(row+1, 0, row_data)
+            print("ok")

@@ -1,10 +1,11 @@
+import os
 from PyQt5 import QtWidgets
 from PyQt5.Qt import Qt
 from functions.graphics_function import *
 from views.result_view import Ui_NCBI_Result
 from functions.NCBI_functions import *
 from controllers.Request import Request
-from controllers.Excel_Window import Excel_Window
+from objects.Excel import Excel
 
 
 class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
@@ -42,9 +43,16 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
             create_messageBox("Attention !", "Remplissez la requête !")
 
     def button_extract_clicked(self):
-        ids = self.get_id_checked()
-        excel_window = Excel_Window(ids=ids)
-        excel_window.exec()
+        rows = self.get_row_checked()
+        desktop_path = os.environ['USERPROFILE'] + '\Desktop\\'
+        name = QtWidgets.QFileDialog.getSaveFileName(self, 'Enregister', desktop_path, "Excel (*.xlsx)")
+        filename = name[0]
+        datas = {'column_names': ["Identifiant", "Titre"], 'rows': rows}
+        excel = Excel(title=filename)
+        worksheet = excel.add_worksheet("Résultats")
+        excel.add_data(worksheet=worksheet, datas=datas)
+        excel.close()
+        create_messageBox("Succès", "Fichier crée !")
 
     def select_all(self, event):
         number_row = self.table.rowCount()
@@ -89,16 +97,18 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         error = error + "\n"
         self.label_error.setText(error)
 
-    def get_id_checked(self):
+    def get_row_checked(self):
         number_row = self.table.rowCount()
-        ids = []
+        checked = []
         for row in range(number_row):
             widget = self.table.item(row, 0)
-            checked = widget.checkState()
-            if checked == 2:
+            is_checked = widget.checkState()
+            if is_checked == 2:
                 id = widget.text()
-                ids.append(id)
-        return ids
+                title = self.table.item(row, 1).text()
+                row = [id, title]
+                checked.append(row)
+        return checked
 
 
 
