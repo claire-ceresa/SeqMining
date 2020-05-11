@@ -5,7 +5,7 @@ from controllers.NCBI import NCBI
 
 class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
     """
-    controlling class for request_view
+    controlling class for principal_view
     """
 
     def __init__(self, parent=None):
@@ -14,5 +14,8 @@ class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
         self.setWindowTitle("SeqMining")
         self.window_ncbi = NCBI()
 
+    # METHODS OF THE CLASS #
+
     def button_ncbi_clicked(self):
+        """Open the NCBI window"""
         self.window_ncbi.show()

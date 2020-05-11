@@ -1,6 +1,7 @@
 import xlsxwriter as x
 import datetime as d
 
+
 class Excel:
 
     def __init__(self, title=None):
@@ -9,6 +10,7 @@ class Excel:
         self.worksheets = []
 
     def set_title(self, title):
+        """Set the title of the workbook"""
         if title is None:
             now = d.datetime.now()
             return now.strftime("%Y%m%d_%H%M%S.xlsx")
@@ -38,4 +40,3 @@ class Excel:
 
         for row, row_data in enumerate(datas["rows"]):
             worksheet.write_row(row+1, 0, row_data)
-            print("ok")
