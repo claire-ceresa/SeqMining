@@ -12,14 +12,10 @@ def get_field_list(database_name):
     return list
 
 
-def get_list_ids(request):
+def get_result_request(request):
     result = Entrez.esearch(db="nucleotide", term=request, idtype="acc", retmax=2500, usehistory='y')
     list = Entrez.read(result)
-    if 'ErrorList' in list:
-        ids = []
-    else:
-        ids = list["IdList"]
-    return ids
+    return list
 
 
 def get_sequence(id):

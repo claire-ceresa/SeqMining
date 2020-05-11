@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 from views.principal_view import Ui_Principal_Window
-from controllers.Result import Result
+from controllers.NCBI import NCBI
 
 
 class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
@@ -12,7 +12,7 @@ class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
         super(Principal, self).__init__(parent)
         self.setupUi(self)
         self.setWindowTitle("SeqMining")
-        self.window_ncbi = Result()
+        self.window_ncbi = NCBI()
 
     def button_ncbi_clicked(self):
         self.window_ncbi.show()
