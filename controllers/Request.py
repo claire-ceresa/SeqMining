@@ -1,12 +1,11 @@
 from PyQt5 import QtWidgets
-from views.request_view import Ui_MainWindow
+from views.request_view import Ui_NCBI_Request
 from functions.NCBI_functions import *
 from functions.graphics_function import *
 from functools import partial
-from controllers.Result import Result
 
 
-class Request(QtWidgets.QMainWindow, Ui_MainWindow):
+class Request(QtWidgets.QDialog, Ui_NCBI_Request):
     """
     controlling class for request_view
     """
@@ -17,7 +16,7 @@ class Request(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setWindowTitle("Rechercher")
         self.field_list_nucleotide = get_field_list("nucleotide")
         self.list_layout_widget = [self.layout_widget_0]
-        self.window_result = None
+        self.request = None
         self.init_ui()
 
     def init_ui(self):
@@ -29,19 +28,21 @@ class Request(QtWidgets.QMainWindow, Ui_MainWindow):
         self.add_layout_filter(position)
 
     def button_remove_clicked(self, number):
-        try:
-            self.remove_layout_filter(number)
-        except Exception as e:
-            print(e)
+        self.remove_layout_filter(number)
 
     def button_create_clicked(self):
         request = self.create_request()
         self.edit_request.setText(request)
 
     def button_search_clicked(self):
-        request = self.edit_request.text()
-        self.window_result = Result(request=request)
-        self.window_result.show()
+        self.set_request()
+        self.close()
+
+    def set_request(self):
+        self.request = self.edit_request.text()
+
+    def get_request(self):
+        return self.request
 
     def create_request(self):
         request_parts = []

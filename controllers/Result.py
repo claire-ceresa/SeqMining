@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets
 from PyQt5.Qt import Qt
 from views.result_view import Ui_NCBI_Result
 from functions.NCBI_functions import *
+from controllers.Request import Request
 
 class Result(QtWidgets.QMainWindow, Ui_NCBI_Result):
     """
@@ -12,15 +13,13 @@ class Result(QtWidgets.QMainWindow, Ui_NCBI_Result):
         super(Result, self).__init__(parent)
         self.setupUi(self)
         self.setWindowTitle("Resultats de la recherche")
-        self.init_ui(request)
+        self.init_ui()
+        self.request = None
 
-    def init_ui(self,request):
-        self.edit_request.setText(request)
-        self.button_search_clicked()
+    def init_ui(self):
         self.label_selectall.mouseReleaseEvent = self.select_all
         self.label_deselectall.mouseReleaseEvent = self.deselect_all
         self.label_help.mouseReleaseEvent = self.open_help
-
 
     def button_search_clicked(self):
         self.table.clearContents()
@@ -59,4 +58,9 @@ class Result(QtWidgets.QMainWindow, Ui_NCBI_Result):
             widget.setCheckState(Qt.Unchecked)
 
     def open_help(self, event):
-        print("open help")
+        dialog = Request()
+        if dialog.exec() == 0:
+            self.request = dialog.get_request()
+        dialog.deleteLater()
+        self.edit_request.setText(self.request)
+
