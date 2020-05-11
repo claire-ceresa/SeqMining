@@ -88,10 +88,14 @@ class Ui_NCBI_Result(object):
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.verticalHeader().setVisible(False)
         self.verticalLayout.addWidget(self.table)
+        self.button_extract = QtWidgets.QPushButton(self.centralwidget)
+        self.button_extract.setObjectName("button_extract")
+        self.verticalLayout.addWidget(self.button_extract)
         NCBI_Result.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(NCBI_Result)
         self.button_search.clicked.connect(NCBI_Result.button_search_clicked)
+        self.button_extract.clicked.connect(NCBI_Result.button_extract_clicked)
         QtCore.QMetaObject.connectSlotsByName(NCBI_Result)
 
     def retranslateUi(self, NCBI_Result):
@@ -106,6 +110,7 @@ class Ui_NCBI_Result(object):
         item.setText(_translate("NCBI_Result", "Accession"))
         item = self.table.horizontalHeaderItem(1)
         item.setText(_translate("NCBI_Result", "Description"))
+        self.button_extract.setText(_translate("NCBI_Result", "Extraire vers un fichier Excel"))
 
 
 if __name__ == "__main__":
