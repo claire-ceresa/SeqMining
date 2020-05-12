@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 from views.principal_view import Ui_Principal_Window
-from controllers.NCBI import NCBI
+from controllers.NCBI_Result_Window import NCBI
 
 
 class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):

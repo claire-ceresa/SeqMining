@@ -13,7 +13,9 @@ class Excel:
         """Set the title of the workbook"""
         if title is None:
             now = d.datetime.now()
-            return now.strftime("%Y%m%d_%H%M%S.xlsx")
+            date = now.strftime("%Y%m%d_%H%M%S")
+            title = date + ".xlsx"
+            return title
         else:
             return title
 

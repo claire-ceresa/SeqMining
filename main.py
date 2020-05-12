@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication
-from controllers.Principal import Principal
+from controllers.Principal_Window import Principal
 from Bio import Entrez
 
 Entrez.email = "claire.ceresa@hotmail.fr"

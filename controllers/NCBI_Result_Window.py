@@ -4,7 +4,8 @@ from PyQt5.Qt import Qt
 from functions.graphics_function import *
 from views.result_view import Ui_NCBI_Result
 from functions.NCBI_functions import *
-from controllers.Request import Request
+from controllers.NCBI_Request_Window import Request
+from controllers.NCBI_Product_Window import NCBI_Product_Window
 from objects.Excel import Excel
 
 
@@ -19,6 +20,7 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         self.setWindowTitle("Rechercher sur NCBI Nucleotide")
         self.init_ui()
         self.request = None
+        self.window_product = None
 
     def init_ui(self):
         """Actions to initialise the window"""
@@ -29,7 +31,7 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
 
     # METHODS OF THE CLASS #
 
-    def button_search_clicked(self):
+    def button_search_request_clicked(self):
         """Show the result of the NCBI request"""
         self.table.clearContents()
         self.table.setRowCount(0)
@@ -46,6 +48,14 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
                 self.fill_in_result_table(list_id)
         else:
             create_messageBox("Attention !", "Remplissez la requête !")
+
+    def button_search_id_clicked(self):
+        id = self.edit_id.text()
+        if len(id) > 0:
+            self.window_product = NCBI_Product_Window(id=id)
+            self.window_product.show()
+        else:
+            create_messageBox("Attention", "Veuillez entrer un identifiant GenBank")
 
     def button_extract_clicked(self):
         """Copy the results in an Excel file"""
@@ -78,6 +88,14 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
             self.request = request_window.get_request()
         request_window.deleteLater()
         self.edit_request.setText(self.request)
+
+    def row_table_clicked(self, row, column):
+        id_widget = self.table.item(row, 0)
+        id = id_widget.text()
+        self.window_product = NCBI_Product_Window(id=id)
+        self.window_product.show()
+
+
 
     # GRAPHIC METHODS #
 

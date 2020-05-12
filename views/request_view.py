@@ -34,10 +34,6 @@ class Ui_NCBI_Request(object):
         self.layout_widget_0.addWidget(self.button_add)
         self.layout_filters.addLayout(self.layout_widget_0)
         self.verticalLayout.addLayout(self.layout_filters)
-        self.label = QtWidgets.QLabel(NCBI_Request)
-        self.label.setAlignment(QtCore.Qt.AlignCenter)
-        self.label.setObjectName("label")
-        self.verticalLayout.addWidget(self.label)
         self.button_create = QtWidgets.QPushButton(NCBI_Request)
         self.button_create.setObjectName("button_create")
         self.verticalLayout.addWidget(self.button_create)
@@ -61,7 +57,6 @@ class Ui_NCBI_Request(object):
         NCBI_Request.setWindowTitle(_translate("NCBI_Request", "Dialog"))
         self.button_remove_0.setText(_translate("NCBI_Request", "-"))
         self.button_add.setText(_translate("NCBI_Request", "+"))
-        self.label.setText(_translate("NCBI_Request", "Construire la requete"))
         self.button_create.setText(_translate("NCBI_Request", "Créer la requête"))
         self.button_search.setText(_translate("NCBI_Request", "Rechercher"))
 
