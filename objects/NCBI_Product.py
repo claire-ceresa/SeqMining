@@ -1,6 +1,7 @@
 from Bio import Entrez, SeqIO
 from urllib import error
 
+
 class NCBI_Product:
 
     def __init__(self, id=None):
