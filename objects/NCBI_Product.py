@@ -9,8 +9,10 @@ class NCBI_Product:
         self.fiche = None
         self.sequence = None
         self.valid = True
-        self.available_on_db = True # TODO : gérer la comparaison avec la db
+        self.available_on_db = False # TODO : gérer la comparaison avec la db
         self._set_properties()
+
+    # SETTER METHODS #
 
     def _set_properties(self):
         self._set_fiche()
@@ -29,3 +31,29 @@ class NCBI_Product:
         sequence = SeqIO.read(self.fiche, "genbank")
         self.sequence = sequence
         SeqIO.write(self.sequence, "fiche.txt", "genbank")
+
+    # GETTER METHODS #
+
+    def get_id(self):
+        return self.sequence.id
+
+    def get_name(self):
+        return self.sequence.name
+
+    def get_description(self):
+        return self.sequence.description
+
+    def get_features(self):
+        return self.sequence.features
+
+    def get_sequence_DNA(self):
+        return self.sequence.seq
+
+    def get_annotations(self):
+        return self.sequence.annotations
+
+    def get_letter_annotations(self):
+        return self.sequence.letter_annotations
+
+    def get_dbxrefs(self):
+        return self.sequence.dbxrefs
