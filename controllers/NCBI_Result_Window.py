@@ -53,7 +53,10 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         id = self.edit_id.text()
         if len(id) > 0:
             self.window_product = NCBI_Product_Window(id=id)
-            self.window_product.show()
+            if self.window_product.product.valid :
+                self.window_product.show()
+            else:
+                create_messageBox("Erreur", "Identifiant inconnu !")
         else:
             create_messageBox("Attention", "Veuillez entrer un identifiant GenBank")
 
