@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QMessageBox
 
 def fill_combobox(combobox, list):
     """Fill in a QComboBox"""
+    combobox.clear()
     for name in list:
         combobox.addItem(str(name))
 

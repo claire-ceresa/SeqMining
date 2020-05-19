@@ -42,7 +42,7 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
             retmax = self.combobox_nb.currentText()
             result = get_result_request(request=request, retmax=retmax)
             count = result["Count"]
-            self.print_results(count, retmax)
+            self.print_results(count=count, retmax=retmax, retstart=1)
             self.set_pages(count=count)
             if count == '0' and "ErrorList" in result:
                 errors = result["ErrorList"]
@@ -96,13 +96,21 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         request = self.edit_request.text()
         result = get_result_request(request=request, retmax=retmax)
         list_id = result["IdList"]
-        self.print_results(result["Count"], retmax)
-        # TODO : set page
+        count = result["Count"]
+        self.print_results(count=count, retmax=retmax, retstart=1)
+        self.set_pages(count=count)
         self.fill_in_result_table(list_id)
         QtWidgets.QApplication.restoreOverrideCursor()
 
     def combobox_page_changed(self):
-        print(self.combobox_page.currentText())
+        QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
+        request = self.edit_request.text()
+        retmax = self.combobox_nb.currentText()
+        page = self.combobox_page.currentText()
+        retstart = (int(page) - 1) * int(retmax)
+        result = get_result_request(request=request, retstart=retstart, retmax=retmax)
+        self.fill_in_result_table(result["IdList"])
+        QtWidgets.QApplication.restoreOverrideCursor()
 
     # METHODS OF QLabel as BUTTONS #
 
@@ -149,9 +157,9 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
             self.table.setItem(row, 0, accession)
             self.table.setItem(row, 1, title)
 
-    def print_results(self, count, retmax):
+    def print_results(self, count, retmax, retstart):
         if int(retmax) < int(count):
-            self.label_result.setText(" Resultats : " + retmax + " sur " + str(count))
+            self.label_result.setText(" Resultats : " + str(retstart) + " à " + str(retmax) + " sur " + str(count))
         else:
             self.label_result.setText(" Resultats : " + str(count))
 
@@ -173,7 +181,7 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         nb_page = ceil(int(count) / int(retmax))
         self.label_on.setText("sur " + str(nb_page))
         if nb_page > 1:
-            pages = list(range(1, nb_page))
+            pages = list(range(1, nb_page+1))
         else:
             pages = [1]
         fill_combobox(self.combobox_page, pages)

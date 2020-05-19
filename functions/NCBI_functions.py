@@ -23,7 +23,7 @@ def get_result_request(request, retmax, retstart=0):
     :param request: the NCBI request
     :return: result of the request, an object DictionaryElement
     """
-    result = Entrez.esearch(db="nucleotide", term=request, idtype="acc", retstart = retstart, retmax=retmax, usehistory='y')
+    result = Entrez.esearch(db="nucleotide", term=request, idtype="acc", retstart=retstart, retmax=retmax, usehistory='y')
     list = Entrez.read(result)
     return list
 
