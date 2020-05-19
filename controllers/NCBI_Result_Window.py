@@ -1,4 +1,5 @@
 import os
+from math import *
 from PyQt5 import QtWidgets
 from PyQt5.Qt import Qt
 from functions.graphics_function import *
@@ -14,7 +15,7 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
     controlling class for result_view
     """
 
-    def __init__(self, parent=None, request=None):
+    def __init__(self, parent=None):
         super(NCBI, self).__init__(parent)
         self.setupUi(self)
         self.setWindowTitle("Rechercher sur NCBI Nucleotide")
@@ -33,13 +34,16 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
 
     def button_search_request_clicked(self):
         """Show the result of the NCBI request"""
+        QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         self.table.clearContents()
         self.table.setRowCount(0)
         request = self.edit_request.text()
         if len(request) > 0:
-            result = get_result_request(request=request)
+            retmax = self.combobox_nb.currentText()
+            result = get_result_request(request=request, retmax=retmax)
             count = result["Count"]
-            self.label_result.setText(count + " resultats trouvés !")
+            self.print_results(count, retmax)
+            self.set_pages(count=count)
             if count == '0' and "ErrorList" in result:
                 errors = result["ErrorList"]
                 self.print_errors(errors)
@@ -48,8 +52,10 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
                 self.fill_in_result_table(list_id)
         else:
             create_messageBox("Attention !", "Remplissez la requête !")
+        QtWidgets.QApplication.restoreOverrideCursor()
 
     def button_search_id_clicked(self):
+        QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         id = self.edit_id.text()
         if len(id) > 0:
             self.window_product = NCBI_Product_Window(id=id)
@@ -59,8 +65,12 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
                 create_messageBox("Erreur", "Identifiant inconnu !")
         else:
             create_messageBox("Attention", "Veuillez entrer un identifiant GenBank")
+        QtWidgets.QApplication.restoreOverrideCursor()
 
-    def button_extract_clicked(self):
+    def button_extract_all_clicked(self):
+        print("all")
+
+    def button_extract_select_clicked(self):
         """Copy the results in an Excel file"""
         rows = self.get_row_checked()
         datas = {'column_names': ["Identifiant", "Titre"], 'rows': rows}
@@ -69,6 +79,32 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
             create_messageBox("Succes !", "Le fichier a été crée !")
         else:
             create_messageBox("Erreur ! ", "Une erreur est survenue !\n" + copy["error"])
+
+    def row_table_clicked(self, row, column):
+        """Open the online Product Window"""
+        QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
+        id_widget = self.table.item(row, 0)
+        id = id_widget.text()
+        self.window_product = NCBI_Product_Window(id=id)
+        self.window_product.show()
+        QtWidgets.QApplication.restoreOverrideCursor()
+
+    def combobox_nb_changed(self):
+        """Change the number of result shown in the table"""
+        QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
+        retmax = self.combobox_nb.currentText()
+        request = self.edit_request.text()
+        result = get_result_request(request=request, retmax=retmax)
+        list_id = result["IdList"]
+        self.print_results(result["Count"], retmax)
+        # TODO : set page
+        self.fill_in_result_table(list_id)
+        QtWidgets.QApplication.restoreOverrideCursor()
+
+    def combobox_page_changed(self):
+        print(self.combobox_page.currentText())
+
+    # METHODS OF QLabel as BUTTONS #
 
     def select_all(self, event):
         """Select all the lines of the table"""
@@ -92,13 +128,6 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         request_window.deleteLater()
         self.edit_request.setText(self.request)
 
-    def row_table_clicked(self, row, column):
-        id_widget = self.table.item(row, 0)
-        id = id_widget.text()
-        self.window_product = NCBI_Product_Window(id=id)
-        self.window_product.show()
-
-
 
     # GRAPHIC METHODS #
 
@@ -109,7 +138,6 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         """
         self.label_error.hide()
         number_row = len(list_ids)
-        self.label_result.setText(str(number_row) + " resultats trouvés !")
         self.table.setRowCount(number_row)
         str_ids = ','.join(list_ids)
         summary = get_summary(str_ids)
@@ -120,6 +148,12 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
             title = QtWidgets.QTableWidgetItem(id["Title"])
             self.table.setItem(row, 0, accession)
             self.table.setItem(row, 1, title)
+
+    def print_results(self, count, retmax):
+        if int(retmax) < int(count):
+            self.label_result.setText(" Resultats : " + retmax + " sur " + str(count))
+        else:
+            self.label_result.setText(" Resultats : " + str(count))
 
     def print_errors(self, errors):
         """
@@ -133,6 +167,16 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
                 error = error + str(value[0]) + " "
         error = error + "\n"
         self.label_error.setText(error)
+
+    def set_pages(self, count):
+        retmax = self.combobox_nb.currentText()
+        nb_page = ceil(int(count) / int(retmax))
+        self.label_on.setText("sur " + str(nb_page))
+        if nb_page > 1:
+            pages = list(range(1, nb_page))
+        else:
+            pages = [1]
+        fill_combobox(self.combobox_page, pages)
 
     # OTHER FUNCTIONS #
 

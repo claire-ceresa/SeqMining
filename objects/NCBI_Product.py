@@ -57,3 +57,15 @@ class NCBI_Product:
 
     def get_dbxrefs(self):
         return self.sequence.dbxrefs
+
+    def get_feature_by_type(self, features, type):
+        """
+        Get all the information of a feature
+        :param type: type of the feature you need (CDS, source, etc)
+        :return: the old_object SeqFeature corresponding to the type
+        """
+        for feature in features:
+            if feature.type == type:
+                return feature
+        return None
+
