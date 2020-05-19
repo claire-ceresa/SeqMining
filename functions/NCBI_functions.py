@@ -17,7 +17,7 @@ def get_field_list(database_name):
     return list
 
 
-def get_result_request(request, retmax, retstart=0):
+def get_result_request(request, retmax, retstart):
     """
     Launch a research on NCBI
     :param request: the NCBI request

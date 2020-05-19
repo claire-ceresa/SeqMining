@@ -39,17 +39,8 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         self.table.setRowCount(0)
         request = self.edit_request.text()
         if len(request) > 0:
-            retmax = self.combobox_nb.currentText()
-            result = get_result_request(request=request, retmax=retmax)
-            count = result["Count"]
-            self.print_results(count=count, retmax=retmax, retstart=1)
-            self.set_pages(count=count)
-            if count == '0' and "ErrorList" in result:
-                errors = result["ErrorList"]
-                self.print_errors(errors)
-            else:
-                list_id = result["IdList"]
-                self.fill_in_result_table(list_id)
+            self.request = request
+            self.set_result_interface()
         else:
             create_messageBox("Attention !", "Remplissez la requête !")
         QtWidgets.QApplication.restoreOverrideCursor()
@@ -59,7 +50,7 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         id = self.edit_id.text()
         if len(id) > 0:
             self.window_product = NCBI_Product_Window(id=id)
-            if self.window_product.product.valid :
+            if self.window_product.product.valid:
                 self.window_product.show()
             else:
                 create_messageBox("Erreur", "Identifiant inconnu !")
@@ -92,25 +83,29 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
     def combobox_nb_changed(self):
         """Change the number of result shown in the table"""
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
-        retmax = self.combobox_nb.currentText()
-        request = self.edit_request.text()
-        result = get_result_request(request=request, retmax=retmax)
-        list_id = result["IdList"]
-        count = result["Count"]
-        self.print_results(count=count, retmax=retmax, retstart=1)
-        self.set_pages(count=count)
-        self.fill_in_result_table(list_id)
+        self.set_result_interface()
         QtWidgets.QApplication.restoreOverrideCursor()
 
-    def combobox_page_changed(self):
+    def combobox_page_changed(self, index):
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
-        request = self.edit_request.text()
-        retmax = self.combobox_nb.currentText()
-        page = self.combobox_page.currentText()
-        retstart = (int(page) - 1) * int(retmax)
-        result = get_result_request(request=request, retstart=retstart, retmax=retmax)
-        self.fill_in_result_table(result["IdList"])
+        self.set_result_interface()
         QtWidgets.QApplication.restoreOverrideCursor()
+
+    def set_result_interface(self):
+        max = int(self.combobox_nb.currentText())
+        if self.combobox_page.currentText() is '':
+            page = 1
+        else:
+            page = int(self.combobox_page.currentText())
+        start = (page - 1) * max
+        result = get_result_request(request=self.request, retmax=max, retstart=start)
+        count = int(result["Count"])
+        self.print_results(start=start, max=max, count=count)
+        self.set_combobox_pages(count=count, max=max, actual=page)
+        if count == '0' and "ErrorList" in result:
+            self.print_errors(result)
+        else:
+            self.fill_in_result_table(result)
 
     # METHODS OF QLabel as BUTTONS #
 
@@ -136,15 +131,15 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         request_window.deleteLater()
         self.edit_request.setText(self.request)
 
-
     # GRAPHIC METHODS #
 
-    def fill_in_result_table(self, list_ids):
+    def fill_in_result_table(self, result):
         """
         Fill the table with the result of the request
         :param list_ids: list of the ids of the result
         """
         self.label_error.hide()
+        list_ids = result["IdList"]
         number_row = len(list_ids)
         self.table.setRowCount(number_row)
         str_ids = ','.join(list_ids)
@@ -156,19 +151,24 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
             title = QtWidgets.QTableWidgetItem(id["Title"])
             self.table.setItem(row, 0, accession)
             self.table.setItem(row, 1, title)
+        self.table.resizeColumnToContents(0)
 
-    def print_results(self, count, retmax, retstart):
-        if int(retmax) < int(count):
-            self.label_result.setText(" Resultats : " + str(retstart) + " à " + str(retmax) + " sur " + str(count))
+    def print_results(self, start, max, count):
+        start_to_print = start + 1
+        max_to_print = max + start
+        if max < count:
+            self.label_result.setText(
+                " Resultats : " + str(start_to_print) + " à " + str(max_to_print) + " sur " + str(count))
         else:
             self.label_result.setText(" Resultats : " + str(count))
 
-    def print_errors(self, errors):
+    def print_errors(self, result):
         """
         Print the errors of the NCBI request
         :param result: list ErrorList of the SeqIO object
         """
         self.label_error.show()
+        errors = result["ErrorList"]
         error = "Les termes suivants n'ont pas été trouvés : "
         for key, value in errors.items():
             if len(value) > 0:
@@ -176,17 +176,21 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         error = error + "\n"
         self.label_error.setText(error)
 
-    def set_pages(self, count):
-        retmax = self.combobox_nb.currentText()
-        nb_page = ceil(int(count) / int(retmax))
+    def set_combobox_pages(self, count, max, actual):
+        nb_page = ceil(count / max)
         self.label_on.setText("sur " + str(nb_page))
         if nb_page > 1:
-            pages = list(range(1, nb_page+1))
+            pages = list(range(1, nb_page + 1))
         else:
             pages = [1]
         fill_combobox(self.combobox_page, pages)
+        self.combobox_page.setCurrentText(str(actual))
 
     # OTHER FUNCTIONS #
+
+    def get_info_result(self):
+        nb_to_print = self.combobox_nb.currentText()
+        actual_page = self.combobox_page.currentText()
 
     def get_row_checked(self):
         """
@@ -224,10 +228,3 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
             return {'done': False, 'error': str(e)}
         else:
             return {'done': True, 'error': None}
-
-
-
-
-
-
-

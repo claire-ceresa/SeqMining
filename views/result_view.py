@@ -106,6 +106,7 @@ class Ui_NCBI_Result(object):
         self.layout_select.addWidget(self.combobox_nb)
         self.verticalLayout.addLayout(self.layout_select)
         self.table = QtWidgets.QTableWidget(self.groupbox_products)
+        self.table.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         self.table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.table.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
@@ -151,7 +152,7 @@ class Ui_NCBI_Result(object):
         self.table.cellDoubleClicked['int','int'].connect(NCBI_Result.row_table_clicked)
         self.button_search_id.clicked.connect(NCBI_Result.button_search_id_clicked)
         self.combobox_nb.currentTextChanged['QString'].connect(NCBI_Result.combobox_nb_changed)
-        self.combobox_page.currentTextChanged['QString'].connect(NCBI_Result.combobox_page_changed)
+        self.combobox_page.activated['int'].connect(NCBI_Result.combobox_page_changed)
         self.button_extract_select.clicked.connect(NCBI_Result.button_extract_select_clicked)
         QtCore.QMetaObject.connectSlotsByName(NCBI_Result)
 
