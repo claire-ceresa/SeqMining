@@ -22,6 +22,7 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         self.init_ui()
         self.request = None
         self.window_product = None
+        self.groupbox_results.hide()
 
     def init_ui(self):
         """Actions to initialise the window"""
@@ -39,6 +40,7 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         self.table.setRowCount(0)
         request = self.edit_request.text()
         if len(request) > 0:
+            self.groupbox_results.show()
             self.request = request
             self.set_result_interface()
         else:
@@ -46,6 +48,7 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         QtWidgets.QApplication.restoreOverrideCursor()
 
     def button_search_id_clicked(self):
+        """Open the NCBI window of the product"""
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         id = self.edit_id.text()
         if len(id) > 0:
@@ -58,18 +61,15 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
             create_messageBox("Attention", "Veuillez entrer un identifiant GenBank")
         QtWidgets.QApplication.restoreOverrideCursor()
 
-    def button_extract_all_clicked(self):
-        print("all")
-
     def button_extract_select_clicked(self):
         """Copy the results in an Excel file"""
+        QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         rows = self.get_row_checked()
         datas = {'column_names': ["Identifiant", "Titre"], 'rows': rows}
         copy = self.create_excel(datas)
-        if copy["done"]:
+        if copy:
             create_messageBox("Succes !", "Le fichier a été crée !")
-        else:
-            create_messageBox("Erreur ! ", "Une erreur est survenue !\n" + copy["error"])
+        QtWidgets.QApplication.restoreOverrideCursor()
 
     def row_table_clicked(self, row, column):
         """Open the online Product Window"""
@@ -86,26 +86,12 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         self.set_result_interface()
         QtWidgets.QApplication.restoreOverrideCursor()
 
-    def combobox_page_changed(self, index):
+    def combobox_page_changed(self):
+        """Change the page of result"""
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         self.set_result_interface()
         QtWidgets.QApplication.restoreOverrideCursor()
 
-    def set_result_interface(self):
-        max = int(self.combobox_nb.currentText())
-        if self.combobox_page.currentText() is '':
-            page = 1
-        else:
-            page = int(self.combobox_page.currentText())
-        start = (page - 1) * max
-        result = get_result_request(request=self.request, retmax=max, retstart=start)
-        count = int(result["Count"])
-        self.print_results(start=start, max=max, count=count)
-        self.set_combobox_pages(count=count, max=max, actual=page)
-        if count == '0' and "ErrorList" in result:
-            self.print_errors(result)
-        else:
-            self.fill_in_result_table(result)
 
     # METHODS OF QLabel as BUTTONS #
 
@@ -136,7 +122,7 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
     def fill_in_result_table(self, result):
         """
         Fill the table with the result of the request
-        :param list_ids: list of the ids of the result
+        :param result: object SeqIO issued of the request
         """
         self.label_error.hide()
         list_ids = result["IdList"]
@@ -154,6 +140,12 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         self.table.resizeColumnToContents(0)
 
     def print_results(self, start, max, count):
+        """
+        Fill in the labels concerning the results of the request
+        :param start: number of the first result shown
+        :param max: number of the last result show
+        :param count: total number of result
+        """
         start_to_print = start + 1
         max_to_print = max + start
         if max < count:
@@ -165,7 +157,7 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
     def print_errors(self, result):
         """
         Print the errors of the NCBI request
-        :param result: list ErrorList of the SeqIO object
+        :param result: object SeqIO issued of the request
         """
         self.label_error.show()
         errors = result["ErrorList"]
@@ -177,6 +169,12 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         self.label_error.setText(error)
 
     def set_combobox_pages(self, count, max, actual):
+        """
+        Fill in the widgets concerning the page of results
+        :param count: total number of result
+        :param max: number of result seen in the table
+        :param actual: number of the page shown at the screen
+        """
         nb_page = ceil(count / max)
         self.label_on.setText("sur " + str(nb_page))
         if nb_page > 1:
@@ -186,11 +184,24 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         fill_combobox(self.combobox_page, pages)
         self.combobox_page.setCurrentText(str(actual))
 
-    # OTHER FUNCTIONS #
+    def set_result_interface(self):
+        """ Set the widget concerning the results"""
+        max = int(self.combobox_nb.currentText())
+        if self.combobox_page.currentText() is '':
+            page = 1
+        else:
+            page = int(self.combobox_page.currentText())
+        start = (page - 1) * max
+        result = get_result_request(request=self.request, retmax=max, retstart=start)
+        count = int(result["Count"])
+        self.print_results(start=start, max=max, count=count)
+        self.set_combobox_pages(count=count, max=max, actual=page)
+        if count == '0' and "ErrorList" in result:
+            self.print_errors(result)
+        else:
+            self.fill_in_result_table(result)
 
-    def get_info_result(self):
-        nb_to_print = self.combobox_nb.currentText()
-        actual_page = self.combobox_page.currentText()
+    # OTHER FUNCTIONS #
 
     def get_row_checked(self):
         """
@@ -218,13 +229,16 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         """
         try:
             desktop_path = os.environ['USERPROFILE'] + '\Desktop\\'
-            name = QtWidgets.QFileDialog.getSaveFileName(self, 'Enregister', desktop_path, "Excel (*.xlsx)")
-            filename = name[0]
+            name = QtWidgets.QFileDialog.getSaveFileName(self, caption="Enregistrer", directory=desktop_path, filter="Excel (*.xlsx)")
+        except:
+            name = QtWidgets.QFileDialog.getSaveFileName(self, caption='Enregister', filter="Excel (*.xlsx)")
+
+        filename = name[0]
+        if len(filename) > 0:
             excel = Excel(title=filename)
             worksheet = excel.add_worksheet("Résultats")
             excel.add_data(worksheet=worksheet, datas=datas)
             excel.close()
-        except Exception as e:
-            return {'done': False, 'error': str(e)}
+            return True
         else:
-            return {'done': True, 'error': None}
+            return False
