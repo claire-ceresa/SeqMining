@@ -3,20 +3,20 @@ from math import *
 from PyQt5 import QtWidgets
 from PyQt5.Qt import Qt
 from functions.graphics_function import *
-from views.result_view import Ui_NCBI_Result
+from views.ncbi_search_view import Ui_NCBI_Result
 from functions.NCBI_functions import *
-from controllers.NCBI_Request_Window import Request
+from controllers.NCBI_Help_Window import NCBI_Help_Window
 from controllers.NCBI_Product_Window import NCBI_Product_Window
 from objects.Excel import Excel
 
 
-class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
+class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
     """
     controlling class for result_view
     """
 
     def __init__(self, parent=None):
-        super(NCBI, self).__init__(parent)
+        super(NCBI_Search_Window, self).__init__(parent)
         self.setupUi(self)
         self.setWindowTitle("Rechercher sur NCBI Nucleotide")
         self.init_ui()
@@ -34,7 +34,7 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
     # METHODS OF THE CLASS #
 
     def button_search_request_clicked(self):
-        """Show the result of the NCBI request"""
+        """Show the result of the NCBI_Search_Window request"""
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         self.table.clearContents()
         self.table.setRowCount(0)
@@ -48,7 +48,7 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
         QtWidgets.QApplication.restoreOverrideCursor()
 
     def button_search_id_clicked(self):
-        """Open the NCBI window of the product"""
+        """Open the NCBI_Search_Window window of the product"""
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         id = self.edit_id.text()
         if len(id) > 0:
@@ -110,8 +110,8 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
             widget.setCheckState(Qt.Unchecked)
 
     def open_help(self, event):
-        """Open the window to construct the NCBI request"""
-        request_window = Request()
+        """Open the window to construct the NCBI_Search_Window request"""
+        request_window = NCBI_Help_Window()
         if request_window.exec() == 0:
             self.request = request_window.get_request()
         request_window.deleteLater()
@@ -156,7 +156,7 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
 
     def print_errors(self, result):
         """
-        Print the errors of the NCBI request
+        Print the errors of the NCBI_Search_Window request
         :param result: object SeqIO issued of the request
         """
         self.label_error.show()
@@ -223,7 +223,7 @@ class NCBI(QtWidgets.QMainWindow, Ui_NCBI_Result):
 
     def create_excel(self, datas):
         """
-        Create the Excel file with the result of the NCBI request
+        Create the Excel file with the result of the NCBI_Search_Window request
         :param datas : dictionnary {'column_names':[], 'rows':[[]]}
         :return: a dictionnary {'done':bool, 'error':string}
         """

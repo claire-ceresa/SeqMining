@@ -4,7 +4,7 @@ from Bio import Entrez, SeqIO
 def get_field_list(database_name):
     """
     Get all the fields of a database
-    :param database_name: the name of the NCBI database
+    :param database_name: the name of the NCBI_Search_Window database
     :return: list of the field names
     """
     list = []
@@ -19,8 +19,8 @@ def get_field_list(database_name):
 
 def get_result_request(request, retmax, retstart):
     """
-    Launch a research on NCBI
-    :param request: the NCBI request
+    Launch a research on NCBI_Search_Window
+    :param request: the NCBI_Search_Window request
     :return: result of the request, an object DictionaryElement
     """
     result = Entrez.esearch(db="nucleotide", term=request, idtype="acc", retstart=retstart, retmax=retmax, usehistory='y')

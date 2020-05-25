@@ -1,17 +1,17 @@
 from PyQt5 import QtWidgets
-from views.request_view import Ui_NCBI_Request
+from views.ncbi_request_view import Ui_NCBI_Request
 from functions.NCBI_functions import *
 from functions.graphics_function import *
 from functools import partial
 
 
-class Request(QtWidgets.QDialog, Ui_NCBI_Request):
+class NCBI_Help_Window(QtWidgets.QDialog, Ui_NCBI_Request):
     """
     controlling class for request_view
     """
 
     def __init__(self, parent=None):
-        super(Request, self).__init__(parent)
+        super(NCBI_Help_Window, self).__init__(parent)
         self.setupUi(self)
         self.setWindowTitle("Rechercher")
         self.field_list_nucleotide = get_field_list("nucleotide")
@@ -42,7 +42,7 @@ class Request(QtWidgets.QDialog, Ui_NCBI_Request):
         self.edit_request.setText(request)
 
     def button_search_clicked(self):
-        """Send the request to the NCBI window"""
+        """Send the request to the NCBI_Search_Window window"""
         self.set_request()
         self.close()
 

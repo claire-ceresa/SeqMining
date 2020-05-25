@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 from views.principal_view import Ui_Principal_Window
-from controllers.NCBI_Result_Window import NCBI
+from controllers.NCBI_Search_Window import NCBI_Search_Window
 from functions.other_functions import *
 
 
@@ -15,7 +15,7 @@ class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
         self.setWindowTitle("SeqMining")
         self.connected_to_internet = True
         self.connected_to_db = True
-        self.window_ncbi = NCBI()
+        self.window_ncbi = NCBI_Search_Window()
         self._set_properties()
         self._init_ui()
 
@@ -27,7 +27,7 @@ class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
     # METHODS OF THE CLASS #
 
     def button_ncbi_clicked(self):
-        """Open the NCBI window"""
+        """Open the NCBI_Search_Window window"""
         self.window_ncbi.show()
 
     def button_db_clicked(self):
