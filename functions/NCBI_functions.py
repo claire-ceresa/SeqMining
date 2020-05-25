@@ -1,4 +1,4 @@
-from Bio import Entrez, SeqIO
+from Bio import Entrez, SeqIO, SeqFeature
 
 
 def get_field_list(database_name):
@@ -26,6 +26,19 @@ def get_result_request(request, retmax, retstart):
     result = Entrez.esearch(db="nucleotide", term=request, idtype="acc", retstart=retstart, retmax=retmax, usehistory='y')
     list = Entrez.read(result)
     return list
+
+
+def get_location_classes():
+    classes = [SeqFeature.FeatureLocation,
+               SeqFeature.CompoundLocation,
+               SeqFeature.ExactPosition,
+               SeqFeature.WithinPosition,
+               SeqFeature.BetweenPosition,
+               SeqFeature.BeforePosition,
+               SeqFeature.AfterPosition,
+               SeqFeature.OneOfPosition,
+               SeqFeature.UnknownPosition]
+    return classes
 
 
 def get_sequence(id):

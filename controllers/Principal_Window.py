@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets
 from views.principal_view import Ui_Principal_Window
 from controllers.NCBI_Search_Window import NCBI_Search_Window
 from functions.other_functions import *
-
+from objects.MongoDB_Connexion import MongoDB_Connexion
 
 class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
     """
@@ -14,8 +14,8 @@ class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
         self.setupUi(self)
         self.setWindowTitle("SeqMining")
         self.connected_to_internet = True
-        self.connected_to_db = True
-        self.window_ncbi = NCBI_Search_Window()
+        self.mongoDB_connexion = MongoDB_Connexion()
+        self.window_ncbi = NCBI_Search_Window(connexion=self.mongoDB_connexion)
         self._set_properties()
         self._init_ui()
 
@@ -59,7 +59,7 @@ class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
 
     def _init_label_db(self):
         """Initialise the label of connexion to the database"""
-        if self.connected_to_db:
+        if self.mongoDB_connexion.connected_to_server:
             self.label_connex_db.setText("Connecté à la base de données")
             self.label_connex_db.setStyleSheet("color: rgb(0, 150, 0);")
         else:

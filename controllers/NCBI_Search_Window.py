@@ -15,10 +15,11 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
     controlling class for result_view
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, connexion=None):
         super(NCBI_Search_Window, self).__init__(parent)
         self.setupUi(self)
         self.setWindowTitle("Rechercher sur NCBI Nucleotide")
+        self.mongoDB_connexion = connexion
         self.init_ui()
         self.request = None
         self.window_product = None
@@ -52,8 +53,8 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         id = self.edit_id.text()
         if len(id) > 0:
-            self.window_product = NCBI_Product_Window(id=id)
-            if self.window_product.product.valid:
+            self.window_product = NCBI_Product_Window(id=id, connexion=self.mongoDB_connexion)
+            if self.window_product.ncbi_product.valid:
                 self.window_product.show()
             else:
                 create_messageBox("Erreur", "Identifiant inconnu !")
@@ -76,7 +77,7 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         id_widget = self.table.item(row, 0)
         id = id_widget.text()
-        self.window_product = NCBI_Product_Window(id=id)
+        self.window_product = NCBI_Product_Window(id=id, connexion=self.mongoDB_connexion)
         self.window_product.show()
         QtWidgets.QApplication.restoreOverrideCursor()
 

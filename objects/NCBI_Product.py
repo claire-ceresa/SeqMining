@@ -1,6 +1,6 @@
-from Bio import Entrez, SeqIO
+from Bio import Entrez, SeqIO,  SeqFeature, SeqRecord, Seq
 from urllib import error
-
+from functions.NCBI_functions import *
 
 class NCBI_Product:
 
@@ -9,7 +9,6 @@ class NCBI_Product:
         self.fiche = None
         self.sequence = None
         self.valid = True
-        self.available_on_db = False # TODO : gérer la comparaison avec la db
         self._set_properties()
 
     # SETTER METHODS #
@@ -68,4 +67,61 @@ class NCBI_Product:
             if feature.type == type:
                 return feature
         return None
+
+    ## TRANSFORMATION METHODS ##
+
+    def get_product_as_dict(self):
+        product = self.analyse_object(self.sequence)
+        return product
+
+    def analyse_object(self, object):
+
+        if isinstance(object, list):
+            final_temp = []
+            for element in object:
+                final_temp.append(self.analyse_object(element))
+            if len(final_temp) == 1:
+                final = final_temp[0]
+            else:
+                final = final_temp
+
+        elif isinstance(object, dict):
+            final = dict()
+            for key, value in object.items():
+                final[key] = self.analyse_object(value)
+
+        elif isinstance(object, SeqFeature.Reference):
+            final = {}
+            attribute_references = ["location", "authors", "title", "journal", "comment"]
+            for name in attribute_references:
+                attribute = getattr(object, name)
+                final[name] = self.analyse_object(attribute)
+
+        elif isinstance(object, SeqRecord.SeqRecord):
+            final = {}
+            attribute_record = ["id", "name", "description", "seq", "dbxrefs", "letter_annotations", "annotations",
+                                "features"]
+            for name in attribute_record:
+                attribute = getattr(object, name)
+                final[name] = self.analyse_object(attribute)
+
+        elif isinstance(object, Seq.Seq):
+            final = str(object)
+
+        elif isinstance(object, SeqFeature.SeqFeature):
+            feature_type = object.type
+            location = self.analyse_object(object.location)
+            qualifiers = self.analyse_object(object.qualifiers)
+            final = {"type": feature_type, "location": location, "qualifiers": qualifiers}
+
+        else:
+            final = object
+
+        location_classes = get_location_classes()
+        if type(object) in location_classes:
+            final = str(object)
+
+        return final
+
+
 
