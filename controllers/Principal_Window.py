@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets
 from views.principal_view import Ui_Principal_Window
 from controllers.NCBI_Search_Window import NCBI_Search_Window
+from controllers.DB_Search_Window import DB_Search_Window
 from functions.other_functions import *
 from objects.MongoDB_Connexion import MongoDB_Connexion
 
@@ -16,6 +17,7 @@ class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
         self.connected_to_internet = True
         self.mongoDB_connexion = MongoDB_Connexion()
         self.window_ncbi = NCBI_Search_Window(connexion=self.mongoDB_connexion)
+        self.window_db = DB_Search_Window(connexion=self.mongoDB_connexion)
         self._set_properties()
         self._init_ui()
 
@@ -32,8 +34,7 @@ class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
 
     def button_db_clicked(self):
         """Open the DB window"""
-        # TODO : create the database
-        print("db")
+        self.window_db.show()
 
     def button_analyses_clicked(self):
         """Open the Analyses window"""
