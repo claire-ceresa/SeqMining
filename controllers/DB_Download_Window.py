@@ -33,7 +33,6 @@ class DB_Download_Window(QtWidgets.QDialog, Ui_db_result):
         else:
             self.table_error.hide()
 
-
     def get_number_saved(self):
         saved = 0
         for result in self.results:
