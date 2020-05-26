@@ -28,7 +28,7 @@ class NCBI_Product_Window(QtWidgets.QMainWindow, Ui_NCBI_Product):
         if saving["error"] is not None:
             create_messageBox("Attention", saving["error"])
         else:
-            create_messageBox("Succès !", "Le produit" + saving["id"] + "a été téléchargé")
+            create_messageBox("Succès !", "Le produit " + saving["id_saved"] + " a été téléchargé")
         self._init_label_available()
 
     def _init_fiche(self):
@@ -46,7 +46,3 @@ class NCBI_Product_Window(QtWidgets.QMainWindow, Ui_NCBI_Product):
             self.label_dispo.setText("Le produit est disponible hors ligne !")
             self.label_dispo.setStyleSheet("color: rgb(0, 200, 0);")
             self.button_download.hide()
-
-
-
-
