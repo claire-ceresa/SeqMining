@@ -1,6 +1,7 @@
 from datetime import datetime
 from pymongo.errors import *
 
+
 class DB_Product:
 
     def __init__(self, id=None, data=None):
@@ -13,16 +14,15 @@ class DB_Product:
         result = collection.find_one({"_id": self.id})
         return result
 
-    def save_on_mongoDB(self, collection):
+    def save_on_db(self, collection):
         try:
             insert = collection.insert_one(self.data)
         except DocumentTooLarge:
-            error = " Document trop large"
+            return {"id_saved":None, "error":"Document trop large"}
         except DuplicateKeyError:
-            error = "Produit déjà téléchargé"
+            return {"id_saved":None, "error":"Produit déjà téléchargé"}
         except Exception as e:
-            error = "Impossible de télécharger le produit"
+            return {"id_saved":None, "error":"Impossible de télécharger le produit"}
         else:
-            error = None
-        return error
+            return {"id_saved":insert.inserted_id, "error":None}
 

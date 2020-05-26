@@ -24,15 +24,15 @@ class NCBI_Product_Window(QtWidgets.QMainWindow, Ui_NCBI_Product):
         self._init_label_available()
 
     def button_download_clicked(self):
-        error = self.db_product.save_on_mongoDB(collection=self.mongoDB_connexion.collection)
-        if error is not None:
-            create_messageBox("Attention", error)
+        saving = self.db_product.save_on_db(collection=self.mongoDB_connexion.collection)
+        if saving["error"] is not None:
+            create_messageBox("Attention", saving["error"])
         else:
-            create_messageBox("Succès !", "Le produit a été téléchargé")
+            create_messageBox("Succès !", "Le produit" + saving["id"] + "a été téléchargé")
         self._init_label_available()
 
     def _init_fiche(self):
-        if self.ncbi_product.valid :
+        if self.ncbi_product.valid:
             text = open('fiche.txt').read()
             self.plainTextEdit.setPlainText(text)
 

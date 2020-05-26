@@ -4,8 +4,8 @@ from pymongo import MongoClient
 class MongoDB_Connexion:
 
     def __init__(self):
-        self.process = self.connect_to_mongodb()
-        self.client = self.get_client()
+        self.process = subprocess.Popen("mongoDB.bat")
+        self.client = MongoClient()
         self.connected_to_server = self.check_connexion_to_server()
         self.database = None
         self.collection = None
@@ -14,19 +14,11 @@ class MongoDB_Connexion:
             self.set_database()
             self.set_collection()
 
-    def connect_to_mongodb(self):
-        process = subprocess.Popen("mongoDB.bat")
-        return process
-
     def terminate_process(self):
         self.process.terminate()
 
     def close_mongodb(self):
         self.client.close()
-
-    def get_client(self):
-        client = MongoClient()
-        return client
 
     def set_database(self):
         self.database = self.client["Nucleotide"]
