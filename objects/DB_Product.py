@@ -18,11 +18,11 @@ class DB_Product:
         try:
             insert = collection.insert_one(self.data)
         except DocumentTooLarge:
-            return {"id_saved":None, "error":"Document trop large"}
+            return {"id_saved":self.data["_id"], "error":"Document trop large"}
         except DuplicateKeyError:
-            return {"id_saved":None, "error":"Produit déjà téléchargé"}
+            return {"id_saved":self.data["_id"], "error":"Produit déjà téléchargé"}
         except Exception as e:
-            return {"id_saved":None, "error":"Impossible de télécharger le produit"}
+            return {"id_saved":self.data["_id"], "error":"Impossible de télécharger le produit"}
         else:
             return {"id_saved":insert.inserted_id, "error":None}
 

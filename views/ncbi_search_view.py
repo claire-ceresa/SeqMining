@@ -145,9 +145,12 @@ class Ui_NCBI_Result(object):
         self.label_on.setObjectName("label_on")
         self.layout_page.addWidget(self.label_on)
         self.verticalLayout.addLayout(self.layout_page)
-        self.button_extract_select = QtWidgets.QPushButton(self.groupbox_results)
-        self.button_extract_select.setObjectName("button_extract_select")
-        self.verticalLayout.addWidget(self.button_extract_select)
+        self.button_extract = QtWidgets.QPushButton(self.groupbox_results)
+        self.button_extract.setObjectName("button_extract")
+        self.verticalLayout.addWidget(self.button_extract)
+        self.button_download = QtWidgets.QPushButton(self.groupbox_results)
+        self.button_download.setObjectName("button_download")
+        self.verticalLayout.addWidget(self.button_download)
         self.verticalLayout_3.addWidget(self.groupbox_results)
         self.verticalLayout_4.addWidget(self.groupbox_products)
         spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
@@ -160,7 +163,8 @@ class Ui_NCBI_Result(object):
         self.button_search_id.clicked.connect(NCBI_Result.button_search_id_clicked)
         self.combobox_nb.currentTextChanged['QString'].connect(NCBI_Result.combobox_nb_changed)
         self.combobox_page.activated['int'].connect(NCBI_Result.combobox_page_changed)
-        self.button_extract_select.clicked.connect(NCBI_Result.button_extract_select_clicked)
+        self.button_extract.clicked.connect(NCBI_Result.button_extract_clicked)
+        self.button_download.clicked.connect(NCBI_Result.button_download_clicked)
         QtCore.QMetaObject.connectSlotsByName(NCBI_Result)
 
     def retranslateUi(self, NCBI_Result):
@@ -185,7 +189,8 @@ class Ui_NCBI_Result(object):
         item = self.table.horizontalHeaderItem(1)
         item.setText(_translate("NCBI_Result", "Description"))
         self.label_page.setText(_translate("NCBI_Result", "Page"))
-        self.button_extract_select.setText(_translate("NCBI_Result", "Extraire la sélection vers un fichier Excel"))
+        self.button_extract.setText(_translate("NCBI_Result", "Extraire la sélection vers un fichier Excel"))
+        self.button_download.setText(_translate("NCBI_Result", "Télécharger la sélection sur la base de données"))
 
 
 if __name__ == "__main__":

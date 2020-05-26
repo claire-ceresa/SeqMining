@@ -7,7 +7,10 @@ from views.ncbi_search_view import Ui_NCBI_Result
 from functions.NCBI_functions import *
 from controllers.NCBI_Help_Window import NCBI_Help_Window
 from controllers.NCBI_Product_Window import NCBI_Product_Window
+from controllers.DB_Download_Window import DB_Download_Window
 from objects.Excel import Excel
+from objects.DB_Product import DB_Product
+from objects.NCBI_Product import NCBI_Product
 
 
 class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
@@ -62,7 +65,7 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
             create_messageBox("Attention", "Veuillez entrer un identifiant GenBank")
         QtWidgets.QApplication.restoreOverrideCursor()
 
-    def button_extract_select_clicked(self):
+    def button_extract_clicked(self):
         """Copy the results in an Excel file"""
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         rows = self.get_row_checked()
@@ -71,6 +74,22 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
         if copy:
             create_messageBox("Succes !", "Le fichier a été crée !")
         QtWidgets.QApplication.restoreOverrideCursor()
+
+    def button_download_clicked(self):
+        """Download the selection"""
+        QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
+        rows = self.get_row_checked()
+        saved = []
+        for row in rows:
+            ncbi_product = NCBI_Product(id=row[0])
+            data = ncbi_product.get_product_as_dict()
+            db_product = DB_Product(id=row[0], data=data)
+            saving = db_product.save_on_db(self.mongoDB_connexion.collection)
+            saved.append(saving)
+        QtWidgets.QApplication.restoreOverrideCursor()
+        saved_window = DB_Download_Window(parent=self, results=saved)
+        saved_window.show()
+        #create_messageBox("Succès !", str(saved) + " résultats enregistrés sur " + str(len(rows)))
 
     def row_table_clicked(self, row, column):
         """Open the online Product Window"""
