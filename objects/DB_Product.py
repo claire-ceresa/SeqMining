@@ -22,7 +22,7 @@ class DB_Product:
         except DuplicateKeyError:
             return {"id_saved":self.data["_id"], "error":"Produit déjà téléchargé"}
         except Exception as e:
-            return {"id_saved":self.data["_id"], "error":"Impossible de télécharger le produit"}
+            return {"id_saved":self.data["_id"], "error":"Impossible de télécharger le produit !\n" + str(e)}
         else:
             return {"id_saved":insert.inserted_id, "error":None}
 

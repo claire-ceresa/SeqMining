@@ -1,6 +1,7 @@
 from Bio import Entrez, SeqIO,  SeqFeature, SeqRecord, Seq
 from urllib import error
 from functions.NCBI_functions import *
+from functions.other_functions import *
 
 class NCBI_Product:
 
@@ -72,6 +73,9 @@ class NCBI_Product:
 
     def get_product_as_dict(self):
         product = self.analyse_object(self.sequence)
+        if "date" in product["annotations"]:
+            date = product["annotations"]["date"]
+            product["annotations"]["date"] = string_to_datetime(date)
         return product
 
     def analyse_object(self, object):

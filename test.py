@@ -8,13 +8,17 @@ from objects.DB_Product import DB_Product
 from objects.NCBI_Product import NCBI_Product
 
 Entrez.email= "claire.ceresa@hotmail.fr"
-app = QApplication(sys.argv)
+# app = QApplication(sys.argv)
+#
+# connexion = MongoDB_Connexion()
+# client = connexion.client
+# collection = connexion.collection
+# id = "GW214376.1"
+#
+# form = NCBI_Product_Window(id=id, connexion=connexion)
+# form.show()
+# app.exec()
 
-connexion = MongoDB_Connexion()
-client = connexion.client
-collection = connexion.collection
-id = "GW214376.1"
-
-form = NCBI_Product_Window(id=id, connexion=connexion)
-form.show()
-app.exec()
+product= NCBI_Product(id="XM_031719044.1")
+d = product.get_product_as_dict()
+print(d)

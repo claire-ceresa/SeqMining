@@ -20,7 +20,7 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
         self.edit_download_2.hide()
 
     def button_search_clicked(self):
-        print("search")
+        print(self.edit_download_1.text())
 
     def combobox_date_changed(self, text):
         if text == "entre":
