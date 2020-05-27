@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets
+from controllers.DB_Results_Window import DB_Result_Window
 from views.db_search_view import Ui_DB_Search
 import re
 import datetime
@@ -13,6 +14,7 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
         self.setupUi(self)
         self.setWindowTitle("Rechercher sur la base de données locale")
         self.mongoDB_connexion = connexion
+        self.window_result = None
         self._init_ui()
 
     def _init_ui(self):
@@ -29,8 +31,8 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
         else:
             print(query)
         results = self.mongoDB_connexion.collection.find(query)
-        for result in results:
-            print(result)
+        self.window_result = DB_Result_Window(results = results)
+        self.window_result.show()
 
     def combobox_date_changed(self, text):
         if text == "entre":
