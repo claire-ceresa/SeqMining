@@ -1,6 +1,7 @@
 from datetime import datetime
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtGui
 from views.db_product_view import Ui_db_product
+from functions.graphics_function import *
 
 class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
     """
@@ -28,6 +29,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
     def _init_groupbox_gen(self):
         layout = QtWidgets.QVBoxLayout()
         self.groupbox_gen.setLayout(layout)
+
         for key, value in self.product["annotations"].items():
             # variable = key.capitalize()
             # variable = variable.replace("_", " ")
@@ -37,16 +39,58 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
             #     print(to_print)
             # except Exception as e:
             #     print(e)
-            widget = self.creation_widget(key, value)
-            layout.addWidget(widget)
+            try:
+                print(value)
+                widget = self.creation_widget(key, value)
+                if isinstance(widget, QtWidgets.QBoxLayout):
+                    layout.addLayout(widget)
+                else:
+                    layout.addWidget(widget)
+            except Exception as e:
+                print(str(e))
+
 
     def creation_widget(self, key, value):
-        if isinstance(value, str):
-            widget = QtWidgets.QLabel()
-            widget.setText(key.capitalize() + " : " + value)
+        if isinstance(value, str) or isinstance(value, int) or isinstance(value, datetime) :
+            label_key = create_label(key.capitalize() + " : ")
+            set_label_bold(label_key, True)
+
+            if isinstance(value, datetime):
+                label_value = create_label(value.strftime("%d-%m-%Y"))
+            else:
+                label_value = create_label(str(value))
+
+            widget = create_layout(widgets=[label_key, label_value], horizontal=True)
+
+        elif isinstance(value, list):
+
+            if isinstance(value[0], str):
+                label_key = create_label(key.capitalize() + " : ")
+                set_label_bold(label_key, True)
+                label_value = create_label(" , ".join(value))
+                widget = create_layout(widgets=[label_key, label_value], horizontal=True)
+
+            else:
+                for index, element in enumerate(value):
+                    label_key = create_label(key.capitalize() + " " + str(index) + " : ")
+                    set_label_bold(label_key, True)
+                    value = self.creation_widget(key,element)
+                    widget = create_layout(widgets=[label_key, value], horizontal=True)
+
+        elif isinstance(value, dict):
+            widgets = []
+            for key_bis, value_bis in value.items():
+                label_key = create_label(key.capitalize() + " : ")
+                set_label_bold(label_key, True)
+                value = self.creation_widget(key_bis, value_bis)
+                widget = create_layout(widgets=[label_key, value], horizontal=True)
+                widgets.append(widget)
+            widget= create_layout(widgets=widgets, vertical=True)
+
         else:
             widget = QtWidgets.QLabel()
             widget.setText(key)
+
         return widget
 
     def creation_text(self, variable):

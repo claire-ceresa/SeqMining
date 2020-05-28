@@ -21,6 +21,7 @@ class Ui_db_product(object):
         self.label_id = QtWidgets.QLabel(self.centralwidget)
         self.label_id.setText("")
         self.label_id.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_id.setTextInteractionFlags(QtCore.Qt.LinksAccessibleByMouse|QtCore.Qt.TextSelectableByMouse)
         self.label_id.setObjectName("label_id")
         self.verticalLayout.addWidget(self.label_id)
         self.label_descr = QtWidgets.QLabel(self.centralwidget)
