@@ -26,17 +26,30 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.edit_seq.setPlainText(self.product["seq"])
 
     def _init_groupbox_gen(self):
+        layout = QtWidgets.QVBoxLayout()
+        self.groupbox_gen.setLayout(layout)
         for key, value in self.product["annotations"].items():
-            variable = key.capitalize()
-            variable = variable.replace("_", " ")
-            try:
-                value_string = self.creation_widget(value)
-                to_print = variable + ' : ' + value_string
-                print(to_print)
-            except Exception as e:
-                print(e)
+            # variable = key.capitalize()
+            # variable = variable.replace("_", " ")
+            # try:
+            #     value_string = self.creation_text(value)
+            #     to_print = variable + ' : ' + value_string
+            #     print(to_print)
+            # except Exception as e:
+            #     print(e)
+            widget = self.creation_widget(key, value)
+            layout.addWidget(widget)
 
-    def creation_widget(self, variable):
+    def creation_widget(self, key, value):
+        if isinstance(value, str):
+            widget = QtWidgets.QLabel()
+            widget.setText(key.capitalize() + " : " + value)
+        else:
+            widget = QtWidgets.QLabel()
+            widget.setText(key)
+        return widget
+
+    def creation_text(self, variable):
         if type(variable) is str:
             return variable
 
@@ -50,11 +63,11 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
             if type(variable[0]) is str:
                 return str(" , ".join(variable))
             else:
-                return self.creation_widget(variable)
+                return self.creation_text(variable)
 
         elif type(variable) is dict:
             for key, value in variable.items():
-                value_string = self.creation_widget(value)
+                value_string = self.creation_text(value)
                 return str(key + "->" + value_string)
 
         else:
