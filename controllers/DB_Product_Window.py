@@ -27,69 +27,56 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.edit_seq.setPlainText(self.product["seq"])
 
     def _init_groupbox_gen(self):
-        layout = QtWidgets.QVBoxLayout()
+        layout = self.creation_widget(self.product["annotations"])
         self.groupbox_gen.setLayout(layout)
 
-        for key, value in self.product["annotations"].items():
-            # variable = key.capitalize()
-            # variable = variable.replace("_", " ")
-            # try:
-            #     value_string = self.creation_text(value)
-            #     to_print = variable + ' : ' + value_string
-            #     print(to_print)
-            # except Exception as e:
-            #     print(e)
-            try:
-                print(value)
-                widget = self.creation_widget(key, value)
-                if isinstance(widget, QtWidgets.QBoxLayout):
-                    layout.addLayout(widget)
-                else:
-                    layout.addWidget(widget)
-            except Exception as e:
-                print(str(e))
+        # for key, value in self.product["annotations"].items():
+        #     # variable = key.capitalize()
+        #     # variable = variable.replace("_", " ")
+        #     # try:
+        #     #     value_string = self.creation_text(value)
+        #     #     to_print = variable + ' : ' + value_string
+        #     #     print(to_print)
+        #     # except Exception as e:
+        #     #     print(e)
+        #     try:
+        #         print(value)
+        #         widget = self.creation_widget(key, value)
+        #         if isinstance(widget, QtWidgets.QBoxLayout):
+        #             layout.addLayout(widget)
+        #         else:
+        #             layout.addWidget(widget)
+        #     except Exception as e:
+        #         print(str(e))
 
 
-    def creation_widget(self, key, value):
-        if isinstance(value, str) or isinstance(value, int) or isinstance(value, datetime) :
-            label_key = create_label(key.capitalize() + " : ")
-            set_label_bold(label_key, True)
+    def creation_widget(self, variable):
 
-            if isinstance(value, datetime):
-                label_value = create_label(value.strftime("%d-%m-%Y"))
+        if isinstance(variable, str) :
+            widget = create_label(variable)
+        elif isinstance(variable, int) :
+            widget = create_label(str(variable))
+        elif isinstance(variable, datetime) :
+            widget = create_label(variable.strftime("%d-%m-%Y"))
+
+        elif isinstance(variable, list):
+            if isinstance(variable[0], str):
+                widget = create_label(" , ".join(variable))
             else:
-                label_value = create_label(str(value))
+                for element in variable:
+                    widget = self.creation_widget(element)
 
-            widget = create_layout(widgets=[label_key, label_value], horizontal=True)
-
-        elif isinstance(value, list):
-
-            if isinstance(value[0], str):
-                label_key = create_label(key.capitalize() + " : ")
-                set_label_bold(label_key, True)
-                label_value = create_label(" , ".join(value))
-                widget = create_layout(widgets=[label_key, label_value], horizontal=True)
-
-            else:
-                for index, element in enumerate(value):
-                    label_key = create_label(key.capitalize() + " " + str(index) + " : ")
-                    set_label_bold(label_key, True)
-                    value = self.creation_widget(key,element)
-                    widget = create_layout(widgets=[label_key, value], horizontal=True)
-
-        elif isinstance(value, dict):
+        elif isinstance(variable, dict):
             widgets = []
-            for key_bis, value_bis in value.items():
+            for key, value in variable.items():
                 label_key = create_label(key.capitalize() + " : ")
                 set_label_bold(label_key, True)
-                value = self.creation_widget(key_bis, value_bis)
-                widget = create_layout(widgets=[label_key, value], horizontal=True)
+                widget_value = self.creation_widget(value)
+                widget = create_layout(widgets=[label_key, widget_value], horizontal=True)
                 widgets.append(widget)
             widget= create_layout(widgets=widgets, vertical=True)
-
         else:
-            widget = QtWidgets.QLabel()
-            widget.setText(key)
+            widget = create_label("Impossible à afficher")
 
         return widget
 
