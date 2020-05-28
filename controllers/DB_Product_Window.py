@@ -47,7 +47,10 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
             return variable.strftime("%d-%m-%Y")
 
         elif type(variable) is list:
-            return str(" , ".join(variable))
+            if type(variable[0]) is str:
+                return str(" , ".join(variable))
+            else:
+                return self.creation_widget(variable)
 
         elif type(variable) is dict:
             for key, value in variable.items():
