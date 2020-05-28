@@ -1,6 +1,6 @@
 import urllib
 import calendar
-import datetime
+from datetime import datetime
 
 def connected_to_internet(url):
     """
@@ -24,3 +24,11 @@ def string_to_datetime(date_initial):
     year = date_split[2]
     date_final = datetime.datetime(year=int(year), month=int(month_number), day=int(day))
     return date_final
+
+def get_string(value):
+    if isinstance(value, datetime):
+        return value.strftime("%d-%m-%Y")
+    elif isinstance(value, list) and isinstance(value[0], str) :
+        return " , ".join(value)
+    else:
+        return str(value)

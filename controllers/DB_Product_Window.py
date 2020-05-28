@@ -2,6 +2,7 @@ from datetime import datetime
 from PyQt5 import QtWidgets, QtGui
 from views.db_product_view import Ui_db_product
 from functions.graphics_function import *
+from functions.other_functions import *
 
 class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
     """
@@ -17,7 +18,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
 
     def _init_ui(self):
         self._init_label_title()
-        self._init_groupbox_gen()
+        self._init_generalities()
 
     def _init_label_title(self):
         self.label_id.setText(self.product["id"])
@@ -26,59 +27,39 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.label_download.setText("Téléchargé le " + date_string)
         self.edit_seq.setPlainText(self.product["seq"])
 
-    def _init_groupbox_gen(self):
-        layout = self.creation_widget(self.product["annotations"])
-        self.groupbox_gen.setLayout(layout)
+    def _init_generalities(self):
+        try:
+            parent = self.tree_widget
+            for key, value in self.product["annotations"].items():
+                self.creation_tree(parent, key, value)
+        except Exception as e:
+            print(e)
+        self.tree_widget.resizeColumnToContents(0)
+        self.tree_widget.resizeColumnToContents(1)
 
-        # for key, value in self.product["annotations"].items():
-        #     # variable = key.capitalize()
-        #     # variable = variable.replace("_", " ")
-        #     # try:
-        #     #     value_string = self.creation_text(value)
-        #     #     to_print = variable + ' : ' + value_string
-        #     #     print(to_print)
-        #     # except Exception as e:
-        #     #     print(e)
-        #     try:
-        #         print(value)
-        #         widget = self.creation_widget(key, value)
-        #         if isinstance(widget, QtWidgets.QBoxLayout):
-        #             layout.addLayout(widget)
-        #         else:
-        #             layout.addWidget(widget)
-        #     except Exception as e:
-        #         print(str(e))
+    def creation_tree(self, parent, key, value):
+        child = QtWidgets.QTreeWidgetItem(parent)
+        string_key = key.replace("_", " ")
+        child.setText(0, string_key.capitalize())
 
+        if isinstance(value, list) and isinstance(value[0], dict):
+            parent = child
+            for index, element in enumerate(value):
+                child = QtWidgets.QTreeWidgetItem(parent)
+                child.setText(0, str(index+1))
+                new_parent = child
+                if isinstance(element, dict):
+                    for key,value in element.items():
+                        self.creation_tree(new_parent,key, value)
 
-    def creation_widget(self, variable):
+        elif isinstance(value, dict):
+            parent = child
+            for key, value in value.items():
+                self.creation_tree(parent, key, value)
 
-        if isinstance(variable, str) :
-            widget = create_label(variable)
-        elif isinstance(variable, int) :
-            widget = create_label(str(variable))
-        elif isinstance(variable, datetime) :
-            widget = create_label(variable.strftime("%d-%m-%Y"))
-
-        elif isinstance(variable, list):
-            if isinstance(variable[0], str):
-                widget = create_label(" , ".join(variable))
-            else:
-                for element in variable:
-                    widget = self.creation_widget(element)
-
-        elif isinstance(variable, dict):
-            widgets = []
-            for key, value in variable.items():
-                label_key = create_label(key.capitalize() + " : ")
-                set_label_bold(label_key, True)
-                widget_value = self.creation_widget(value)
-                widget = create_layout(widgets=[label_key, widget_value], horizontal=True)
-                widgets.append(widget)
-            widget= create_layout(widgets=widgets, vertical=True)
         else:
-            widget = create_label("Impossible à afficher")
+            child.setText(1, get_string(value))
 
-        return widget
 
     def creation_text(self, variable):
         if type(variable) is str:
