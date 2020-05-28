@@ -21,7 +21,7 @@ class Ui_db_results(object):
         self.table_result = QtWidgets.QTableWidget(self.centralwidget)
         self.table_result.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         self.table_result.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.table_result.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
+        self.table_result.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.table_result.setObjectName("table_result")
         self.table_result.setColumnCount(2)
         self.table_result.setRowCount(0)
@@ -34,6 +34,7 @@ class Ui_db_results(object):
         db_results.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(db_results)
+        self.table_result.cellDoubleClicked['int','int'].connect(db_results.table_result_clicked)
         QtCore.QMetaObject.connectSlotsByName(db_results)
 
     def retranslateUi(self, db_results):

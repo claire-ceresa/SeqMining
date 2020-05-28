@@ -27,7 +27,7 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
     def button_search_clicked(self):
         query = self.construct_query()
         results = self.mongoDB_connexion.collection.find(query)
-        self.window_result = DB_Result_Window(results=results)
+        self.window_result = DB_Result_Window(results=list(results))
         self.window_result.show()
 
     def combobox_date_changed(self, text):
