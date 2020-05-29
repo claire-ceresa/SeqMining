@@ -1,9 +1,12 @@
-from Bio import Entrez, SeqIO,  SeqFeature, SeqRecord, Seq
+from Bio import SeqRecord, Seq
 from urllib import error
 from functions.NCBI_functions import *
 from functions.other_functions import *
 
 class NCBI_Product:
+
+    """Object representing a product available online on NCBI"""
+
 
     def __init__(self, id=None):
         self.id = id
@@ -69,9 +72,10 @@ class NCBI_Product:
                 return feature
         return None
 
-    ## TRANSFORMATION METHODS ##
+    # TRANSFORMATION METHODS #
 
     def get_product_as_dict(self):
+        """Transform the product as a dictionnary"""
         product = self.analyse_object(self.sequence)
         if "date" in product["annotations"]:
             date = product["annotations"]["date"]
@@ -79,6 +83,7 @@ class NCBI_Product:
         return product
 
     def analyse_object(self, object):
+        """Analyse an object and transform it to simple object (str, int, dict, list)"""
 
         if isinstance(object, list):
             final_temp = []

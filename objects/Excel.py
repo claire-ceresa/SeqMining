@@ -4,6 +4,8 @@ import datetime as d
 
 class Excel:
 
+    """Object dealing with Excel file, using XlsxWriter package"""
+
     def __init__(self, title=None):
         self.title = self.set_title(title)
         self.workbook = x.Workbook(self.title)

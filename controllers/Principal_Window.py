@@ -22,6 +22,7 @@ class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
         self._init_ui()
 
     def _set_properties(self):
+        """Set the properties of the object"""
         internet = connected_to_internet("https://www.ncbi.nlm.nih.gov/nucleotide")
         if not internet["connected"]:
             self.connected_to_internet = False
@@ -29,7 +30,7 @@ class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
     # METHODS OF THE CLASS #
 
     def button_ncbi_clicked(self):
-        """Open the NCBI_Search_Window window"""
+        """Open the NCBI window"""
         self.window_ncbi.show()
 
     def button_db_clicked(self):

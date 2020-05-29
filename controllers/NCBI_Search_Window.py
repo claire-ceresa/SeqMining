@@ -1,9 +1,8 @@
 import os
 from math import *
-from PyQt5 import QtWidgets
 from PyQt5.Qt import Qt
-from functions.graphics_function import *
 from views.ncbi_search_view import Ui_NCBI_Result
+from functions.graphics_function import *
 from functions.NCBI_functions import *
 from controllers.NCBI_Help_Window import NCBI_Help_Window
 from controllers.NCBI_Product_Window import NCBI_Product_Window
@@ -15,7 +14,7 @@ from objects.NCBI_Product import NCBI_Product
 
 class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
     """
-    controlling class for result_view
+    controlling class for ncbi_search_view
     """
 
     def __init__(self, parent=None, connexion=None):
@@ -78,26 +77,21 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
     def button_download_clicked(self):
         """Download the selection"""
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
-        try:
-            rows = self.get_row_checked()
-            saved = []
-            for row in rows:
-                ncbi_product = NCBI_Product(id=row[0])
-                data = ncbi_product.get_product_as_dict()
-                db_product = DB_Product(id=row[0], data=data)
-                saving = db_product.save_on_db(self.mongoDB_connexion.collection)
-                saved.append(saving)
-            QtWidgets.QApplication.restoreOverrideCursor()
-            saved_window = DB_Download_Window(parent=self, results=saved)
-            saved_window.show()
-        except Exception as e:
-            print(e)
-        #create_messageBox("Succès !", str(saved) + " résultats enregistrés sur " + str(len(rows)))
+        rows = self.get_row_checked()
+        saved = []
+        for row in rows:
+            ncbi_product = NCBI_Product(id=row[0])
+            data = ncbi_product.get_product_as_dict()
+            db_product = DB_Product(id=row[0], data=data)
+            saving = db_product.save_on_db(self.mongoDB_connexion.collection)
+            saved.append(saving)
+        QtWidgets.QApplication.restoreOverrideCursor()
+        saved_window = DB_Download_Window(parent=self, results=saved)
+        saved_window.show()
 
     def row_table_clicked(self, row, column):
         """Open the online Product Window"""
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
-
         id_widget = self.table.item(row, 0)
         id = id_widget.text()
         self.window_product = NCBI_Product_Window(id=id, connexion=self.mongoDB_connexion)

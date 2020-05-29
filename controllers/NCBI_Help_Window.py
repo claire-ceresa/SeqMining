@@ -1,5 +1,4 @@
-from PyQt5 import QtWidgets
-from views.ncbi_request_view import Ui_NCBI_Request
+from views.ncbi_help_view import Ui_NCBI_Request
 from functions.NCBI_functions import *
 from functions.graphics_function import *
 from functools import partial
@@ -17,11 +16,7 @@ class NCBI_Help_Window(QtWidgets.QDialog, Ui_NCBI_Request):
         self.field_list_nucleotide = get_field_list("nucleotide")
         self.list_layout_widget = [self.layout_widget_0]
         self.request = None
-        self.init_ui()
-
-    def init_ui(self):
-        fill_combobox(self.combobox_field_0, self.field_list_nucleotide)
-        self.button_remove_0.clicked.connect(partial(self.button_remove_clicked, 0))
+        self._init_ui()
 
     # METHODS OF THE CLASS #
 
@@ -48,14 +43,15 @@ class NCBI_Help_Window(QtWidgets.QDialog, Ui_NCBI_Request):
 
     # GRAPHIC METHODS #
 
+    def _init_ui(self):
+        fill_combobox(self.combobox_field_0, self.field_list_nucleotide)
+        self.button_remove_0.clicked.connect(partial(self.button_remove_clicked, 0))
+
     def add_layout_filter(self, position):
         """
         Add a filter for the request
         :param position: number of the line
         """
-        layout = QtWidgets.QHBoxLayout()
-        layout.setObjectName("layout_widget_" + str(position))
-
         combobox_field = QtWidgets.QComboBox()
         combobox_field.setObjectName("combobox_field_" + str(position))
         fill_combobox(combobox_field, self.field_list_nucleotide)
@@ -74,11 +70,9 @@ class NCBI_Help_Window(QtWidgets.QDialog, Ui_NCBI_Request):
 
         button_add = self.button_add
 
-        layout.addWidget(combobox_link)
-        layout.addWidget(combobox_field)
-        layout.addWidget(edit)
-        layout.addWidget(button_remove)
-        layout.addWidget(button_add)
+        widgets = [combobox_link, combobox_field, edit, button_remove, button_add]
+        layout = create_layout(widgets = widgets, horizontal=True)
+        layout.setObjectName("layout_widget_" + str(position))
 
         self.layout_filters.addLayout(layout)
         self.list_layout_widget.append(layout)
@@ -121,6 +115,7 @@ class NCBI_Help_Window(QtWidgets.QDialog, Ui_NCBI_Request):
         """Create the request thanks to all the filters"""
         request_parts = []
         request = ""
+
         for layout in self.list_layout_widget:
             dict_value = {"link": "", "field": "", "value": ""}
             number_widget = layout.count()

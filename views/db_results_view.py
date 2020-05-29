@@ -18,6 +18,15 @@ class Ui_db_results(object):
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
+        self.label_result = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_result.setFont(font)
+        self.label_result.setText("")
+        self.label_result.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_result.setObjectName("label_result")
+        self.verticalLayout.addWidget(self.label_result)
         self.table_result = QtWidgets.QTableWidget(self.centralwidget)
         self.table_result.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         self.table_result.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
@@ -31,10 +40,14 @@ class Ui_db_results(object):
         self.table_result.setHorizontalHeaderItem(1, item)
         self.table_result.horizontalHeader().setStretchLastSection(True)
         self.verticalLayout.addWidget(self.table_result)
+        self.button_extract = QtWidgets.QPushButton(self.centralwidget)
+        self.button_extract.setObjectName("button_extract")
+        self.verticalLayout.addWidget(self.button_extract)
         db_results.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(db_results)
         self.table_result.cellDoubleClicked['int','int'].connect(db_results.table_result_clicked)
+        self.button_extract.clicked.connect(db_results.button_extract_clicked)
         QtCore.QMetaObject.connectSlotsByName(db_results)
 
     def retranslateUi(self, db_results):
@@ -44,6 +57,7 @@ class Ui_db_results(object):
         item.setText(_translate("db_results", "Identifiant"))
         item = self.table_result.horizontalHeaderItem(1)
         item.setText(_translate("db_results", "Description"))
+        self.button_extract.setText(_translate("db_results", "Extraire vers un fichier Excel"))
 
 
 if __name__ == "__main__":

@@ -16,7 +16,8 @@ def create_messageBox(title, text):
     message.exec()
 
 
-def create_label(text):
+def create_label(text=None):
+    """Create and return a QLabel with the text setted"""
     label = QtWidgets.QLabel()
     label.setText(text)
     label.setWordWrap(True)
@@ -24,12 +25,14 @@ def create_label(text):
 
 
 def set_label_bold(label, bool):
+    """Set a QLabel in bold or not"""
     font = QtGui.QFont()
     font.setBold(bool)
     label.setFont(font)
 
 
-def create_layout(widgets=None, vertical=False, horizontal=False):
+def create_layout(widgets=None, vertical=False, horizontal=False, spacer=False):
+    """Create, fill in and return a QLayout"""
     if vertical and not horizontal:
         layout = QtWidgets.QVBoxLayout()
     elif horizontal and not vertical:
@@ -43,8 +46,9 @@ def create_layout(widgets=None, vertical=False, horizontal=False):
                 layout.addLayout(widget)
             else:
                 layout.addWidget(widget)
-        spacer = QtWidgets.QSpacerItem(40,20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        layout.addItem(spacer)
+
+        if spacer:
+            spacer = QtWidgets.QSpacerItem(40,20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+            layout.addItem(spacer)
 
     return layout
-

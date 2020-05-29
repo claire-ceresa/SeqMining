@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_NCBI_Result(object):
     def setupUi(self, NCBI_Result):
         NCBI_Result.setObjectName("NCBI_Result")
-        NCBI_Result.resize(681, 631)
+        NCBI_Result.resize(681, 637)
         self.centralwidget = QtWidgets.QWidget(NCBI_Result)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -56,6 +56,7 @@ class Ui_NCBI_Result(object):
         font = QtGui.QFont()
         font.setUnderline(True)
         self.label_help.setFont(font)
+        self.label_help.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.label_help.setStyleSheet("color: rgb(11, 0, 168);")
         self.label_help.setObjectName("label_help")
         self.layout_help.addWidget(self.label_help)
@@ -81,6 +82,7 @@ class Ui_NCBI_Result(object):
         font = QtGui.QFont()
         font.setUnderline(True)
         self.label_selectall.setFont(font)
+        self.label_selectall.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.label_selectall.setStyleSheet("color: rgb(11, 0, 168);")
         self.label_selectall.setObjectName("label_selectall")
         self.layout_select.addWidget(self.label_selectall)
@@ -88,6 +90,7 @@ class Ui_NCBI_Result(object):
         font = QtGui.QFont()
         font.setUnderline(True)
         self.label_deselectall.setFont(font)
+        self.label_deselectall.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.label_deselectall.setStyleSheet("color: rgb(11, 0, 168);")
         self.label_deselectall.setObjectName("label_deselectall")
         self.layout_select.addWidget(self.label_deselectall)
