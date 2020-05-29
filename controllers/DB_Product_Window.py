@@ -19,6 +19,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
     def _init_ui(self):
         self._init_label_title()
         self._init_generalities()
+        self._init_features()
 
     def _init_label_title(self):
         self.label_id.setText(self.product["id"])
@@ -28,12 +29,9 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.edit_seq.setPlainText(self.product["seq"])
 
     def _init_generalities(self):
-        try:
-            parent = self.tree_widget
-            for key, value in self.product["annotations"].items():
-                self.creation_tree(parent, key, value)
-        except Exception as e:
-            print(e)
+        parent = self.tree_widget
+        for key, value in self.product["annotations"].items():
+            self.creation_tree(parent, key, value)
         self.tree_widget.resizeColumnToContents(0)
         self.tree_widget.resizeColumnToContents(1)
 
@@ -60,28 +58,29 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         else:
             child.setText(1, get_string(value))
 
+    def _init_features(self):
+        features = self.product["features"]
+        if len(features) > 0:
+            for feature in features:
+                try:
+                    groupbox = QtWidgets.QGroupBox()
+                    title = ''
+                    if 'type' in feature:
+                        title = title + feature['type']
+                    if 'location ' in feature:
+                        title = title + " " + feature['location']
+                    groupbox.setTitle(title)
+                    layout_gb = create_layout(vertical=True)
+                    groupbox.setLayout(layout_gb)
+                    for key, value in feature["qualifiers"].items():
+                        if not key == "translation":
+                            label_key = create_label(key.capitalize() + " : ")
+                            label_value = create_label(get_string(value))
+                            layout_lb = create_layout([label_key, label_value], horizontal=True)
+                            layout_gb.addLayout(layout_lb)
+                    self.layout_features.addWidget(groupbox)
+                except Exception as e:
+                    print(e)
 
-    def creation_text(self, variable):
-        if type(variable) is str:
-            return variable
 
-        elif type(variable) is int:
-            return str(variable)
 
-        elif type(variable) is datetime:
-            return variable.strftime("%d-%m-%Y")
-
-        elif type(variable) is list:
-            if type(variable[0]) is str:
-                return str(" , ".join(variable))
-            else:
-                return self.creation_text(variable)
-
-        elif type(variable) is dict:
-            for key, value in variable.items():
-                value_string = self.creation_text(value)
-                return str(key + "->" + value_string)
-
-        else:
-            print(type(variable))
-            return ''
