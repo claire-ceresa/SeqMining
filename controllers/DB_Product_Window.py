@@ -25,7 +25,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.label_descr.setText(self.product["description"])
         date_string = get_string(self.product["download_date"])
         self.label_download.setText("Téléchargé le " + date_string)
-        self.edit_seq.setPlainText(self.product["seq"])
+        self.edit_seq.setPlainText(self.product["seq"]["seq"])
 
     def _init_generalities(self):
         parent = self.tree_widget

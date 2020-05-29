@@ -1,4 +1,4 @@
-from Bio import Entrez
+from Bio import Entrez, SeqIO, Seq
 from PyQt5.QtWidgets import QApplication
 import sys
 from controllers.NCBI_Search_Window import NCBI_Search_Window
@@ -19,6 +19,11 @@ Entrez.email= "claire.ceresa@hotmail.fr"
 # form.show()
 # app.exec()
 
-product= NCBI_Product(id="XM_031719044.1")
-d = product.get_product_as_dict()
-print(d)
+id = "XM_031719044.1"
+fiche = Entrez.efetch(db="nucleotide", id=id, rettype="gb", retmode="text")
+sequence = SeqIO.read(fiche, "genbank")
+seq = sequence.seq
+
+print(isinstance(seq, Seq.Seq))
+print(str(seq))
+print(str(seq.alphabet))

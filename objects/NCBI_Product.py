@@ -115,7 +115,7 @@ class NCBI_Product:
                 final[name] = self.analyse_object(attribute)
 
         elif isinstance(object, Seq.Seq):
-            final = str(object)
+            final = {"seq":str(object), "alphabet":str(object.alphabet)}
 
         elif isinstance(object, SeqFeature.SeqFeature):
             feature_type = object.type
