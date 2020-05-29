@@ -22,7 +22,7 @@ def string_to_datetime(date_initial):
     month_letter = date_split[1].capitalize()
     month_number = abbr_month[month_letter]
     year = date_split[2]
-    date_final = datetime.datetime(year=int(year), month=int(month_number), day=int(day))
+    date_final = datetime(year=int(year), month=int(month_number), day=int(day))
     return date_final
 
 def get_string(value):

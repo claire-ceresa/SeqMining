@@ -78,22 +78,26 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
     def button_download_clicked(self):
         """Download the selection"""
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
-        rows = self.get_row_checked()
-        saved = []
-        for row in rows:
-            ncbi_product = NCBI_Product(id=row[0])
-            data = ncbi_product.get_product_as_dict()
-            db_product = DB_Product(id=row[0], data=data)
-            saving = db_product.save_on_db(self.mongoDB_connexion.collection)
-            saved.append(saving)
-        QtWidgets.QApplication.restoreOverrideCursor()
-        saved_window = DB_Download_Window(parent=self, results=saved)
-        saved_window.show()
+        try:
+            rows = self.get_row_checked()
+            saved = []
+            for row in rows:
+                ncbi_product = NCBI_Product(id=row[0])
+                data = ncbi_product.get_product_as_dict()
+                db_product = DB_Product(id=row[0], data=data)
+                saving = db_product.save_on_db(self.mongoDB_connexion.collection)
+                saved.append(saving)
+            QtWidgets.QApplication.restoreOverrideCursor()
+            saved_window = DB_Download_Window(parent=self, results=saved)
+            saved_window.show()
+        except Exception as e:
+            print(e)
         #create_messageBox("Succès !", str(saved) + " résultats enregistrés sur " + str(len(rows)))
 
     def row_table_clicked(self, row, column):
         """Open the online Product Window"""
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
+
         id_widget = self.table.item(row, 0)
         id = id_widget.text()
         self.window_product = NCBI_Product_Window(id=id, connexion=self.mongoDB_connexion)
