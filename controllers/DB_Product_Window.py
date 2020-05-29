@@ -67,7 +67,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
                     title = ''
                     if 'type' in feature:
                         title = title + feature['type']
-                    if 'location ' in feature:
+                    if 'location' in feature:
                         title = title + " " + feature['location']
                     groupbox.setTitle(title)
                     layout_gb = create_layout(vertical=True)

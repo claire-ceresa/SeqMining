@@ -19,6 +19,7 @@ def create_messageBox(title, text):
 def create_label(text):
     label = QtWidgets.QLabel()
     label.setText(text)
+    label.setWordWrap(True)
     return label
 
 
