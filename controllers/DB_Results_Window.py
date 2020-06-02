@@ -13,7 +13,7 @@ class DB_Results_Window(QtWidgets.QMainWindow, Ui_db_results):
         self.setupUi(self)
         self.setWindowTitle("Résultats de la recherche")
         self.results = results
-        self.product_windows = {}
+        self.product_windows = []
         self._init_ui()
 
     # METHODS OF THE CLASS #
@@ -21,8 +21,9 @@ class DB_Results_Window(QtWidgets.QMainWindow, Ui_db_results):
     def table_result_clicked(self, line, column):
         """Open the DB window of the product """
         product = self.results[line]
-        self.product_windows[id] = DB_Product_Window(product=product)
-        self.product_windows[id].show()
+        product_window = DB_Product_Window(product=product)
+        product_window.show()
+        self.product_windows.append(product_window)
 
     def button_extract_clicked(self):
         """Extract the result to an Excel file"""

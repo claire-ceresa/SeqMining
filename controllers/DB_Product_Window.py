@@ -17,6 +17,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
 
     def _init_ui(self):
         self._init_label_title()
+        self._init_sequence()
         self._init_generalities()
         self._init_features()
 
@@ -25,7 +26,15 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.label_descr.setText(self.product["description"])
         date_string = get_string(self.product["download_date"])
         self.label_download.setText("Téléchargé le " + date_string)
-        self.edit_seq.setPlainText(self.product["seq"]["seq"])
+
+    def _init_sequence(self):
+        start = 2
+        end = 50
+        sequence = self.product["seq"]["seq"]
+        sequence_bold = "<b>" + sequence[start:end] + "</b>"
+        new_sequence = sequence[0:start-1] + sequence_bold + sequence[end+1:len(sequence)]
+        #self.edit_seq.setPlainText(self.product["seq"]["seq"])
+        self.edit_seq.setPlainText(new_sequence)
 
     def _init_generalities(self):
         parent = self.tree_widget
@@ -60,12 +69,12 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         for feature in features:
             try:
                 groupbox = QtWidgets.QGroupBox()
-                title = ''
-                if 'type' in feature:
-                    title = title + feature['type']
-                if 'location' in feature:
-                    title = title + " " + feature['location']
-                groupbox.setTitle(title)
+                # title = ''
+                # if 'type' in feature:
+                #     title = title + feature['type']
+                # if 'location' in feature:
+                #     title = title + " " + feature['location']
+                # groupbox.setTitle(title)
                 layout_gb = create_layout(vertical=True, spacer=True)
                 groupbox.setLayout(layout_gb)
 
