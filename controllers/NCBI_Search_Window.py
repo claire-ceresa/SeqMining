@@ -43,9 +43,12 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
         self.table.setRowCount(0)
         request = self.edit_request.text()
         if len(request) > 0:
-            self.groupbox_results.show()
-            self.request = request
-            self.set_result_interface()
+            try:
+                self.groupbox_results.show()
+                self.request = request
+                self.set_result_interface()
+            except Exception as e:
+                print(e)
         else:
             create_messageBox("Attention !", "Remplissez la requête !")
         QtWidgets.QApplication.restoreOverrideCursor()
@@ -211,12 +214,13 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
             page = int(self.combobox_page.currentText())
         start = (page - 1) * max
         result = get_result_request(request=self.request, retmax=max, retstart=start)
-        count = int(result["Count"])
-        self.print_results(start=start, max=max, count=count)
-        self.set_combobox_pages(count=count, max=max, actual=page)
-        if count == '0' and "ErrorList" in result:
+        if result["Count"] == '0' and "ErrorList" in result:
             self.print_errors(result)
+            self.groupbox_results.hide()
         else:
+            count = int(result["Count"])
+            self.print_results(start=start, max=max, count=count)
+            self.set_combobox_pages(count=count, max=max, actual=page)
             self.fill_in_result_table(result)
 
     # OTHER FUNCTIONS #
