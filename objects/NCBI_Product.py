@@ -115,7 +115,7 @@ class NCBI_Product:
                 final[name] = self.analyse_object(attribute)
 
         elif isinstance(object, Seq.Seq):
-            final = {"seq":str(object), "alphabet":str(object.alphabet)}
+            final = {"seq": str(object), "alphabet": str(object.alphabet)}
 
         elif isinstance(object, SeqFeature.SeqFeature):
             feature_type = object.type
@@ -123,12 +123,14 @@ class NCBI_Product:
             qualifiers = self.analyse_object(object.qualifiers)
             final = {"type": feature_type, "location": location, "qualifiers": qualifiers}
 
+        elif isinstance(object, SeqFeature.FeatureLocation):
+            start = [int(object.start), object.start.__class__.__name__]
+            end = [int(object.end), object.end.__class__.__name__]
+            strand = object.strand
+            final = {"start": start, "end": end, "strand": strand}
+
         else:
             final = object
-
-        location_classes = get_location_classes()
-        if type(object) in location_classes:
-            final = str(object)
 
         return final
 

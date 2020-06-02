@@ -28,19 +28,6 @@ def get_result_request(request, retmax, retstart):
     return list
 
 
-def get_location_classes():
-    classes = [SeqFeature.FeatureLocation,
-               SeqFeature.CompoundLocation,
-               SeqFeature.ExactPosition,
-               SeqFeature.WithinPosition,
-               SeqFeature.BetweenPosition,
-               SeqFeature.BeforePosition,
-               SeqFeature.AfterPosition,
-               SeqFeature.OneOfPosition,
-               SeqFeature.UnknownPosition]
-    return classes
-
-
 def get_sequence(id):
     """
     Get the all sequence for an id

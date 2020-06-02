@@ -1,4 +1,4 @@
-from Bio import Entrez, SeqIO, Seq
+from Bio import Entrez, SeqIO, Seq, SeqFeature
 from PyQt5.QtWidgets import QApplication
 import sys
 from controllers.NCBI_Search_Window import NCBI_Search_Window
@@ -24,6 +24,22 @@ fiche = Entrez.efetch(db="nucleotide", id=id, rettype="gb", retmode="text")
 sequence = SeqIO.read(fiche, "genbank")
 seq = sequence.seq
 
-print(isinstance(seq, Seq.Seq))
-print(str(seq))
-print(str(seq.alphabet))
+f = sequence.features[0]
+l = f.location
+print(l.__repr__())
+
+start = [int(l.start), l.start.__class__.__name__]
+end = [int(l.end), l.end.__class__.__name__]
+strand = l.strand
+
+print(start)
+print(end)
+print(strand)
+
+start_class = getattr(SeqFeature, start[1])
+start_position = start_class(start[0])
+end_class = getattr(SeqFeature, end[1])
+end_position = end_class(end[0])
+location = SeqFeature.FeatureLocation(start=start_position, end=end_position, strand=strand)
+print(location.__repr__())
+
