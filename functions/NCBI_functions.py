@@ -48,3 +48,16 @@ def get_summary(id):
     handle = Entrez.esummary(db="nucleotide", id=id)
     record = Entrez.read(handle)
     return record
+
+def breakRNA(seq):
+    seqList = []
+    start = 0
+    stop = len(seq)
+    step = 10
+    stop += step
+
+    for index in range(start, stop, step):
+        seqList.append(seq[:step])
+        seq = seq[step:]
+
+    return seqList

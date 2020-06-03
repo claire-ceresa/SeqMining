@@ -86,13 +86,9 @@ class NCBI_Product:
         """Analyse an object and transform it to simple object (str, int, dict, list)"""
 
         if isinstance(object, list):
-            final_temp = []
+            final = []
             for element in object:
-                final_temp.append(self.analyse_object(element))
-            if len(final_temp) == 1:
-                final = final_temp[0]
-            else:
-                final = final_temp
+                final.append(self.analyse_object(element))
 
         elif isinstance(object, dict):
             final = dict()

@@ -15,21 +15,11 @@ connexion = MongoDB_Connexion()
 client = connexion.client
 collection = connexion.collection
 
-#product = NCBI_Product(id="GW214376.1") -> beug a tester
-product = NCBI_Product(id="AY313605.1")
+product = NCBI_Product(id="GW214376.1")
+#product = NCBI_Product(id="XM_022923110.1")
 product_dict = product.get_product_as_dict()
 
 form = DB_Product_TEST(product=product_dict)
-layout = QVBoxLayout()
-form.area_feature.setLayout(layout)
-button_group = QButtonGroup()
-
-features = product_dict["features"]
-for feature in features:
-    button = QRadioButton()
-    button.setText(feature["type"])
-    layout.addWidget(button)
-
 form.show()
 app.exec()
 #
