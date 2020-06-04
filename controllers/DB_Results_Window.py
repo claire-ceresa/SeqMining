@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets
 from views.db_results_view import Ui_db_results
 from controllers. DB_Product_Window import DB_Product_Window
-
+from controllers.DB_Product_test import DB_Product_TEST
 
 class DB_Results_Window(QtWidgets.QMainWindow, Ui_db_results):
     """
@@ -21,7 +21,12 @@ class DB_Results_Window(QtWidgets.QMainWindow, Ui_db_results):
     def table_result_clicked(self, line, column):
         """Open the DB window of the product """
         product = self.results[line]
-        product_window = DB_Product_Window(product=product)
+        #product_window = DB_Product_Window(product=product)
+        try:
+            product_window = DB_Product_TEST(product=product)
+        except Exception as e:
+            print(product)
+            print(e)
         product_window.show()
         self.product_windows.append(product_window)
 

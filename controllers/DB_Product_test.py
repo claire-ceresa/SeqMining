@@ -16,9 +16,8 @@ class DB_Product_TEST(QtWidgets.QMainWindow, Ui_db_product_test):
         self.setWindowTitle(product["id"])
         self.product = product
         self.groupbox = None
-        #self._init_generalities()
-        self._init_buttons()
-        #self._init_sequence()
+        self._init_label_title()
+        self._init_features()
 
     ## METHODS OF THE CLASS ##
 
@@ -31,48 +30,21 @@ class DB_Product_TEST(QtWidgets.QMainWindow, Ui_db_product_test):
 
     ## GRAPHIC METHODS ##
 
-    def _init_buttons(self):
+    def _init_label_title(self):
+        self.label_id.setText(self.product["id"])
+        self.label_descr.setText(self.product["description"])
+        date_string = get_string(self.product["download_date"])
+        self.label_download.setText("Téléchargé le " + date_string)
+
+    def _init_features(self):
         self.creation_group_button()
         self._init_source()
-
-    # def _init_sequence(self):
-    #     sequence = self.product["seq"]["seq"]
-    #     cut_sequence = breakRNA(sequence)
-    #     self.label_seq.setText(cut_sequence)
-
-    def _init_generalities(self):
-        parent = self.tree_widget
-        for key, value in self.product["annotations"].items():
-            self.creation_tree(parent, key, value)
-        self.tree_widget.resizeColumnToContents(0)
-        self.tree_widget.resizeColumnToContents(1)
 
     def _init_source(self):
         button = self.groupbutton.button(0)
         if button is not None:
             button.setChecked(True)
             self.button_feature_clicked(0)
-
-    def creation_tree(self, parent, key, value):
-        child = QtWidgets.QTreeWidgetItem(parent)
-        string_key = key.replace("_", " ")
-        child.setText(0, string_key.capitalize())
-
-        if isinstance(value, list) and isinstance(value[0], dict):
-            parent = child
-            for index, element in enumerate(value):
-                child = QtWidgets.QTreeWidgetItem(parent)
-                child.setText(0, str(index+1))
-                if isinstance(element, dict):
-                    for key, value in element.items():
-                        self.creation_tree(child, key, value)
-
-        elif isinstance(value, dict):
-            for key, value in value.items():
-                self.creation_tree(child, key, value)
-
-        else:
-            child.setText(1, get_string(value))
 
     def creation_group_button(self):
         self.groupbutton = QButtonGroup()
@@ -96,10 +68,8 @@ class DB_Product_TEST(QtWidgets.QMainWindow, Ui_db_product_test):
         feature = self.product["features"][id]
         for key, value in feature["qualifiers"].items():
             if not key == "translation":
-                label_key = create_label(text=key.capitalize() + " : ")
-                label_value = create_label(text=get_string(value))
-                layout_lb = create_layout([label_key, label_value], horizontal=True, spacer=True)
-                layout_gb.addLayout(layout_lb)
+                label_qualifier = create_label(text = key.capitalize() + " : " + get_string(value))
+                layout_gb.addWidget(label_qualifier)
         self.groupbox.setLayout(layout_gb)
 
         self.scroll_area_feature = QScrollArea()
@@ -122,8 +92,8 @@ class DB_Product_TEST(QtWidgets.QMainWindow, Ui_db_product_test):
             middle_sequence = "<span style='color:#ff0000;'>" + str(breakRNA(extract)) + "</span>"
             position_start_feature = sequence.find(extract)
             position_end_feature = position_start_feature + len(extract)
-            begin_sequence = sequence[:position_start_feature-1]
-            end_sequence = sequence[position_end_feature+1:]
+            begin_sequence = sequence[:position_start_feature]
+            end_sequence = sequence[position_end_feature:]
             sequence_finale = breakRNA(begin_sequence) + middle_sequence + breakRNA(end_sequence)
             self.label_seq.setText(sequence_finale)
 
