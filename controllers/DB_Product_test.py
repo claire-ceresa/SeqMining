@@ -15,18 +15,35 @@ class DB_Product_TEST(QtWidgets.QMainWindow, Ui_db_product_test):
         self.setupUi(self)
         self.setWindowTitle(product["id"])
         self.product = product
-        self.groupbox = None
+        self.width_initial = self.width()
+        self.groupbox_feature = None
+        self.groupbox_annot = None
+        self.groupbox_ref = None
         self._init_label_title()
         self._init_features()
 
     ## METHODS OF THE CLASS ##
 
     def button_feature_clicked(self, id):
-        if self.groupbox is not None:
-            self.groupbox.close()
+        if self.groupbox_feature is not None:
+            self.groupbox_feature.close()
             self.scroll_area_feature.close()
         self.creation_groupbox_feature(id)
         self.set_sequence(id)
+
+    def action_gen_toggled(self, checked):
+        if checked:
+            self.create_groupbox_gen()
+        else:
+            self.groupbox_annot.close()
+            self.groupbox_annot = None
+
+    def action_ref_toggled(self, checked):
+        if checked:
+            self.create_groupbox_ref()
+        else:
+            self.groupbox_ref.close()
+            self.groupbox_ref = None
 
     ## GRAPHIC METHODS ##
 
@@ -62,27 +79,74 @@ class DB_Product_TEST(QtWidgets.QMainWindow, Ui_db_product_test):
         self.groupbutton.buttonClicked['int'].connect(self.button_feature_clicked)
 
     def creation_groupbox_feature(self, id):
-        self.groupbox = QGroupBox()
+        self.groupbox_feature = QGroupBox()
         layout_gb = create_layout(vertical=True, spacer=True)
+        self.groupbox_feature.setLayout(layout_gb)
 
         feature = self.product["features"][id]
         for key, value in feature["qualifiers"].items():
             if not key == "translation":
                 label_qualifier = create_label(text = key.capitalize() + " : " + get_string(value))
                 layout_gb.addWidget(label_qualifier)
-        self.groupbox.setLayout(layout_gb)
 
-        self.scroll_area_feature = QScrollArea()
-        self.scroll_area_feature.setWidgetResizable(True)
-        self.scroll_area_feature.setWidget(self.groupbox)
+        self.scroll_area_feature = create_scroll_area(widget=self.groupbox_feature)
         self.layout_feature.addWidget(self.scroll_area_feature)
+
+    def create_groupbox_gen(self):
+        self.groupbox_annot = create_groupbox(title='', flat=True)
+        layout = self.centralwidget.layout()
+        layout.addWidget(self.groupbox_annot)
+
+        groupbox_gen = create_groupbox(title='Generalities')
+        add_widget_to_groupbox(groupbox_gen, self.groupbox_annot)
+        groupbox_org = create_groupbox(title="Organism")
+        add_widget_to_groupbox(groupbox_org, self.groupbox_annot)
+
+        annotations = self.product["annotations"]
+        for key, value in annotations.items():
+            if key == "references":
+                continue
+            elif key == "organism" :
+                label = create_label(text = get_string(value), wordwrap=False)
+                set_label_bold(label, True)
+                add_widget_to_groupbox(label, groupbox_org)
+            elif key == "taxonomy":
+                for rank in annotations["taxonomy"]:
+                    label = create_label(text=rank, wordwrap=False)
+                    add_widget_to_groupbox(label, groupbox_org)
+            else:
+                label = create_label(text = key.capitalize() + " : " + get_string(value), wordwrap=False)
+                add_widget_to_groupbox(label, groupbox_gen)
+
+    def create_groupbox_ref(self):
+            self.groupbox_ref = create_groupbox(title="References")
+            self.groupbox_ref.setMinimumWidth(200)
+            self.groupbox_ref.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+            layout = self.centralwidget.layout()
+            layout.addWidget(self.groupbox_ref)
+
+            annotations = self.product["annotations"]
+            for index, reference in enumerate(annotations["references"]):
+                for key, value in reference.items():
+                    if key == "location":
+                        location = create_feature_location(value[0])
+                        label = create_label(text = str(index) + " : " + str(location))
+                        set_label_bold(label, True)
+                    else:
+                        label = create_label(text = key.capitalize() + " : " + get_string(value))
+                    add_widget_to_groupbox(label, self.groupbox_ref)
+
+
+
+
+
 
     def set_sequence(self, id):
         feature = self.product["features"][id]
         location_dict = feature["location"]
         location = create_feature_location(location_dict)
         title = str(location.start) + "-" + str(location.end)
-        self.groupbox.setTitle(title)
+        self.groupbox_feature.setTitle(title)
         sequence = self.product["seq"]["seq"]
         if location.start == 0 and location.end == len(sequence):
             cut_sequence = breakRNA(sequence)
