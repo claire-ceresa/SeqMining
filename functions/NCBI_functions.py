@@ -60,4 +60,14 @@ def breakRNA(seq):
         seqList.append(seq[:step])
         seq = seq[step:]
 
-    return seqList
+    return " ".join(seqList)
+
+
+def create_feature_location(dict):
+    start_class = getattr(SeqFeature, dict["start"][1])
+    start_position = start_class(dict["start"][0])
+    end_class = getattr(SeqFeature, dict["end"][1])
+    end_position = end_class(dict["end"][0])
+    strand = dict["strand"]
+    location = SeqFeature.FeatureLocation(start=start_position, end=end_position, strand=strand)
+    return location

@@ -28,13 +28,13 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.label_download.setText("Téléchargé le " + date_string)
 
     def _init_sequence(self):
-        start = 2
-        end = 50
-        sequence = self.product["seq"]["seq"]
-        sequence_bold = "<b>" + sequence[start:end] + "</b>"
-        new_sequence = sequence[0:start-1] + sequence_bold + sequence[end+1:len(sequence)]
-        #self.edit_seq.setPlainText(self.product["seq"]["seq"])
-        self.edit_seq.setPlainText(new_sequence)
+        # start = 2
+        # end = 50
+        # sequence = self.product["seq"]["seq"]
+        # sequence_bold = "<b>" + sequence[start:end] + "</b>"
+        # new_sequence = sequence[0:start-1] + sequence_bold + sequence[end+1:len(sequence)]
+        self.edit_seq.setPlainText(self.product["seq"]["seq"])
+        #self.edit_seq.setPlainText(new_sequence)
 
     def _init_generalities(self):
         parent = self.tree_widget

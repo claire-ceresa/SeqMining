@@ -52,3 +52,4 @@ def create_layout(widgets=None, vertical=False, horizontal=False, spacer=False):
             layout.addItem(spacer)
 
     return layout
+
