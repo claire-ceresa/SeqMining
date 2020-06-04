@@ -17,6 +17,7 @@ class Ui_db_product_test(object):
         self.centralwidget = QtWidgets.QWidget(db_product_test)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
+        self.horizontalLayout.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.layout_fix = QtWidgets.QVBoxLayout()
         self.layout_fix.setObjectName("layout_fix")

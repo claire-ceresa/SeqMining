@@ -15,7 +15,6 @@ class DB_Product_TEST(QtWidgets.QMainWindow, Ui_db_product_test):
         self.setupUi(self)
         self.setWindowTitle(product["id"])
         self.product = product
-        self.width_initial = self.width()
         self.groupbox_feature = None
         self.groupbox_annot = None
         self.groupbox_ref = None
@@ -33,7 +32,7 @@ class DB_Product_TEST(QtWidgets.QMainWindow, Ui_db_product_test):
 
     def action_gen_toggled(self, checked):
         if checked:
-            self.create_groupbox_gen()
+            self.create_groupbox_annot()
         else:
             self.groupbox_annot.close()
             self.groupbox_annot = None
@@ -85,14 +84,17 @@ class DB_Product_TEST(QtWidgets.QMainWindow, Ui_db_product_test):
 
         feature = self.product["features"][id]
         for key, value in feature["qualifiers"].items():
-            if not key == "translation":
+            if key == "translation":
+                label_qualifier = create_label(text = key.capitalize() + " :\n" + break_seq(value[0], step=60), wordwrap=True)
+                label_qualifier.setTextInteractionFlags(Qt.TextSelectableByMouse)
+            else:
                 label_qualifier = create_label(text = key.capitalize() + " : " + get_string(value))
-                layout_gb.addWidget(label_qualifier)
+            layout_gb.addWidget(label_qualifier)
 
         self.scroll_area_feature = create_scroll_area(widget=self.groupbox_feature)
         self.layout_feature.addWidget(self.scroll_area_feature)
 
-    def create_groupbox_gen(self):
+    def create_groupbox_annot(self):
         self.groupbox_annot = create_groupbox(title='', flat=True)
         layout = self.centralwidget.layout()
         layout.addWidget(self.groupbox_annot)
@@ -119,27 +121,22 @@ class DB_Product_TEST(QtWidgets.QMainWindow, Ui_db_product_test):
                 add_widget_to_groupbox(label, groupbox_gen)
 
     def create_groupbox_ref(self):
-            self.groupbox_ref = create_groupbox(title="References")
-            self.groupbox_ref.setMinimumWidth(200)
-            self.groupbox_ref.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
-            layout = self.centralwidget.layout()
-            layout.addWidget(self.groupbox_ref)
+        self.groupbox_ref = create_groupbox(title="References")
+        self.groupbox_ref.setMinimumWidth(200)
+        self.groupbox_ref.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        layout = self.centralwidget.layout()
+        layout.addWidget(self.groupbox_ref)
 
-            annotations = self.product["annotations"]
-            for index, reference in enumerate(annotations["references"]):
-                for key, value in reference.items():
-                    if key == "location":
-                        location = create_feature_location(value[0])
-                        label = create_label(text = str(index) + " : " + str(location))
-                        set_label_bold(label, True)
-                    else:
-                        label = create_label(text = key.capitalize() + " : " + get_string(value))
-                    add_widget_to_groupbox(label, self.groupbox_ref)
-
-
-
-
-
+        annotations = self.product["annotations"]
+        for index, reference in enumerate(annotations["references"]):
+            for key, value in reference.items():
+                if key == "location":
+                    location = create_feature_location(value[0])
+                    label = create_label(text = str(index) + " : " + str(location))
+                    set_label_bold(label, True)
+                else:
+                    label = create_label(text = key.capitalize() + " : " + get_string(value))
+                add_widget_to_groupbox(label, self.groupbox_ref)
 
     def set_sequence(self, id):
         feature = self.product["features"][id]
@@ -149,16 +146,16 @@ class DB_Product_TEST(QtWidgets.QMainWindow, Ui_db_product_test):
         self.groupbox_feature.setTitle(title)
         sequence = self.product["seq"]["seq"]
         if location.start == 0 and location.end == len(sequence):
-            cut_sequence = breakRNA(sequence)
+            cut_sequence = break_seq(sequence)
             self.label_seq.setText(cut_sequence)
         else:
             extract = location.extract(sequence)
-            middle_sequence = "<span style='color:#ff0000;'>" + str(breakRNA(extract)) + "</span>"
+            middle_sequence = "<span style='color:#ff0000;'>" + str(break_seq(extract)) + "</span>"
             position_start_feature = sequence.find(extract)
             position_end_feature = position_start_feature + len(extract)
             begin_sequence = sequence[:position_start_feature]
             end_sequence = sequence[position_end_feature:]
-            sequence_finale = breakRNA(begin_sequence) + middle_sequence + breakRNA(end_sequence)
+            sequence_finale = break_seq(begin_sequence) + middle_sequence + break_seq(end_sequence)
             self.label_seq.setText(sequence_finale)
 
 
