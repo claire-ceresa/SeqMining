@@ -3,7 +3,6 @@ from Bio import Entrez, SeqIO, Seq, SeqFeature
 from PyQt5.QtWidgets import *
 from controllers.NCBI_Search_Window import NCBI_Search_Window
 from controllers.NCBI_Product_Window import NCBI_Product_Window
-from controllers.DB_Product_test import DB_Product_TEST
 from objects.MongoDB_Connexion import MongoDB_Connexion
 from objects.DB_Product import DB_Product
 from objects.NCBI_Product import NCBI_Product
@@ -18,7 +17,7 @@ collection = connexion.collection
 #product = NCBI_Product(id="GW214376.1")
 product = NCBI_Product(id="XM_022923110.1")
 product_dict = product.get_product_as_dict()
-form = DB_Product_TEST(product=product_dict)
+form = DB_Product(product=product_dict)
 form.show()
 app.exec()
 #
