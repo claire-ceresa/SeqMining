@@ -14,34 +14,15 @@ connexion = MongoDB_Connexion()
 client = connexion.client
 collection = connexion.collection
 
-#product = NCBI_Product(id="GW214376.1")
-product = NCBI_Product(id="XM_022923110.1")
+id = "KU762340.1"
+product = NCBI_Product(id=id)
 product_dict = product.get_product_as_dict()
-form = DB_Product(product=product_dict)
+sequence = product_dict["seq"]["seq"]
+feature = product_dict["features"][3]
+
+print(feature)
+
+form = NCBI_Product_Window(id=id, connexion=connexion)
 form.show()
 app.exec()
-#
-# id = "XM_031719044.1"
-# fiche = Entrez.efetch(db="nucleotide", id=id, rettype="gb", retmode="text")
-# sequence = SeqIO.read(fiche, "genbank")
-# seq = sequence.seq
-#
-# f = sequence.features[0]
-# l = f.location
-# print(l.__repr__())
-#
-# start = [int(l.start), l.start.__class__.__name__]
-# end = [int(l.end), l.end.__class__.__name__]
-# strand = l.strand
-#
-# print(start)
-# print(end)
-# print(strand)
-#
-# start_class = getattr(SeqFeature, start[1])
-# start_position = start_class(start[0])
-# end_class = getattr(SeqFeature, end[1])
-# end_position = end_class(end[0])
-# location = SeqFeature.FeatureLocation(start=start_position, end=end_position, strand=strand)
-# print(location.__repr__())
 

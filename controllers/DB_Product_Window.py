@@ -139,23 +139,43 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
                 add_widget_to_groupbox(label, self.groupbox_ref)
 
     def set_sequence(self, id):
+        sequence = self.product["seq"]["seq"]
         feature = self.product["features"][id]
         location_dict = feature["location"]
         location = create_feature_location(location_dict)
-        title = str(location.start) + "-" + str(location.end)
-        self.groupbox_feature.setTitle(title)
-        sequence = self.product["seq"]["seq"]
-        if location.start == 0 and location.end == len(sequence):
-            cut_sequence = break_seq(sequence)
-            self.label_seq.setText(cut_sequence)
+        self.groupbox_feature.setTitle(str(location))
+        if "positions" in location_dict:
+            self.colore_compound_location(location, sequence)
         else:
-            extract = location.extract(sequence)
-            middle_sequence = "<span style='color:#ff0000;'>" + str(break_seq(extract)) + "</span>"
-            position_start_feature = sequence.find(extract)
-            position_end_feature = position_start_feature + len(extract)
-            begin_sequence = sequence[:position_start_feature]
-            end_sequence = sequence[position_end_feature:]
-            sequence_finale = break_seq(begin_sequence) + middle_sequence + break_seq(end_sequence)
-            self.label_seq.setText(sequence_finale)
+            if location.start == 0 and location.end == len(sequence):
+                cut_sequence = break_seq(sequence)
+                self.label_seq.setText(cut_sequence)
+            else:
+                self.colore_feature_location(location, sequence)
 
+    def colore_feature_location(self,location, sequence):
+        extract = location.extract(sequence)
+        cut_sequence = self.cut_sequence(extract, sequence)
+        sequence_finale = " ".join(cut_sequence)
+        self.label_seq.setText(sequence_finale)
 
+    def colore_compound_location(self, location, all_sequence):
+        all_cut_part = []
+        sequence = all_sequence
+        for part in location.parts:
+            extract = part.extract(all_sequence)
+            cut_sequence = self.cut_sequence(extract, sequence)
+            all_cut_part.append(cut_sequence[0])
+            all_cut_part.append(cut_sequence[1])
+            sequence = cut_sequence[2].replace(" ", "")
+        all_cut_part.append(cut_sequence[2])
+        sequence_finale = " ".join(all_cut_part)
+        self.label_seq.setText(sequence_finale)
+
+    def cut_sequence(self, extract, sequence):
+        middle = "<span style='color:#ff0000;'>" + str(break_seq(extract)) + "</span>"
+        position_start_feature = sequence.find(extract)
+        position_end_feature = position_start_feature + len(extract)
+        begin = sequence[:position_start_feature]
+        end = sequence[position_end_feature:]
+        return [break_seq(begin), middle, break_seq(end)]

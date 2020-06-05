@@ -63,10 +63,17 @@ def break_seq(seq, step=10):
 
 
 def create_feature_location(dict):
-    start_class = getattr(SeqFeature, dict["start"][1])
-    start_position = start_class(dict["start"][0])
-    end_class = getattr(SeqFeature, dict["end"][1])
-    end_position = end_class(dict["end"][0])
-    strand = dict["strand"]
-    location = SeqFeature.FeatureLocation(start=start_position, end=end_position, strand=strand)
+    if "positions" in dict:
+        positions = []
+        for part in dict["positions"]:
+            position = create_feature_location(part)
+            positions.append(position)
+        location = SeqFeature.CompoundLocation(positions, operator=dict["operator"])
+    else:
+        start_class = getattr(SeqFeature, dict["start"][1])
+        start_position = start_class(dict["start"][0])
+        end_class = getattr(SeqFeature, dict["end"][1])
+        end_position = end_class(dict["end"][0])
+        strand = dict["strand"]
+        location = SeqFeature.FeatureLocation(start=start_position, end=end_position, strand=strand)
     return location

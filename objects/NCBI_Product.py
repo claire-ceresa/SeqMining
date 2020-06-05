@@ -84,7 +84,6 @@ class NCBI_Product:
 
     def analyse_object(self, object):
         """Analyse an object and transform it to simple object (str, int, dict, list)"""
-
         if isinstance(object, list):
             final = []
             for element in object:
@@ -124,6 +123,17 @@ class NCBI_Product:
             end = [int(object.end), object.end.__class__.__name__]
             strand = object.strand
             final = {"start": start, "end": end, "strand": strand}
+
+        elif isinstance(object, SeqFeature.CompoundLocation):
+            operator = object.operator
+            parts = object.parts
+            positions = []
+            for part in parts:
+                position = self.analyse_object(part)
+                positions.append(position)
+            final = {"positions":positions, "operator":operator}
+
+
 
         else:
             final = object
