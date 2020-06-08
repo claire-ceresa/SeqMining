@@ -16,9 +16,10 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.setWindowTitle(product["id"])
         self.product = product
         self.groupbox_feature = None
-        self.groupbox_annot = None
-        self.groupbox_ref = None
+        self.layout_annot = None
+        self.layout_ref = None
         self._init_label_title()
+        #self._init_sequence_grid()
         self._init_features()
 
     ## METHODS OF THE CLASS ##
@@ -32,17 +33,17 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
 
     def action_gen_toggled(self, checked):
         if checked:
-            self.create_groupbox_annot()
+            self.create_annotations()
         else:
-            self.groupbox_annot.close()
-            self.groupbox_annot = None
+            clear_layout(self.layout_annot)
+            self.layout_annot = None
 
     def action_ref_toggled(self, checked):
         if checked:
-            self.create_groupbox_ref()
+            self.create_ref()
         else:
-            self.groupbox_ref.close()
-            self.groupbox_ref = None
+            clear_layout(self.layout_ref)
+            self.layout_ref = None
 
     ## GRAPHIC METHODS ##
 
@@ -94,15 +95,13 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.scroll_area_feature = create_scroll_area(widget=self.groupbox_feature)
         self.layout_feature.addWidget(self.scroll_area_feature)
 
-    def create_groupbox_annot(self):
-        self.groupbox_annot = create_groupbox(title='', flat=True)
-        layout = self.centralwidget.layout()
-        layout.addWidget(self.groupbox_annot)
-
+    def create_annotations(self):
         groupbox_gen = create_groupbox(title='Generalities')
-        add_widget_to_groupbox(groupbox_gen, self.groupbox_annot)
         groupbox_org = create_groupbox(title="Organism")
-        add_widget_to_groupbox(groupbox_org, self.groupbox_annot)
+        self.layout_annot = create_layout(widgets = [groupbox_gen, groupbox_org], vertical=True)
+
+        layout = self.centralwidget.layout()
+        layout.addLayout(self.layout_annot)
 
         annotations = self.product["annotations"]
         for key, value in annotations.items():
@@ -120,12 +119,14 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
                 label = create_label(text = key.capitalize() + " : " + get_string(value), wordwrap=False)
                 add_widget_to_groupbox(label, groupbox_gen)
 
-    def create_groupbox_ref(self):
-        self.groupbox_ref = create_groupbox(title="References")
-        self.groupbox_ref.setMinimumWidth(200)
-        self.groupbox_ref.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+    def create_ref(self):
+        groupbox_ref = create_groupbox(title="References")
+        groupbox_ref.setMinimumWidth(200)
+        groupbox_ref.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        self.layout_ref = create_layout([groupbox_ref], vertical=True)
+
         layout = self.centralwidget.layout()
-        layout.addWidget(self.groupbox_ref)
+        layout.addLayout(self.layout_ref)
 
         annotations = self.product["annotations"]
         for index, reference in enumerate(annotations["references"]):
@@ -136,7 +137,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
                     set_label_bold(label, True)
                 else:
                     label = create_label(text = key.capitalize() + " : " + get_string(value))
-                add_widget_to_groupbox(label, self.groupbox_ref)
+                add_widget_to_groupbox(label, groupbox_ref)
 
     def set_sequence(self, id):
         sequence = self.product["seq"]["seq"]
@@ -179,3 +180,17 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         begin = sequence[:position_start_feature]
         end = sequence[position_end_feature:]
         return [break_seq(begin), middle, break_seq(end)]
+
+
+    def _init_sequence_grid(self):
+        # grid_seq = QGridLayout()
+        # for line in range(1, 10):
+        #     for column in range(1, 50):
+        #         label = create_label("A", wordwrap=False)
+        #         grid_seq.addWidget(label, line, column)
+        # self.scroll_area_seq.setLayout(grid_seq)
+        # self.area_seq.setLayout(grid_seq)
+        doc = QTextDocument()
+        layout = self.area_seq.layout()
+        layout.addWidget(doc)
+

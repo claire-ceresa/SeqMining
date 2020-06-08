@@ -57,6 +57,15 @@ def create_layout(widgets=None, vertical=False, horizontal=False, spacer=False):
     return layout
 
 
+def clear_layout(layout):
+    if layout is not None:
+        while layout.count():
+            item = layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+
+
 def create_scroll_area(widget):
     area = QtWidgets.QScrollArea()
     area.setWidgetResizable(True)

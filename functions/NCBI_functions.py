@@ -49,6 +49,7 @@ def get_summary(id):
     record = Entrez.read(handle)
     return record
 
+
 def break_seq(seq, step=10):
     seqList = []
     start = 0
