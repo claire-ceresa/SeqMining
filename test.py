@@ -20,8 +20,6 @@ product_dict = product.get_product_as_dict()
 sequence = product_dict["seq"]["seq"]
 feature = product_dict["features"][3]
 
-print(feature)
-
 form = NCBI_Product_Window(id=id, connexion=connexion)
 form.show()
 app.exec()

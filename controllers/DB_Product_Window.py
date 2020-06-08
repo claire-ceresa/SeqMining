@@ -1,4 +1,3 @@
-from PyQt5.QtWidgets import *
 from PyQt5.Qt import *
 from views.db_product_view import Ui_db_product
 from functions.NCBI_functions import *
@@ -7,7 +6,7 @@ from functions.graphics_function import *
 
 class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
     """
-    controlling class for principal_view
+    controlling class for db_product_view
     """
 
     def __init__(self, parent=None, product=None):

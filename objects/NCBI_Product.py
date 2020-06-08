@@ -32,46 +32,11 @@ class NCBI_Product:
     def _set_sequence(self):
         sequence = SeqIO.read(self.fiche, "genbank")
         self.sequence = sequence
-        SeqIO.write(self.sequence, "fiche.txt", "genbank")
-
-    # GETTER METHODS #
-
-    def get_id(self):
-        return self.sequence.id
-
-    def get_name(self):
-        return self.sequence.name
-
-    def get_description(self):
-        return self.sequence.description
-
-    def get_features(self):
-        return self.sequence.features
-
-    def get_sequence_DNA(self):
-        return self.sequence.seq
-
-    def get_annotations(self):
-        return self.sequence.annotations
-
-    def get_letter_annotations(self):
-        return self.sequence.letter_annotations
-
-    def get_dbxrefs(self):
-        return self.sequence.dbxrefs
-
-    def get_feature_by_type(self, features, type):
-        """
-        Get all the information of a feature
-        :param type: type of the feature you need (CDS, source, etc)
-        :return: the old_object SeqFeature corresponding to the type
-        """
-        for feature in features:
-            if feature.type == type:
-                return feature
-        return None
 
     # TRANSFORMATION METHODS #
+
+    def create_txt_file(self):
+        SeqIO.write(self.sequence, "fiche.txt", "genbank")
 
     def get_product_as_dict(self):
         """Transform the product as a dictionnary"""

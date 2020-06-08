@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets
 from views.db_results_view import Ui_db_results
 from controllers. DB_Product_Window import DB_Product_Window
+from controllers.Excel_Window import Excel_Window
 
 class DB_Results_Window(QtWidgets.QMainWindow, Ui_db_results):
     """
@@ -12,6 +13,7 @@ class DB_Results_Window(QtWidgets.QMainWindow, Ui_db_results):
         self.setupUi(self)
         self.setWindowTitle("Résultats de la recherche")
         self.results = results
+        self.excel_window = None
         self.product_windows = []
         self._init_ui()
 
@@ -20,17 +22,19 @@ class DB_Results_Window(QtWidgets.QMainWindow, Ui_db_results):
     def table_result_clicked(self, line, column):
         """Open the DB window of the product """
         product = self.results[line]
-        try:
-            product_window = DB_Product_Window(product=product)
-        except Exception as e:
-            print(e)
+        product_window = DB_Product_Window(product=product)
+        print(product)
         product_window.show()
         self.product_windows.append(product_window)
 
     def button_extract_clicked(self):
         """Extract the result to an Excel file"""
         # TODO : extraction to Excel personnalise
-        print("Excel")
+        try:
+            self.excel_window = Excel_Window()
+            self.excel_window.show()
+        except Exception as e:
+            print(e)
 
     # GRAPHIC METHODS #
 

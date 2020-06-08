@@ -38,6 +38,7 @@ class NCBI_Product_Window(QtWidgets.QMainWindow, Ui_NCBI_Product):
 
     def _init_fiche(self):
         """Initialize the fiche issued of NCBI"""
+        self.ncbi_product.create_txt_file()
         if self.ncbi_product.valid:
             text = open('fiche.txt').read()
             self.plainTextEdit.setPlainText(text)
