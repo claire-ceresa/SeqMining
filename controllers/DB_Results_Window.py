@@ -23,7 +23,6 @@ class DB_Results_Window(QtWidgets.QMainWindow, Ui_db_results):
         """Open the DB window of the product """
         product = self.results[line]
         product_window = DB_Product_Window(product=product)
-        print(product)
         product_window.show()
         self.product_windows.append(product_window)
 
@@ -31,7 +30,7 @@ class DB_Results_Window(QtWidgets.QMainWindow, Ui_db_results):
         """Extract the result to an Excel file"""
         # TODO : extraction to Excel personnalise
         try:
-            self.excel_window = Excel_Window()
+            self.excel_window = Excel_Window(results=self.results)
             self.excel_window.show()
         except Exception as e:
             print(e)

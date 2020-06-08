@@ -1,6 +1,6 @@
 from datetime import datetime
 from pymongo.errors import *
-
+from functions.NCBI_functions import *
 
 class DB_Product:
 
@@ -9,8 +9,6 @@ class DB_Product:
     def __init__(self, id=None, data=None):
         self.id = id
         self.data = data
-        self.data["_id"] = id
-        self.data["download_date"] = datetime.now()
 
     def existed_in_collection(self, collection):
         """Check if the id existed in the collection"""
@@ -26,6 +24,8 @@ class DB_Product:
         :param collection: name of the collection where to save it
         :return: {'id':str, 'error':str or None}
         """
+        self.data["_id"] = self.id
+        self.data["download_date"] = datetime.now()
         try:
             insert = collection.insert_one(self.data)
         except DocumentTooLarge:
@@ -37,3 +37,20 @@ class DB_Product:
         else:
             return {"id":insert.inserted_id, "error":None}
 
+    def get_id(self):
+        return self.data["_id"]
+
+    def get_description(self):
+        return self.data["description"]
+
+    def get_sequence(self):
+        return self.data["seq"]["seq"]
+
+    def get_length(self):
+        return len(self.data["seq"]["seq"])
+
+    def get_species(self):
+        if "organism" in self.data["annotations"]:
+            return self.data["annotations"]["organism"]
+        else:
+            return None
