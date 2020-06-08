@@ -25,10 +25,18 @@ def string_to_datetime(date_initial):
     date_final = datetime(year=int(year), month=int(month_number), day=int(day))
     return date_final
 
-def get_string(value):
-    if isinstance(value, datetime):
-        return value.strftime("%d-%m-%Y")
-    elif isinstance(value, list) and isinstance(value[0], str) :
-        return " , ".join(value)
+def get_string(object):
+    if isinstance(object, datetime):
+        string= object.strftime("%d-%m-%Y")
+    elif isinstance(object, list) and isinstance(object[0], str):
+        string= " , ".join(object)
+    elif isinstance(object, dict):
+        string = ""
+        for key, value in object.items():
+            if isinstance(value, dict):
+                string = string + str(key) + "\n" + get_string(value)
+            else:
+                string = string + str(key) + ":" + str(value) + "\n"
     else:
-        return str(value)
+        string= str(object)
+    return string

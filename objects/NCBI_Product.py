@@ -7,7 +7,6 @@ class NCBI_Product:
 
     """Object representing a product available online on NCBI"""
 
-
     def __init__(self, id=None):
         self.id = id
         self.fiche = None
@@ -132,8 +131,6 @@ class NCBI_Product:
                 position = self.analyse_object(part)
                 positions.append(position)
             final = {"positions":positions, "operator":operator}
-
-
 
         else:
             final = object

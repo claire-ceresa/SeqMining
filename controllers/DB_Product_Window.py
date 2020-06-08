@@ -111,11 +111,14 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
                 set_label_bold(label, True)
                 add_widget_to_groupbox(label, groupbox_org)
             elif key == "taxonomy":
-                for rank in annotations["taxonomy"]:
+                for rank in annotations["taxonomy"][::-1]:
                     label = create_label(text=rank, wordwrap=False)
                     add_widget_to_groupbox(label, groupbox_org)
             else:
-                label = create_label(text = key.capitalize() + " : " + get_string(value), wordwrap=False)
+                try:
+                    label = create_label(text = key.capitalize() + " : " + get_string(value), wordwrap=False)
+                except Exception as e:
+                    print(e)
                 add_widget_to_groupbox(label, groupbox_gen)
 
     def create_ref(self):
