@@ -1,8 +1,8 @@
 from PyQt5 import QtWidgets
-from views.db_download_view import Ui_db_result
+from views.db_download_view import Ui_db_download
 
 
-class DB_Download_Window(QtWidgets.QDialog, Ui_db_result):
+class DB_Download_Window(QtWidgets.QDialog, Ui_db_download):
     """
     controlling class for db_download_view
     """

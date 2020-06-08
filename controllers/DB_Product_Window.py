@@ -19,7 +19,6 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.layout_annot = None
         self.layout_ref = None
         self._init_label_title()
-        #self._init_sequence_grid()
         self._init_features()
 
     ## METHODS OF THE CLASS ##
@@ -180,17 +179,3 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         begin = sequence[:position_start_feature]
         end = sequence[position_end_feature:]
         return [break_seq(begin), middle, break_seq(end)]
-
-
-    def _init_sequence_grid(self):
-        # grid_seq = QGridLayout()
-        # for line in range(1, 10):
-        #     for column in range(1, 50):
-        #         label = create_label("A", wordwrap=False)
-        #         grid_seq.addWidget(label, line, column)
-        # self.scroll_area_seq.setLayout(grid_seq)
-        # self.area_seq.setLayout(grid_seq)
-        doc = QTextDocument()
-        layout = self.area_seq.layout()
-        layout.addWidget(doc)
-

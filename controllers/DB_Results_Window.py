@@ -22,9 +22,7 @@ class DB_Results_Window(QtWidgets.QMainWindow, Ui_db_results):
         product = self.results[line]
         try:
             product_window = DB_Product_Window(product=product)
-            #product_window = DB_Product_TEST(product=product)
         except Exception as e:
-            print(product)
             print(e)
         product_window.show()
         self.product_windows.append(product_window)
