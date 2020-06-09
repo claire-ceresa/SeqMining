@@ -91,12 +91,19 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
             layout_gb.addWidget(label_qualifier)
 
         self.scroll_area_feature = create_scroll_area(widget=self.groupbox_feature)
+        self.scroll_area_feature.setFrameShape(QFrame.NoFrame)
         self.layout_feature.addWidget(self.scroll_area_feature)
 
     def create_annotations(self):
         groupbox_gen = create_groupbox(title='Generalities')
+        scroll_area_gen = create_scroll_area(groupbox_gen)
+        scroll_area_gen.setMinimumWidth(200)
+        scroll_area_gen.setFrameShape(QFrame.NoFrame)
         groupbox_org = create_groupbox(title="Organism")
-        self.layout_annot = create_layout(widgets = [groupbox_gen, groupbox_org], vertical=True)
+        scroll_area_org = create_scroll_area(groupbox_org)
+        scroll_area_org.setMinimumWidth(200)
+        scroll_area_org.setFrameShape(QFrame.NoFrame)
+        self.layout_annot = create_layout(widgets = [scroll_area_gen, scroll_area_org], vertical=True)
 
         layout = self.centralwidget.layout()
         layout.addLayout(self.layout_annot)
@@ -122,9 +129,10 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
 
     def create_ref(self):
         groupbox_ref = create_groupbox(title="References")
-        groupbox_ref.setMinimumWidth(200)
         groupbox_ref.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
-        self.layout_ref = create_layout([groupbox_ref], vertical=True)
+        scroll_area_ref = create_scroll_area(groupbox_ref)
+        scroll_area_ref.setMinimumWidth(200)
+        self.layout_ref = create_layout([scroll_area_ref], vertical=True)
 
         layout = self.centralwidget.layout()
         layout.addLayout(self.layout_ref)

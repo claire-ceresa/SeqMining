@@ -82,6 +82,7 @@ def create_groupbox(title, flat=False):
         groupbox.setFlat(True)
     return groupbox
 
+
 def add_widget_to_groupbox(widget, groupbox):
     layout = groupbox.layout()
     layout.addWidget(widget)
