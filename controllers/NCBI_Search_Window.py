@@ -33,6 +33,7 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
         self.label_selectall.mouseReleaseEvent = self.select_all
         self.label_deselectall.mouseReleaseEvent = self.deselect_all
         self.label_help.mouseReleaseEvent = self.open_help
+        self.progressBar.hide()
 
     # METHODS OF THE CLASS #
 
@@ -81,13 +82,16 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
         """Download the selection"""
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         rows = self.get_row_checked()
+        self.progressBar.show()
+        self.progressBar.setMaximum(len(rows))
         saved = []
-        for row in rows:
+        for index, row in enumerate(rows):
             ncbi_product = NCBI_Product(id=row[0])
             data = ncbi_product.get_product_as_dict()
             db_product = DB_Product(id=row[0], data=data)
             saving = db_product.save_on_db(self.mongoDB_connexion.collection)
             saved.append(saving)
+            self.progressBar.setValue(index+1)
         QtWidgets.QApplication.restoreOverrideCursor()
         saved_window = DB_Download_Window(parent=self, results=saved)
         saved_window.show()

@@ -16,8 +16,8 @@ class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
         self.setWindowTitle("SeqMining")
         self.connected_to_internet = True
         self.mongoDB_connexion = MongoDB_Connexion()
-        self.window_ncbi = NCBI_Search_Window(connexion=self.mongoDB_connexion)
-        self.window_db = DB_Search_Window(connexion=self.mongoDB_connexion)
+        self.window_ncbi = None
+        self.window_db = None
         self._set_properties()
         self._init_ui()
 
@@ -31,10 +31,12 @@ class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
 
     def button_ncbi_clicked(self):
         """Open the NCBI window"""
+        self.window_ncbi = NCBI_Search_Window(connexion=self.mongoDB_connexion)
         self.window_ncbi.show()
 
     def button_db_clicked(self):
         """Open the DB window"""
+        self.window_db = DB_Search_Window(connexion=self.mongoDB_connexion)
         self.window_db.show()
 
     def button_analyses_clicked(self):
