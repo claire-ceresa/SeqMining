@@ -115,14 +115,13 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
 
                 if operation == 'avant':
                     value = {"$lte": date_1}
-                elif operation == 'apres':
+                elif operation == 'après':
                     value = {'$gte': date_1}
                 else:
                     edit_2 = getattr(self, edit_name + "_2")
                     text_2 = edit_2.text()
                     date_2 = datetime.strptime(text_2, '%d/%m/%Y')
-                    value = {"$lte": date_1, "$gt": date_2}
-
+                    value = {"$gte": date_1, "$lt": date_2}
             else:
                 edit = getattr(self, edit_name)
                 text = edit.text()
