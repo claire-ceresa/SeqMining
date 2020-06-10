@@ -34,10 +34,7 @@ class Excel_Window(QMainWindow, Ui_excel_window):
     def button_export_clicked(self):
         datas_to_export = self.get_data_to_export()
         try:
-            desktop_path = os.environ['USERPROFILE'] + '\Desktop\\'
-            name = QFileDialog.getSaveFileName(self, 'Enregister', desktop_path, "Excel (*.xlsx)")
-            filename = name[0]
-
+            filename = get_save_filename("Excel")
             file = Excel(filename)
             worksheet = file.add_worksheet()
             file.add_data(worksheet, datas_to_export)

@@ -32,19 +32,24 @@ class Ui_NCBI_Product(object):
         self.button_download.setObjectName("button_download")
         self.horizontalLayout.addWidget(self.button_download)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.plainTextEdit.setObjectName("plainTextEdit")
-        self.verticalLayout.addWidget(self.plainTextEdit)
+        self.edit_fiche = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.edit_fiche.setObjectName("edit_fiche")
+        self.verticalLayout.addWidget(self.edit_fiche)
+        self.button_extract = QtWidgets.QPushButton(self.centralwidget)
+        self.button_extract.setObjectName("button_extract")
+        self.verticalLayout.addWidget(self.button_extract)
         NCBI_Product.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(NCBI_Product)
         self.button_download.clicked.connect(NCBI_Product.button_download_clicked)
+        self.button_extract.clicked.connect(NCBI_Product.button_extract_clicked)
         QtCore.QMetaObject.connectSlotsByName(NCBI_Product)
 
     def retranslateUi(self, NCBI_Product):
         _translate = QtCore.QCoreApplication.translate
         NCBI_Product.setWindowTitle(_translate("NCBI_Product", "MainWindow"))
         self.button_download.setText(_translate("NCBI_Product", "Télécharger"))
+        self.button_extract.setText(_translate("NCBI_Product", "Extraire dans un fichier texte"))
 
 
 if __name__ == "__main__":

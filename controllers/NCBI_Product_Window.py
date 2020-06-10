@@ -29,6 +29,17 @@ class NCBI_Product_Window(QtWidgets.QMainWindow, Ui_NCBI_Product):
             create_messageBox("Succès !", "Le produit " + saving["id"] + " a été téléchargé")
         self._init_label_available()
 
+    def button_extract_clicked(self):
+        """Extract the NCBI page to a text file"""
+        file = get_directory()
+        title = file + "/" + self.ncbi_product.id + ".txt"
+        try:
+            self.ncbi_product.create_txt_file(title= title)
+        except Exception as e:
+            create_messageBox("Erreur !", "Le fichier n'a pas pu etre crée !\n" + str(e))
+        else:
+            create_messageBox("Succès !", "Le fichier a été enregistré !")
+
     # GRAPHIC METHODS #
 
     def _init_ui(self):
@@ -42,7 +53,7 @@ class NCBI_Product_Window(QtWidgets.QMainWindow, Ui_NCBI_Product):
         self.ncbi_product.create_txt_file()
         if self.ncbi_product.valid:
             text = open('fiche.txt').read()
-            self.plainTextEdit.setPlainText(text)
+            self.edit_fiche.setPlainText(text)
 
     def _init_label_available(self):
         """Initialize the label for availability"""

@@ -35,8 +35,11 @@ class NCBI_Product:
 
     # TRANSFORMATION METHODS #
 
-    def create_txt_file(self):
-        SeqIO.write(self.sequence, "fiche.txt", "genbank")
+    def create_txt_file(self, title=None):
+        if title is None:
+            SeqIO.write(self.sequence, "fiche.txt", "genbank")
+        else:
+            SeqIO.write(self.sequence, title, "genbank")
 
     def get_product_as_dict(self):
         """Transform the product as a dictionnary"""

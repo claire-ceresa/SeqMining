@@ -1,3 +1,4 @@
+import os
 from PyQt5 import QtWidgets, QtGui
 
 
@@ -87,4 +88,30 @@ def add_widget_to_groupbox(widget, groupbox):
     layout = groupbox.layout()
     layout.addWidget(widget)
 
+
+def get_save_filename(type):
+    if type == "Excel":
+        filter = "Excel (*.xlsx)"
+    elif type == "Text":
+        filter = "Text (*.txt)"
+    else:
+        filter = None
+
+    try:
+        desktop_path = os.environ['USERPROFILE'] + '\Desktop\\'
+        name = QtWidgets.QFileDialog.getSaveFileName(caption="Enregistrer", directory=desktop_path, filter=filter)
+    except:
+        name = QtWidgets.QFileDialog.getSaveFileName(caption='Enregister', filter=filter)
+
+    filename = name[0]
+    return filename
+
+
+def get_directory():
+    try:
+        desktop_path = os.environ['USERPROFILE'] + '\Desktop\\'
+        dir = str(QtWidgets.QFileDialog.getExistingDirectory(caption="Choisir un emplacement", directory=desktop_path))
+    except:
+        dir = str(QtWidgets.QFileDialog.getExistingDirectory(caption="Choisir un emplacement"))
+    return dir
 

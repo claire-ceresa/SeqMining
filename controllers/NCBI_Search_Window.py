@@ -255,13 +255,7 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
         :param datas : dictionnary {'column_names':[], 'rows':[[]]}
         :return: a dictionnary {'done':bool, 'error':string}
         """
-        try:
-            desktop_path = os.environ['USERPROFILE'] + '\Desktop\\'
-            name = QtWidgets.QFileDialog.getSaveFileName(self, caption="Enregistrer", directory=desktop_path, filter="Excel (*.xlsx)")
-        except:
-            name = QtWidgets.QFileDialog.getSaveFileName(self, caption='Enregister', filter="Excel (*.xlsx)")
-
-        filename = name[0]
+        filename = get_save_filename(type="Excel")
         if len(filename) > 0:
             excel = Excel(title=filename)
             worksheet = excel.add_worksheet("Résultats")
