@@ -6,7 +6,8 @@ class MongoDB_Connexion:
     """Object dealing with the connexion to the MongoDB database"""
 
     def __init__(self):
-        self.process = subprocess.Popen("mongoDB.bat")
+        #self.process = subprocess.Popen("mongoDB.bat")
+        self.process = subprocess.Popen('mongod.exe')
         self.client = MongoClient()
         self.connected_to_server = self.check_connexion_to_server()
         self.database = None

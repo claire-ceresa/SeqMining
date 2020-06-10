@@ -35,7 +35,7 @@ include_files = ["controllers",
                  "functions",
                  "objects",
                  "views",
-                 "mongoDB.bat"]
+                 "mongod.exe"]
 
 # Creation du dictionnaire d'options
 options = {
