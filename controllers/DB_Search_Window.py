@@ -24,7 +24,8 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
     def button_search_clicked(self):
         """Launch the search on the MongoDB database and open the result window"""
         query = self.construct_query()
-        results = self.mongoDB_connexion.collection.find(query)
+        collection = self.mongoDB_connexion.get_collection("Product", "Nucleotide")
+        results = collection.find(query)
         self.window_result = DB_Results_Window(results=list(results))
         self.window_result.show()
 

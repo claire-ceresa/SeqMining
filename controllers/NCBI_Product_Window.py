@@ -21,7 +21,8 @@ class NCBI_Product_Window(QtWidgets.QMainWindow, Ui_NCBI_Product):
 
     def button_download_clicked(self):
         """Save the product on the MongoDB database"""
-        saving = self.db_product.save_on_db(collection=self.mongoDB_connexion.collection)
+        collection = self.mongoDB_connexion.get_collection("Product", "Nucleotide")
+        saving = self.db_product.save_on_db(collection=collection)
         if saving["error"] is not None:
             create_messageBox("Attention", saving["error"])
         else:
@@ -45,7 +46,8 @@ class NCBI_Product_Window(QtWidgets.QMainWindow, Ui_NCBI_Product):
 
     def _init_label_available(self):
         """Initialize the label for availability"""
-        existed = self.db_product.existed_in_collection(self.mongoDB_connexion.collection)
+        collection = self.mongoDB_connexion.get_collection("Product", "Nucleotide")
+        existed = self.db_product.existed_in_collection(collection)
         if existed:
             self.label_dispo.setText("Le produit est disponible hors ligne !")
             self.label_dispo.setStyleSheet("color: rgb(0, 200, 0);")

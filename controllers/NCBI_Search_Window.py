@@ -80,6 +80,7 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
 
     def button_download_clicked(self):
         """Download the selection"""
+        collection = self.mongoDB_connexion.get_collection("Product", "Nucleotide")
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         rows = self.get_row_checked()
         self.progressBar.show()
@@ -89,12 +90,13 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
             ncbi_product = NCBI_Product(id=row[0])
             data = ncbi_product.get_product_as_dict()
             db_product = DB_Product(id=row[0], data=data)
-            saving = db_product.save_on_db(self.mongoDB_connexion.collection)
+            saving = db_product.save_on_db(collection)
             saved.append(saving)
             self.progressBar.setValue(index+1)
         QtWidgets.QApplication.restoreOverrideCursor()
         saved_window = DB_Download_Window(parent=self, results=saved)
         saved_window.show()
+        self.progressBar.hide()
 
     def row_table_clicked(self, row, column):
         """Open the online Product Window"""

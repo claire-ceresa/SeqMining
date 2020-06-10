@@ -6,37 +6,31 @@ class MongoDB_Connexion:
     """Object dealing with the connexion to the MongoDB database"""
 
     def __init__(self):
-        #self.process = subprocess.Popen("mongoDB.bat")
-        self.process = subprocess.Popen('mongod.exe')
-        self.client = MongoClient()
-        self.connected_to_server = self.check_connexion_to_server()
-        self.database = None
-        self.collection = None
+        # self.process = subprocess.Popen("mongoDB.bat")
+        # self.process = subprocess.Popen('mongod.exe')
+        self.connexion = MongoClient()
 
-        if self.connected_to_server:
-            self.set_database()
-            self.set_collection()
+    # def terminate_process(self):
+    #     """Put an end to the mongoDB.bat process"""
+    #     self.process.terminate()
 
-    def terminate_process(self):
-        """Put an end to the mongoDB.bat process"""
-        self.process.terminate()
-
-    def close_mongodb(self):
+    def close(self):
         """Close the connexion with the database"""
-        self.client.close()
+        self.connexion.close()
 
-    def set_database(self):
+    def get_database(self, database_name):
         """Open the database"""
-        self.database = self.client["Nucleotide"]
+        return self.connexion[database_name]
 
-    def set_collection(self):
+    def get_collection(self, collection_name, database_name):
         """Open the collection"""
-        self.collection = self.database["Product"]
+        database = self.get_database(database_name)
+        return database[collection_name]
 
-    def check_connexion_to_server(self):
+    def connected_to_server(self):
         """Check if SeqMining is connected to the server"""
         try:
-            self.client.server_info()
+            self.connexion.server_info()
         except:
             return False
         else:
