@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 from PyQt5 import QtWidgets
 from controllers.DB_Results_Window import DB_Results_Window
+from controllers.DB_Product_Window import DB_Product_Window
 from views.db_search_view import Ui_DB_Search
 
 
@@ -24,10 +25,12 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
     def button_search_clicked(self):
         """Launch the search on the MongoDB database and open the result window"""
         query = self.construct_query()
-        print(query)
         collection = self.mongoDB_connexion.get_collection("Product", "Nucleotide")
-        results = collection.find(query)
-        self.window_result = DB_Results_Window(results=list(results))
+        results = list(collection.find(query))
+        if len(results) == 1:
+            self.window_result = DB_Product_Window(product=results[0])
+        else:
+            self.window_result = DB_Results_Window(results=results)
         self.window_result.show()
 
     def combobox_date_changed(self, text):

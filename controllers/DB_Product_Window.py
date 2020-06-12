@@ -4,6 +4,7 @@ from functions.NCBI_functions import *
 from functions.other_functions import *
 from functions.graphics_function import *
 
+
 class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
     """
     controlling class for db_product_view
@@ -17,8 +18,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.groupbox_feature = None
         self.layout_annot = None
         self.layout_ref = None
-        self._init_label_title()
-        self._init_features()
+        self._init_ui()
 
     ## METHODS OF THE CLASS ##
 
@@ -38,12 +38,22 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
 
     def action_ref_toggled(self, checked):
         if checked:
-            self.create_ref()
+            try:
+                self.create_ref()
+            except Exception as e:
+                print(e)
         else:
             clear_layout(self.layout_ref)
             self.layout_ref = None
 
     ## GRAPHIC METHODS ##
+
+    def _init_ui(self):
+        self._init_label_title()
+        self._init_features()
+        self._init_source()
+        if "references" not in self.product['annotations']:
+            self.action_ref.setEnabled(False)
 
     def _init_label_title(self):
         self.label_id.setText(self.product["id"])
@@ -52,8 +62,17 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.label_download.setText("Téléchargé le " + date_string)
 
     def _init_features(self):
-        self.creation_group_button()
-        self._init_source()
+        widgets = []
+
+        features = self.product["features"]
+        for id, feature in enumerate(features):
+            button = create_radio_button(feature["type"])
+            widgets.append(button)
+
+        self.groupbutton = create_button_group(widgets=widgets, )
+        layout = create_layout(widgets=widgets, vertical=True)
+        self.area_button.setLayout(layout)
+        self.groupbutton.buttonClicked['int'].connect(self.button_feature_clicked)
 
     def _init_source(self):
         button = self.groupbutton.button(0)
@@ -61,25 +80,8 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
             button.setChecked(True)
             self.button_feature_clicked(0)
 
-    def creation_group_button(self):
-        self.groupbutton = QButtonGroup()
-        widget = []
-
-        features = self.product["features"]
-        for id, feature in enumerate(features):
-            button = QRadioButton()
-            button.setText(feature["type"])
-            self.groupbutton.addButton(button, id)
-            widget.append(button)
-
-        layout = create_layout(widgets=widget, vertical=True)
-        self.area_button.setLayout(layout)
-        self.groupbutton.buttonClicked['int'].connect(self.button_feature_clicked)
-
     def creation_groupbox_feature(self, id):
-        self.groupbox_feature = QGroupBox()
-        layout_gb = create_layout(vertical=True, spacer=True)
-        self.groupbox_feature.setLayout(layout_gb)
+        self.groupbox_feature = create_groupbox()
 
         feature = self.product["features"][id]
         for key, value in feature["qualifiers"].items():
@@ -88,21 +90,16 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
                 label_qualifier.setTextInteractionFlags(Qt.TextSelectableByMouse)
             else:
                 label_qualifier = create_label(text = key.capitalize() + " : " + get_string(value))
-            layout_gb.addWidget(label_qualifier)
+            add_widget_to_groupbox(label_qualifier, self.groupbox_feature)
 
-        self.scroll_area_feature = create_scroll_area(widget=self.groupbox_feature)
-        self.scroll_area_feature.setFrameShape(QFrame.NoFrame)
+        self.scroll_area_feature = create_scroll_area(widget=self.groupbox_feature, frame=False)
         self.layout_feature.addWidget(self.scroll_area_feature)
 
     def create_annotations(self):
         groupbox_gen = create_groupbox(title='Generalities')
-        scroll_area_gen = create_scroll_area(groupbox_gen)
-        scroll_area_gen.setMinimumWidth(200)
-        scroll_area_gen.setFrameShape(QFrame.NoFrame)
+        scroll_area_gen = create_scroll_area(groupbox_gen, minwidth=200, frame=False)
         groupbox_org = create_groupbox(title="Organism")
-        scroll_area_org = create_scroll_area(groupbox_org)
-        scroll_area_org.setMinimumWidth(200)
-        scroll_area_org.setFrameShape(QFrame.NoFrame)
+        scroll_area_org = create_scroll_area(groupbox_org, minwidth=200, frame=False)
         self.layout_annot = create_layout(widgets = [scroll_area_gen, scroll_area_org], vertical=True)
 
         layout = self.centralwidget.layout()
@@ -121,18 +118,12 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
                     label = create_label(text=rank, wordwrap=False)
                     add_widget_to_groupbox(label, groupbox_org)
             else:
-                try:
-                    label = create_label(text = key.capitalize() + " : " + get_string(value), wordwrap=False)
-                except Exception as e:
-                    print(e)
+                label = create_label(text = key.capitalize() + " : " + get_string(value), wordwrap=False)
                 add_widget_to_groupbox(label, groupbox_gen)
 
     def create_ref(self):
         groupbox_ref = create_groupbox(title="References")
-        groupbox_ref.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
-        scroll_area_ref = create_scroll_area(groupbox_ref)
-        scroll_area_ref.setMinimumWidth(200)
-        scroll_area_ref.setFrameShape(QFrame.NoFrame)
+        scroll_area_ref = create_scroll_area(groupbox_ref, minwidth=200, frame=False)
         self.layout_ref = create_layout([scroll_area_ref], vertical=True)
 
         layout = self.centralwidget.layout()

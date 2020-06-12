@@ -67,16 +67,21 @@ def clear_layout(layout):
                 widget.deleteLater()
 
 
-def create_scroll_area(widget):
+def create_scroll_area(widget, minwidth=None, frame=True):
     area = QtWidgets.QScrollArea()
     area.setWidgetResizable(True)
+    if minwidth is not None:
+        area.setMinimumWidth(minwidth)
+    if not frame:
+        area.setFrameShape(QtWidgets.QFrame.NoFrame)
     area.setWidget(widget)
     return area
 
 
-def create_groupbox(title, flat=False):
+def create_groupbox(title=None, flat=False):
     groupbox = QtWidgets.QGroupBox()
-    groupbox.setTitle(title)
+    if title is not None:
+        groupbox.setTitle(title)
     layout = create_layout(vertical=True, spacer=False)
     groupbox.setLayout(layout)
     if flat:
@@ -115,3 +120,16 @@ def get_directory():
         dir = str(QtWidgets.QFileDialog.getExistingDirectory(caption="Choisir un emplacement"))
     return dir
 
+def create_radio_button(text):
+    button = QtWidgets.QRadioButton()
+    button.setText(text)
+    return button
+
+
+
+def create_button_group(widgets=None):
+    group = QtWidgets.QButtonGroup()
+    if widgets is not None:
+        for index, widget in enumerate(widgets):
+            group.addButton(widget, index)
+    return group
