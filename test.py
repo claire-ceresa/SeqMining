@@ -8,19 +8,18 @@ from objects.DB_Product import DB_Product
 from objects.NCBI_Product import NCBI_Product
 
 Entrez.email= "claire.ceresa@hotmail.fr"
-app = QApplication(sys.argv)
-
-connexion = MongoDB_Connexion()
-client = connexion.client
-collection = connexion.collection
+# app = QApplication(sys.argv)
+#
+# connexion = MongoDB_Connexion()
+# client = connexion.client
+# collection = connexion.collection
 
 id = "KU762340.1"
 product = NCBI_Product(id=id)
-product_dict = product.get_product_as_dict()
-sequence = product_dict["seq"]["seq"]
-feature = product_dict["features"][3]
+seq = product.sequence
+print(seq)
 
-form = NCBI_Product_Window(id=id, connexion=connexion)
-form.show()
-app.exec()
+# form = NCBI_Product_Window(id=id, connexion=connexion)
+# form.show()
+# app.exec()
 

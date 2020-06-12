@@ -132,6 +132,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         groupbox_ref.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
         scroll_area_ref = create_scroll_area(groupbox_ref)
         scroll_area_ref.setMinimumWidth(200)
+        scroll_area_ref.setFrameShape(QFrame.NoFrame)
         self.layout_ref = create_layout([scroll_area_ref], vertical=True)
 
         layout = self.centralwidget.layout()
