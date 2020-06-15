@@ -1,9 +1,9 @@
 import re
 from datetime import datetime
-from PyQt5 import QtWidgets
 from controllers.DB_Results_Window import DB_Results_Window
 from controllers.DB_Product_Window import DB_Product_Window
 from views.db_search_view import Ui_DB_Search
+from functions.graphics_function import *
 
 
 
@@ -51,6 +51,10 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
             self.label_download_et.hide()
             self.edit_download_2.hide()
 
+    def action_project_triggered(self):
+        #self.widget_project.show()
+        print("project")
+
     # GRAPHIC METHODS #
 
     def _init_ui(self):
@@ -59,6 +63,12 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
         self.edit_date_2.hide()
         self.label_download_et.hide()
         self.edit_download_2.hide()
+        self._init_combobox_project()
+
+    def _init_combobox_project(self):
+        projects = self.mongoDB_connexion.get_all_projects()
+        for project in projects:
+            self.combobox_project.addItem(project["name"])
 
     def get_checked_checkboxes(self):
         """

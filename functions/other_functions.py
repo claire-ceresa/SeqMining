@@ -25,6 +25,7 @@ def string_to_datetime(date_initial):
     date_final = datetime(year=int(year), month=int(month_number), day=int(day))
     return date_final
 
+
 def get_string(object):
     if isinstance(object, datetime):
         string= object.strftime("%d-%m-%Y")

@@ -126,10 +126,16 @@ def create_radio_button(text):
     return button
 
 
-
 def create_button_group(widgets=None):
     group = QtWidgets.QButtonGroup()
     if widgets is not None:
         for index, widget in enumerate(widgets):
             group.addButton(widget, index)
     return group
+
+
+def create_edit(text=None):
+    edit = QtWidgets.QLineEdit()
+    if text is not None:
+        edit.setText(text)
+    return edit
