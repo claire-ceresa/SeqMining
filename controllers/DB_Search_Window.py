@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 from controllers.DB_Results_Window import DB_Results_Window
 from controllers.DB_Product_Window import DB_Product_Window
+from controllers.Project_Window import Project_Window
 from views.db_search_view import Ui_DB_Search
 from functions.graphics_function import *
 
@@ -17,6 +18,7 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
         self.setupUi(self)
         self.setWindowTitle("Rechercher sur la base de données locale")
         self.mongoDB_connexion = connexion
+        self.window_project = None
         self.window_result = None
         self._init_ui()
 
@@ -52,8 +54,8 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
             self.edit_download_2.hide()
 
     def action_project_triggered(self):
-        #self.widget_project.show()
-        print("project")
+        self.window_project = Project_Window(connexion=self.mongoDB_connexion)
+        self.window_project.show()
 
     # GRAPHIC METHODS #
 
