@@ -24,7 +24,10 @@ class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
 
     def modif_clicked(self, event):
         if self.fixed:
-            self.version_modif()
+            try:
+                self.version_modif()
+            except Exception as e:
+                print(e)
         elif self.modified:
             self.update_project()
             self.version_fix()
@@ -58,7 +61,7 @@ class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
         self.gridLayout.addWidget(self.name, 0, 0)
         self.comment = create_edit()
         self.gridLayout.addWidget(self.comment, 1, 0)
-        if len(self.project["comment"]):
+        if len(self.project["comment"]) > 0:
             self.comment.setText(self.project["comment"])
         self.modif.setText("Enregistrer")
 
@@ -75,7 +78,10 @@ class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
         self.modif.setText("Enregistrer")
 
     def update_project(self):
-        print("save modification")
+        id = self.project["_id"]
+        collection = self.connexion.get_collection("Projects", "Nucleotide")
+        updating = collection.update({"_id":5}, {"name":self.name.text(), "comment":self.comment.text()})
+        print(updating)
 
     def save_new(self):
         print("save new project")
