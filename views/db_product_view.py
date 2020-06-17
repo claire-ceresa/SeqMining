@@ -134,8 +134,12 @@ class Ui_db_product(object):
         self.action_ref.setObjectName("action_ref")
         self.action_analyser = QtWidgets.QAction(db_product)
         self.action_analyser.setObjectName("action_analyser")
+        self.action_projet = QtWidgets.QAction(db_product)
+        self.action_projet.setCheckable(True)
+        self.action_projet.setObjectName("action_projet")
         self.menu_afficher.addAction(self.action_gen)
         self.menu_afficher.addAction(self.action_ref)
+        self.menu_afficher.addAction(self.action_projet)
         self.menu_outils.addAction(self.action_analyser)
         self.menubar.addAction(self.menu_afficher.menuAction())
         self.menubar.addAction(self.menu_outils.menuAction())
@@ -143,6 +147,7 @@ class Ui_db_product(object):
         self.retranslateUi(db_product)
         self.action_gen.toggled['bool'].connect(db_product.action_gen_toggled)
         self.action_ref.toggled['bool'].connect(db_product.action_ref_toggled)
+        self.action_projet.toggled['bool'].connect(db_product.action_projet_toggled)
         QtCore.QMetaObject.connectSlotsByName(db_product)
 
     def retranslateUi(self, db_product):
@@ -154,6 +159,7 @@ class Ui_db_product(object):
         self.action_gen.setText(_translate("db_product", "Généralités"))
         self.action_ref.setText(_translate("db_product", "Références"))
         self.action_analyser.setText(_translate("db_product", "Analyser la séquence"))
+        self.action_projet.setText(_translate("db_product", "Projets associés"))
 
 
 if __name__ == "__main__":

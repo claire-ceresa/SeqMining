@@ -5,6 +5,7 @@ from controllers.DB_Product_Window import DB_Product_Window
 from controllers.Project_Window import Project_Window
 from views.db_search_view import Ui_DB_Search
 from functions.graphics_function import *
+from functions.db_functions import *
 
 
 
@@ -71,7 +72,7 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
 
     def _init_combobox_project(self):
         self.combobox_project.clear()
-        projects = self.mongoDB_connexion.get_all_projects()
+        projects = get_all_projects()
         for project in projects:
             self.combobox_project.addItem(project["name"])
 

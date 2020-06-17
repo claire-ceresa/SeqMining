@@ -41,3 +41,11 @@ def get_string(object):
     else:
         string= str(object)
     return string
+
+
+def extract_list_of_attribute(list_old, attribute):
+    list_new = []
+    for item in list_old:
+        list_new.append(item[attribute])
+    return list_new
+

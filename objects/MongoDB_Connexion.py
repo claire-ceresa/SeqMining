@@ -36,12 +36,5 @@ class MongoDB_Connexion:
         else:
             return True
 
-    def get_all_projects(self):
-        collection = self.get_collection("Projects", "Nucleotide")
-        return collection.find({})
-
-    def get_one(self, collection, id):
-        collection = self.get_collection(collection, "Nucleotide")
-        return collection.find_one({"_id":id})
 
 

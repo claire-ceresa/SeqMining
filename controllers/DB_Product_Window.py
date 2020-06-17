@@ -3,6 +3,7 @@ from views.db_product_view import Ui_db_product
 from functions.NCBI_functions import *
 from functions.other_functions import *
 from functions.graphics_function import *
+from functions.db_functions import *
 
 
 class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
@@ -18,6 +19,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.groupbox_feature = None
         self.layout_annot = None
         self.layout_ref = None
+        self.layout_project = None
         self._init_ui()
 
     ## METHODS OF THE CLASS ##
@@ -45,6 +47,17 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         else:
             clear_layout(self.layout_ref)
             self.layout_ref = None
+
+    def action_projet_toggled(self, checked):
+        if self.layout_ref is not None:
+            clear_layout(self.layout_ref)
+            self.layout_ref = None
+            self.action_ref.setChecked(False)
+        if checked:
+            self.create_project()
+        else:
+            clear_layout(self.layout_project)
+            self.layout_project=None
 
     ## GRAPHIC METHODS ##
 
@@ -90,7 +103,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
                 label_qualifier.setTextInteractionFlags(Qt.TextSelectableByMouse)
             else:
                 label_qualifier = create_label(text = key.capitalize() + " : " + get_string(value))
-            add_widget_to_groupbox(label_qualifier, self.groupbox_feature)
+            add_widget_to_groupbox(widget=label_qualifier, groupbox=self.groupbox_feature)
 
         self.scroll_area_feature = create_scroll_area(widget=self.groupbox_feature, frame=False)
         self.layout_feature.addWidget(self.scroll_area_feature)
@@ -112,14 +125,14 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
             elif key == "organism" :
                 label = create_label(text = get_string(value), wordwrap=False)
                 set_label_bold(label, True)
-                add_widget_to_groupbox(label, groupbox_org)
+                add_widget_to_groupbox(widget=label, groupbox=groupbox_org)
             elif key == "taxonomy":
                 for rank in annotations["taxonomy"][::-1]:
                     label = create_label(text=rank, wordwrap=False)
-                    add_widget_to_groupbox(label, groupbox_org)
+                    add_widget_to_groupbox(widget=label, groupbox=groupbox_org)
             else:
                 label = create_label(text = key.capitalize() + " : " + get_string(value), wordwrap=False)
-                add_widget_to_groupbox(label, groupbox_gen)
+                add_widget_to_groupbox(widget=label, groupbox=groupbox_gen)
 
     def create_ref(self):
         groupbox_ref = create_groupbox(title="References")
@@ -138,7 +151,28 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
                     set_label_bold(label, True)
                 else:
                     label = create_label(text = key.capitalize() + " : " + get_string(value))
-                add_widget_to_groupbox(label, groupbox_ref)
+                add_widget_to_groupbox(widget=label, groupbox=groupbox_ref)
+
+    def create_project(self):
+        groupbox_project = create_groupbox(title="Projets associés")
+        scroll_area_project = create_scroll_area(groupbox_project, minwidth=200, frame=False)
+        self.layout_project = create_layout([scroll_area_project], vertical=True)
+
+        layout = self.centralwidget.layout()
+        layout.addLayout(self.layout_project)
+
+        projects = get_all_projects_for_a_product(self.product["id"])
+        for project in projects:
+            label_name = create_label(project["name"])
+            set_label_bold(label_name, True)
+            label_comment = create_label(project["comment"])
+            layout = create_layout([label_name, label_comment], vertical=True)
+            add_widget_to_groupbox(layout_widget=layout, groupbox=groupbox_project)
+
+        label_add = create_label("Ajouter à un autre projet")
+        set_label_clickable(label_add)
+        label_add.mouseReleaseEvent = self.add_to_a_project
+        self.layout_project.addWidget(label_add)
 
     def set_sequence(self, id):
         sequence = self.product["seq"]["seq"]
@@ -181,3 +215,17 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         begin = sequence[:position_start_feature]
         end = sequence[position_end_feature:]
         return [break_seq(begin), middle, break_seq(end)]
+
+    def add_to_a_project(self, event):
+        projects = get_not_project_for_a_product(self.product["id"])
+        project_name = extract_list_of_attribute(projects, "name")
+        self.combobox_project = create_combobox(project_name)
+        label_ok = create_label("Ok")
+        set_label_clickable(label_ok)
+        label_ok.mouseReleaseEvent = self.save_product_in_project
+        layout = create_layout([self.combobox_project, label_ok], horizontal=True)
+        self.layout_project.addLayout(layout)
+
+    def save_product_in_project(self, event):
+        name = self.combobox_project.currentText()
+        add_product_to_project(id=self.product["id"], project=name)

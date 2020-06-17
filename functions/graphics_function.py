@@ -1,6 +1,12 @@
 import os
 from PyQt5 import QtWidgets, QtGui
 
+def create_combobox(widgets=None):
+    combobox = QtWidgets.QComboBox()
+    if widgets is not None:
+        fill_combobox(combobox, widgets)
+    return combobox
+
 
 def fill_combobox(combobox, list):
     """Fill in a QComboBox"""
@@ -33,6 +39,14 @@ def set_label_bold(label, bool):
     font = QtGui.QFont()
     font.setBold(bool)
     label.setFont(font)
+
+
+def set_label_clickable(label):
+    font = QtGui.QFont()
+    font.setUnderline(True)
+    label.setFont(font)
+    label.setStyleSheet("color: rgb(11, 0, 168);")
+
 
 
 def create_layout(widgets=None, vertical=False, horizontal=False, spacer=False):
@@ -89,9 +103,12 @@ def create_groupbox(title=None, flat=False):
     return groupbox
 
 
-def add_widget_to_groupbox(widget, groupbox):
+def add_widget_to_groupbox(widget=None, layout_widget=None, groupbox=None):
     layout = groupbox.layout()
-    layout.addWidget(widget)
+    if widget is not None:
+        layout.addWidget(widget)
+    if layout_widget is not None:
+        layout.addLayout(layout_widget)
 
 
 def get_save_filename(type):
