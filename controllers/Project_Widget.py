@@ -5,7 +5,7 @@ from PyQt5 import QtWidgets
 
 class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
     """
-    controlling class for db_search_view
+    controlling class for project_widget_view
     """
 
     def __init__(self, parent=None, connexion=None, project=None, statut=None):

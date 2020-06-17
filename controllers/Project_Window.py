@@ -5,7 +5,7 @@ from functions.graphics_function import *
 
 class Project_Window(QtWidgets.QDialog, Ui_Project_Dialog):
     """
-    controlling class for db_search_view
+    controlling class for project_window_view
     """
 
     def __init__(self, parent=None, connexion=None):
