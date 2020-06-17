@@ -55,7 +55,9 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
 
     def action_project_triggered(self):
         self.window_project = Project_Window(connexion=self.mongoDB_connexion)
-        self.window_project.show()
+        if self.window_project.exec() == 0:
+            self._init_combobox_project()
+
 
     # GRAPHIC METHODS #
 
@@ -68,6 +70,7 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
         self._init_combobox_project()
 
     def _init_combobox_project(self):
+        self.combobox_project.clear()
         projects = self.mongoDB_connexion.get_all_projects()
         for project in projects:
             self.combobox_project.addItem(project["name"])
