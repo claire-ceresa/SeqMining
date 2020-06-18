@@ -8,11 +8,12 @@ class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
     controlling class for project_widget_view
     """
 
-    def __init__(self, parent=None, project=None, statut=None):
+    def __init__(self, parent=None, project=None, statut=None, product=None):
         super(Project_Widget, self).__init__(parent)
         self.setupUi(self)
         self.project = project
         self.statut = statut
+        self.product = product
         self._init_ui()
 
     def _init_ui(self):
@@ -24,6 +25,8 @@ class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
             self.version_fix()
         elif self.statut == "New":
             self.version_new()
+        elif self.statut == "Product":
+            self.version_product()
         else:
             print(self.statut)
 
@@ -49,7 +52,10 @@ class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
         else:
             question = QtWidgets.QMessageBox.question(self, "Supprimer le projet", "Etes vous sûr ?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
             if question == QtWidgets.QMessageBox.Yes:
-                self.delete_project()
+                if self.statut == "Product":
+                    self.delete_id_from_project()
+                else:
+                    self.delete_project()
 
     def version_fix(self):
         self.name.close()
@@ -81,6 +87,15 @@ class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
         self.gridLayout.addWidget(self.comment, 1, 0)
         self.modif.setText("Enregistrer")
 
+    def version_product(self):
+        self.name = create_label(self.project["name"])
+        self.gridLayout.addWidget(self.name, 0, 0)
+        if len(self.project["comment"]) > 0:
+            self.comment = create_label(self.project["comment"])
+            self.gridLayout.addWidget(self.comment, 1, 0)
+        self.modif.close()
+        self.deleting.setText("Retirer")
+
     def update_project(self):
         id = self.project["_id"]
         updating = update_project(where={"_id": id}, set={"name": self.name.text(), "comment": self.comment.text()})
@@ -106,5 +121,16 @@ class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
 
     def delete_project(self):
         delete = delete_project(self.project["_id"])
-        self.project = None
-        self.close()
+        if delete["nModified"] == 1:
+            self.project = None
+            self.close()
+        else:
+            create_messageBox("Erreur", "Projet introuvable")
+
+    def delete_id_from_project(self):
+        delete = delete_product_from_project(self.project["_id"], self.product["id"])
+        if delete["nModified"] == 1:
+            self.project = None
+            self.close()
+        else:
+            create_messageBox("Erreur", "Projet introuvable")

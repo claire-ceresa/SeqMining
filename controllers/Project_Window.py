@@ -21,7 +21,7 @@ class Project_Window(QtWidgets.QDialog, Ui_Project_Dialog):
         for project in projects:
             widget = Project_Widget(project=project, statut="Fix")
             self.projects_widgets.append(widget)
-        layout = create_layout(widgets=self.projects_widgets, vertical=True, spacer=True)
+        layout = create_layout(widgets=self.projects_widgets, vertical=True)
         self.scroll_projects.setLayout(layout)
 
     def button_add_clicked(self):

@@ -76,4 +76,8 @@ def delete_project(id):
     return project_collection.delete_one({"_id": id})
 
 
+def delete_product_from_project(id_project, id_product):
+    return project_collection.update({"_id":id_project}, {"$pull":{"ids_gb":id_product}})
+
+
 connexion.close()

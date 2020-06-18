@@ -29,7 +29,6 @@ def create_label(text=None, wordwrap=True):
     """Create and return a QLabel with the text setted"""
     label = QtWidgets.QLabel()
     label.setText(text)
-    label.setCursor(Qt.PointingHandCursor)
     if wordwrap:
         label.setWordWrap(True)
     else:
@@ -49,10 +48,10 @@ def set_label_clickable(label):
     font.setUnderline(True)
     label.setFont(font)
     label.setStyleSheet("color: rgb(11, 0, 168);")
+    label.setCursor(Qt.PointingHandCursor)
 
 
-
-def create_layout(widgets=None, vertical=False, horizontal=False, spacer=False):
+def create_layout(widgets=None, vertical=False, horizontal=False):
     """Create, fill in and return a QLayout"""
     if vertical and not horizontal:
         layout = QtWidgets.QVBoxLayout()
@@ -68,10 +67,6 @@ def create_layout(widgets=None, vertical=False, horizontal=False, spacer=False):
             else:
                 layout.addWidget(widget)
 
-        if spacer:
-            spacer = QtWidgets.QSpacerItem(40,20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-            layout.addItem(spacer)
-
     return layout
 
 
@@ -82,6 +77,16 @@ def clear_layout(layout):
             widget = item.widget()
             if widget is not None:
                 widget.deleteLater()
+
+
+def create_spacer(vertical=False, horizontal=False):
+    if vertical and not horizontal:
+        spacer = QtWidgets.QSpacerItem(0,0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+    elif horizontal and not vertical:
+        spacer = QtWidgets.QSpacerItem(0,0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+    else:
+        spacer = QtWidgets.QSpacerItem()
+    return spacer
 
 
 def create_scroll_area(widget, minwidth=None, frame=True):
@@ -99,7 +104,7 @@ def create_groupbox(title=None, flat=False):
     groupbox = QtWidgets.QGroupBox()
     if title is not None:
         groupbox.setTitle(title)
-    layout = create_layout(vertical=True, spacer=False)
+    layout = create_layout(vertical=True)
     groupbox.setLayout(layout)
     if flat:
         groupbox.setFlat(True)
