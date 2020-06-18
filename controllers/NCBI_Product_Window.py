@@ -9,10 +9,9 @@ class NCBI_Product_Window(QtWidgets.QMainWindow, Ui_NCBI_Product):
     controlling class for ncbi_product_view
     """
 
-    def __init__(self, parent=None, id=None, connexion=None):
+    def __init__(self, parent=None, id=None):
         super(NCBI_Product_Window, self).__init__(parent)
         self.setupUi(self)
-        self.mongoDB_connexion = connexion
         self.ncbi_product = NCBI_Product(id=id)
         self.db_product = DB_Product(id=self.ncbi_product.id, data=self.ncbi_product.get_product_as_dict())
         self._init_ui()
@@ -21,8 +20,7 @@ class NCBI_Product_Window(QtWidgets.QMainWindow, Ui_NCBI_Product):
 
     def button_download_clicked(self):
         """Save the product on the MongoDB database"""
-        collection = self.mongoDB_connexion.get_collection("Product", "Nucleotide")
-        saving = self.db_product.save_on_db(collection=collection)
+        saving = self.db_product.saved_on_db()
         if saving["error"] is not None:
             create_messageBox("Attention", saving["error"])
         else:
@@ -57,8 +55,7 @@ class NCBI_Product_Window(QtWidgets.QMainWindow, Ui_NCBI_Product):
 
     def _init_label_available(self):
         """Initialize the label for availability"""
-        collection = self.mongoDB_connexion.get_collection("Product", "Nucleotide")
-        existed = self.db_product.existed_in_collection(collection)
+        existed = self.db_product.existed_in_collection()
         if existed:
             self.label_dispo.setText("Le produit est disponible hors ligne !")
             self.label_dispo.setStyleSheet("color: rgb(0, 200, 0);")

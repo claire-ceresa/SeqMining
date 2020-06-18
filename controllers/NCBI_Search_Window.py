@@ -1,4 +1,3 @@
-import os
 from math import *
 from PyQt5.Qt import Qt
 from views.ncbi_search_view import Ui_NCBI_Result
@@ -17,11 +16,10 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
     controlling class for ncbi_search_view
     """
 
-    def __init__(self, parent=None, connexion=None):
+    def __init__(self, parent=None):
         super(NCBI_Search_Window, self).__init__(parent)
         self.setupUi(self)
         self.setWindowTitle("Rechercher sur NCBI Nucleotide")
-        self.mongoDB_connexion = connexion
         self.init_ui()
         self.request = None
         self.window_product = None
@@ -59,12 +57,15 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         id = self.edit_id.text()
         if len(id) > 0:
-            self.window_product = NCBI_Product_Window(id=id, connexion=self.mongoDB_connexion)
-            if self.window_product.ncbi_product.valid:
+            product = NCBI_Product(id=id)
+            if product.valid:
+                self.window_product = NCBI_Product_Window(id=id)
                 self.window_product.show()
             else:
+                QtWidgets.QApplication.restoreOverrideCursor()
                 create_messageBox("Erreur", "Identifiant inconnu !")
         else:
+            QtWidgets.QApplication.restoreOverrideCursor()
             create_messageBox("Attention", "Veuillez entrer un identifiant GenBank")
         QtWidgets.QApplication.restoreOverrideCursor()
 
@@ -75,12 +76,12 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
         datas = {'column_names': ["Identifiant", "Titre"], 'rows': rows}
         copy = self.create_excel(datas)
         if copy:
+            QtWidgets.QApplication.restoreOverrideCursor()
             create_messageBox("Succes !", "Le fichier a été crée !")
         QtWidgets.QApplication.restoreOverrideCursor()
 
     def button_download_clicked(self):
         """Download the selection"""
-        collection = self.mongoDB_connexion.get_collection("Product", "Nucleotide")
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         rows = self.get_row_checked()
         self.progressBar.show()
@@ -90,7 +91,7 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
             ncbi_product = NCBI_Product(id=row[0])
             data = ncbi_product.get_product_as_dict()
             db_product = DB_Product(id=row[0], data=data)
-            saving = db_product.save_on_db(collection)
+            saving = db_product.saved_on_db()
             saved.append(saving)
             self.progressBar.setValue(index+1)
         QtWidgets.QApplication.restoreOverrideCursor()
@@ -103,7 +104,7 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         id_widget = self.table.item(row, 0)
         id = id_widget.text()
-        self.window_product = NCBI_Product_Window(id=id, connexion=self.mongoDB_connexion)
+        self.window_product = NCBI_Product_Window(id=id)
         self.window_product.show()
         QtWidgets.QApplication.restoreOverrideCursor()
 

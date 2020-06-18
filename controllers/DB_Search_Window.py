@@ -14,11 +14,11 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
     controlling class for db_search_view
     """
 
-    def __init__(self, parent=None, connexion=None):
+    def __init__(self, parent=None):
         super(DB_Search_Window, self).__init__(parent)
         self.setupUi(self)
         self.setWindowTitle("Rechercher sur la base de données locale")
-        self.mongoDB_connexion = connexion
+        #self.mongoDB_connexion = connexion
         self.window_project = None
         self.window_result = None
         self._init_ui()
@@ -28,8 +28,7 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
     def button_search_clicked(self):
         """Launch the search on the MongoDB database and open the result window"""
         query = self.construct_query()
-        collection = self.mongoDB_connexion.get_collection("Product", "Nucleotide")
-        results = list(collection.find(query))
+        results = find_products(query)
         if len(results) == 1:
             self.window_result = DB_Product_Window(product=results[0])
         else:
@@ -55,7 +54,7 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
             self.edit_download_2.hide()
 
     def action_project_triggered(self):
-        self.window_project = Project_Window(connexion=self.mongoDB_connexion)
+        self.window_project = Project_Window()
         if self.window_project.exec() == 0:
             self._init_combobox_project()
 
@@ -173,5 +172,3 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
         attribute = name_split[1]
         name = type + "_" + attribute
         return name
-
-

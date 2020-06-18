@@ -1,8 +1,8 @@
-from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem
 from views.db_download_view import Ui_db_download
 
 
-class DB_Download_Window(QtWidgets.QDialog, Ui_db_download):
+class DB_Download_Window(QDialog, Ui_db_download):
     """
     controlling class for db_download_view
     """
@@ -42,8 +42,8 @@ class DB_Download_Window(QtWidgets.QDialog, Ui_db_download):
         if len(self.errors) > 0:
             self.table_error.setRowCount(len(self.errors))
             for line, error in enumerate(self.errors):
-                self.table_error.setItem(line, 0, QtWidgets.QTableWidgetItem(error["id"]))
-                self.table_error.setItem(line, 1, QtWidgets.QTableWidgetItem(error["error"]))
+                self.table_error.setItem(line, 0, QTableWidgetItem(error["id"]))
+                self.table_error.setItem(line, 1, QTableWidgetItem(error["error"]))
             self.table_error.resizeColumnToContents(0)
         else:
             self.table_error.hide()

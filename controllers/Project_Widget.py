@@ -1,6 +1,6 @@
 from views.project_widget_view import Ui_project_widget
 from functions.graphics_function import *
-from PyQt5 import QtWidgets
+from functions.db_functions import *
 
 
 class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
@@ -8,11 +8,9 @@ class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
     controlling class for project_widget_view
     """
 
-    def __init__(self, parent=None, connexion=None, project=None, statut=None):
+    def __init__(self, parent=None, project=None, statut=None):
         super(Project_Widget, self).__init__(parent)
         self.setupUi(self)
-        self.connexion = connexion
-        self.collection = connexion.get_collection("Projects", "Nucleotide")
         self.project = project
         self.statut = statut
         self._init_ui()
@@ -85,28 +83,28 @@ class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
 
     def update_project(self):
         id = self.project["_id"]
-        updating = self.collection.update({"_id":id}, {"name":self.name.text(), "comment":self.comment.text()})
+        updating = update_project(where={"_id": id}, set={"name": self.name.text(), "comment": self.comment.text()})
         if updating["n"] == 1:
-            self.project = self.connexion.get_one("Projects", id)
+            self.project = get_one_project(id=id)
         else:
             create_messageBox("Erreur", "Une erreur est survenue")
 
     def save_new(self):
-        query = {"name":self.name.text(), "comment":self.comment.text(), "ids_gb":[]}
-        existed = self.collection.find_one({"name":self.name.text()})
+        query = {"name": self.name.text(), "comment": self.comment.text(), "ids_gb": []}
+        existed = get_one_project(name=self.name.text())
         if existed is not None:
             create_messageBox("Attention !", "Ce nom de projet existe déjà !")
             return False
         else:
-            add = self.collection.insert_one(query)
+            add = save_project(query)
             if add.acknowledged:
-                self.project = self.connexion.get_one("Projects", add.inserted_id)
+                self.project = get_one_project(id=add.inserted_id)
                 return True
             else:
                 create_messageBox("Erreur", "Une erreur est survenue")
                 return False
 
     def delete_project(self):
-        delete = self.collection.delete_one({"_id":self.project["_id"]})
+        delete = delete_project(self.project["_id"])
         self.project = None
         self.close()

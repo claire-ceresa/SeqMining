@@ -1,4 +1,3 @@
-import subprocess
 from pymongo import MongoClient
 
 
@@ -6,13 +5,7 @@ class MongoDB_Connexion:
     """Object dealing with the connexion to the MongoDB database"""
 
     def __init__(self):
-        # self.process = subprocess.Popen("mongoDB.bat")
-        # self.process = subprocess.Popen('mongod.exe')
         self.connexion = MongoClient()
-
-    # def terminate_process(self):
-    #     """Put an end to the mongoDB.bat process"""
-    #     self.process.terminate()
 
     def close(self):
         """Close the connexion with the database"""

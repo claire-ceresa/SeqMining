@@ -1,9 +1,9 @@
-from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem
 from views.db_results_view import Ui_db_results
 from controllers. DB_Product_Window import DB_Product_Window
 from controllers.Excel_Window import Excel_Window
 
-class DB_Results_Window(QtWidgets.QMainWindow, Ui_db_results):
+class DB_Results_Window(QMainWindow, Ui_db_results):
     """
     controlling class for db_results_view
     """
@@ -42,5 +42,5 @@ class DB_Results_Window(QtWidgets.QMainWindow, Ui_db_results):
         self.label_result.setText(str(len(self.results)) + " résultats")
         for line, result in enumerate(self.results):
             self.table_result.setRowCount(line+1)
-            self.table_result.setItem(line, 0, QtWidgets.QTableWidgetItem(result["_id"]))
-            self.table_result.setItem(line, 1, QtWidgets.QTableWidgetItem(result["description"]))
+            self.table_result.setItem(line, 0, QTableWidgetItem(result["_id"]))
+            self.table_result.setItem(line, 1, QTableWidgetItem(result["description"]))

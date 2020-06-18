@@ -1,11 +1,12 @@
-from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QMainWindow
 from views.principal_view import Ui_Principal_Window
 from controllers.NCBI_Search_Window import NCBI_Search_Window
 from controllers.DB_Search_Window import DB_Search_Window
 from functions.other_functions import *
 from objects.MongoDB_Connexion import MongoDB_Connexion
 
-class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
+
+class Principal(QMainWindow, Ui_Principal_Window):
     """
     controlling class for principal_view
     """
@@ -14,29 +15,24 @@ class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
         super(Principal, self).__init__(parent)
         self.setupUi(self)
         self.setWindowTitle("SeqMining")
-        self.connected_to_internet = True
-        self.mongoDB_connexion = MongoDB_Connexion()
+        self.connected_to_internet = self._check_connexion_to_internet()
+        self.connected_to_db = self._check_connexion_to_db()
         self.window_ncbi = None
         self.window_db = None
-        self._set_properties()
         self._init_ui()
 
-    def _set_properties(self):
-        """Set the properties of the object"""
-        internet = connected_to_internet("https://www.ncbi.nlm.nih.gov/nucleotide")
-        if not internet["connected"]:
-            self.connected_to_internet = False
+        #self.mongoDB_connexion = MongoDB_Connexion()
 
     # METHODS OF THE CLASS #
 
     def button_ncbi_clicked(self):
         """Open the NCBI window"""
-        self.window_ncbi = NCBI_Search_Window(connexion=self.mongoDB_connexion)
+        self.window_ncbi = NCBI_Search_Window()
         self.window_ncbi.show()
 
     def button_db_clicked(self):
         """Open the DB window"""
-        self.window_db = DB_Search_Window(connexion=self.mongoDB_connexion)
+        self.window_db = DB_Search_Window()
         self.window_db.show()
 
     def button_analyses_clicked(self):
@@ -63,9 +59,24 @@ class Principal(QtWidgets.QMainWindow, Ui_Principal_Window):
 
     def _init_label_db(self):
         """Initialise the label of connexion to the database"""
-        if self.mongoDB_connexion.connected_to_server:
+        if self.connected_to_db:
             self.label_connex_db.setText("Connecté à la base de données")
             self.label_connex_db.setStyleSheet("color: rgb(0, 150, 0);")
         else:
             self.label_connex_db.setText("Pas connecté à la base de données")
             self.label_connex_db.setStyleSheet("color: rgb(255, 0, 0);")
+
+
+    # CONNEXION FUNCTIONS #
+
+    def _check_connexion_to_db(self) :
+        """Return state of connexion to db"""
+        connexion = MongoDB_Connexion()
+        state = connexion.connected_to_server()
+        connexion.close()
+        return state
+
+    def _check_connexion_to_internet(self):
+        """Return state of connexion to internet"""
+        internet = connected_to_internet("https://www.ncbi.nlm.nih.gov/nucleotide")
+        return internet["connected"]

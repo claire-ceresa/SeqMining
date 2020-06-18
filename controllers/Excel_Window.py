@@ -1,11 +1,10 @@
-import os
-from PyQt5.QtWidgets import QMainWindow, QComboBox, QFileDialog
 from views.excel_view import Ui_excel_window
 from functions.graphics_function import *
 from objects.DB_Product import DB_Product
 from objects.Excel import Excel
 
-class Excel_Window(QMainWindow, Ui_excel_window):
+
+class Excel_Window(QtWidgets.QMainWindow, Ui_excel_window):
     """
     controlling class for excel_view
     """
@@ -46,7 +45,7 @@ class Excel_Window(QMainWindow, Ui_excel_window):
 
     def _create_cell_combobox(self, column):
         """Create a QComboBox in the header cell"""
-        combobox = QComboBox()
+        combobox = QtWidgets.QComboBox()
         fill_combobox(combobox, list(self.corresp_var_method))
         self.table.setCellWidget(0, column, combobox)
         self.table.resizeColumnsToContents()
