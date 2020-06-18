@@ -1,5 +1,7 @@
 import os
 from PyQt5 import QtWidgets, QtGui
+from PyQt5.Qt import Qt
+
 
 def create_combobox(widgets=None):
     combobox = QtWidgets.QComboBox()
@@ -27,6 +29,7 @@ def create_label(text=None, wordwrap=True):
     """Create and return a QLabel with the text setted"""
     label = QtWidgets.QLabel()
     label.setText(text)
+    label.setCursor(Qt.PointingHandCursor)
     if wordwrap:
         label.setWordWrap(True)
     else:

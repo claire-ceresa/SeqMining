@@ -18,7 +18,6 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
         super(DB_Search_Window, self).__init__(parent)
         self.setupUi(self)
         self.setWindowTitle("Rechercher sur la base de données locale")
-        #self.mongoDB_connexion = connexion
         self.window_project = None
         self.window_result = None
         self._init_ui()

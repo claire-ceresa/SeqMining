@@ -22,7 +22,7 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
         self.setWindowTitle("Rechercher sur NCBI Nucleotide")
         self.init_ui()
         self.request = None
-        self.window_product = None
+        self.product_windows = []
         self.groupbox_results.hide()
 
     def init_ui(self):
@@ -59,8 +59,9 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
         if len(id) > 0:
             product = NCBI_Product(id=id)
             if product.valid:
-                self.window_product = NCBI_Product_Window(id=id)
-                self.window_product.show()
+                window_product = NCBI_Product_Window(id=id)
+                window_product.show()
+                self.product_windows.append(window_product)
             else:
                 QtWidgets.QApplication.restoreOverrideCursor()
                 create_messageBox("Erreur", "Identifiant inconnu !")
@@ -104,8 +105,9 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
         QtWidgets.QApplication.setOverrideCursor(Qt.WaitCursor)
         id_widget = self.table.item(row, 0)
         id = id_widget.text()
-        self.window_product = NCBI_Product_Window(id=id)
-        self.window_product.show()
+        window_product = NCBI_Product_Window(id=id)
+        window_product.show()
+        self.product_windows.append(window_product)
         QtWidgets.QApplication.restoreOverrideCursor()
 
     def combobox_nb_changed(self):
