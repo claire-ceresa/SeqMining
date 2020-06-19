@@ -14,9 +14,7 @@ from functions.db_functions import *
 Entrez.email= "claire.ceresa@hotmail.fr"
 app = QApplication(sys.argv)
 
-id = "KU902046.1"
-product = get_one_product(id)
-form = DB_Product_Window(product=product)
+form = DB_Search_Window()
 
 form.show()
 app.exec()

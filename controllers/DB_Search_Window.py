@@ -26,13 +26,47 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
 
     def button_search_clicked(self):
         """Launch the search on the MongoDB database and open the result window"""
-        query = self.construct_query()
-        results = find_products(query)
-        if len(results) == 1:
-            self.window_result = DB_Product_Window(product=results[0])
-        else:
-            self.window_result = DB_Results_Window(results=results)
-        self.window_result.show()
+        try:
+            if self.checkbox_project.isChecked():
+                project_name = self.combobox_project.currentText()
+                project = get_one_project(name = project_name)
+            else:
+                project = None
+
+            query = self.construct_query()
+            if query is not None :
+                query_result = find_products(query)
+
+                if project is None:
+                    results = query_result
+                else:
+                    results = []
+                    for product in query_result:
+                        if product["_id"] in project["ids_gb"]:
+                            results.append(product)
+            else:
+                if project is None:
+                    return
+                else:
+                    results = []
+                    for id in project["ids_gb"]:
+                        product = get_one_product(id)
+                        results.append(product)
+
+            if len(results) == 1:
+                self.window_result = DB_Product_Window(product=results[0])
+            else:
+                self.window_result = DB_Results_Window(results=results)
+            self.window_result.show()
+
+
+
+
+
+
+        except Exception as e:
+            print(e)
+
 
     def combobox_date_changed(self, text):
         """Show a 2nd DateEdit if the combobox is 'entre' for the product date"""
@@ -108,7 +142,8 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
             'checkbox_taxo': 'annotations.taxonomy',
             'checkbox_title': 'annotations.references.title',
             'checkbox_author': 'annotations.references.authors',
-            'checkbox_journal': 'annotations.references.journal'
+            'checkbox_journal': 'annotations.references.journal',
+            'checkbox_project': None
         }
         return checkboxes
 
@@ -142,6 +177,9 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
                     date_2 = datetime.strptime(text_2, '%d/%m/%Y')
                     value = {"$gte": date_1, "$lt": date_2}
 
+            elif checkbox_name == "checkbox_project":
+                continue
+
             else:
                 edit = getattr(self, edit_name)
                 text = edit.text()
@@ -155,8 +193,10 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
 
         if len(parts_of_query) > 1:
             query = {"$and":parts_of_query}
-        else:
+        elif len(parts_of_query) == 1:
             query = parts_of_query[0]
+        else:
+            query = None
 
         return query
 
