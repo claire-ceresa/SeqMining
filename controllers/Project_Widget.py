@@ -92,6 +92,7 @@ class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
 
     def version_product(self):
         self.name = create_label(self.project["name"])
+        set_label_bold(self.name, True)
         self.gridLayout.addWidget(self.name, 0, 0)
         if len(self.project["comment"]) > 0:
             self.comment = create_label(self.project["comment"])

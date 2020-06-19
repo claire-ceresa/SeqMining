@@ -145,6 +145,7 @@ def get_directory():
         dir = str(QtWidgets.QFileDialog.getExistingDirectory(caption="Choisir un emplacement"))
     return dir
 
+
 def create_radio_button(text):
     button = QtWidgets.QRadioButton()
     button.setText(text)

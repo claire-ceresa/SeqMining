@@ -140,11 +140,11 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         label_add = create_label("Ajouter à un autre projet")
         set_label_clickable(label_add)
         label_add.mouseReleaseEvent = self.add_to_a_project
-        self.layout_gb_2.addWidget(label_add)
+        self.layout_button = create_layout([label_add], vertical=True)
+        self.layout_gb_2.addLayout(self.layout_button)
 
         spacer = create_spacer(vertical=True)
-        layout = self.groupbox_proj.groupbox.layout()
-        layout.addItem(spacer)
+        self.layout_gb_2.addItem(spacer)
 
     def set_sequence(self, id):
         sequence = self.product["seq"]["seq"]
@@ -196,7 +196,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         set_label_clickable(label_ok)
         label_ok.mouseReleaseEvent = self.save_product_in_project
         layout = create_layout([self.combobox_project, label_ok], horizontal=True)
-        self.layout_gb_2.addLayout(layout)
+        self.layout_button.addLayout(layout)
 
     def save_product_in_project(self, event):
         name = self.combobox_project.currentText()
