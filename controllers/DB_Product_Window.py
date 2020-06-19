@@ -1,6 +1,7 @@
 from PyQt5.Qt import *
 from views.db_product_view import Ui_db_product
 from controllers.Project_Widget import Project_Widget
+from widgets.Product_Groupbox import Product_Groupbox
 from functions.NCBI_functions import *
 from functions.other_functions import *
 from functions.graphics_function import *
@@ -106,54 +107,35 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.layout_feature.addWidget(self.scroll_area_feature)
 
     def create_annotations(self):
-        groupbox_gen = create_groupbox(title='Generalities')
-        scroll_area_gen = create_scroll_area(groupbox_gen, minwidth=200, frame=False)
-        self.layout_gb_1.addWidget(scroll_area_gen)
-        groupbox_org = create_groupbox(title="Organism")
-        scroll_area_org = create_scroll_area(groupbox_org, minwidth=200, frame=False)
-        self.layout_gb_1.addWidget(scroll_area_org)
-
+        self.groupbox_gen = Product_Groupbox(type="Generalities")
+        self.groupbox_org = Product_Groupbox(type="Organism")
+        self.layout_gb_1.addWidget(self.groupbox_gen)
+        self.layout_gb_1.addWidget(self.groupbox_org)
         annotations = self.product["annotations"]
+
         for key, value in annotations.items():
             if key == "references":
                 continue
             elif key == "organism" :
                 label = create_label(text = get_string(value), wordwrap=False)
                 set_label_bold(label, True)
-                add_widget_to_groupbox(widget=label, groupbox=groupbox_org)
+                self.groupbox_org.add_widget(label)
             elif key == "taxonomy":
                 for rank in annotations["taxonomy"][::-1]:
                     label = create_label(text=rank, wordwrap=False)
-                    add_widget_to_groupbox(widget=label, groupbox=groupbox_org)
+                    self.groupbox_org.add_widget(label)
             else:
                 label = create_label(text = key.capitalize() + " : " + get_string(value), wordwrap=False)
-                add_widget_to_groupbox(widget=label, groupbox=groupbox_gen)
+                self.groupbox_gen.add_widget(label)
 
     def create_ref(self):
-        groupbox_ref = create_groupbox(title="References")
-        scroll_area_ref = create_scroll_area(groupbox_ref, minwidth=200, frame=False)
-        self.layout_gb_2.addWidget(scroll_area_ref)
-
-        annotations = self.product["annotations"]
-        for index, reference in enumerate(annotations["references"]):
-            for key, value in reference.items():
-                if key == "location":
-                    location = create_feature_location(value[0])
-                    label = create_label(text = str(index) + " : " + str(location))
-                    set_label_bold(label, True)
-                else:
-                    label = create_label(text = key.capitalize() + " : " + get_string(value))
-                add_widget_to_groupbox(widget=label, groupbox=groupbox_ref)
+        datas = self.product["annotations"]
+        self.groupbox_ref = Product_Groupbox(datas=datas, type="References")
+        self.layout_gb_2.addWidget(self.groupbox_ref)
 
     def create_project(self):
-        groupbox_project = create_groupbox(title="Projets associés")
-        scroll_area_project = create_scroll_area(groupbox_project, minwidth=200, frame=False)
-        self.layout_gb_2.addWidget(scroll_area_project)
-
-        projects = get_all_projects_for_a_product(self.product["id"])
-        for project in projects:
-            widget = Project_Widget(project=project, statut="Product", product=self.product)
-            add_widget_to_groupbox(widget=widget, groupbox=groupbox_project)
+        self.groupbox_proj = Product_Groupbox(datas=self.product, type="Projects")
+        self.layout_gb_2.addWidget(self.groupbox_proj)
 
         label_add = create_label("Ajouter à un autre projet")
         set_label_clickable(label_add)
@@ -161,7 +143,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.layout_gb_2.addWidget(label_add)
 
         spacer = create_spacer(vertical=True)
-        layout = groupbox_project.layout()
+        layout = self.groupbox_proj.groupbox.layout()
         layout.addItem(spacer)
 
     def set_sequence(self, id):
@@ -218,4 +200,12 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
 
     def save_product_in_project(self, event):
         name = self.combobox_project.currentText()
-        add_product_to_project(id=self.product["id"], project=name)
+        adding = add_product_to_project(id=self.product["id"], project=name)
+        if adding["nModified"] != 1:
+            create_messageBox("Erreur", "Impossible d'ajouter le produit au projet")
+        else:
+            project = get_one_project(name=name)
+            widget = Project_Widget(project=project, statut="Product", product=self.product)
+            self.groupbox_proj.add_widget(widget)
+
+

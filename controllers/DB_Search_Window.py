@@ -141,6 +141,7 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
                     text_2 = edit_2.text()
                     date_2 = datetime.strptime(text_2, '%d/%m/%Y')
                     value = {"$gte": date_1, "$lt": date_2}
+
             else:
                 edit = getattr(self, edit_name)
                 text = edit.text()

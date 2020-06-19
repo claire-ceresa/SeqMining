@@ -52,10 +52,13 @@ class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
         else:
             question = QtWidgets.QMessageBox.question(self, "Supprimer le projet", "Etes vous sûr ?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
             if question == QtWidgets.QMessageBox.Yes:
-                if self.statut == "Product":
-                    self.delete_id_from_project()
-                else:
-                    self.delete_project()
+                try:
+                    if self.statut == "Product":
+                        self.delete_id_from_project()
+                    else:
+                        self.delete_project()
+                except Exception as e:
+                    print(e)
 
     def version_fix(self):
         self.name.close()
@@ -99,7 +102,7 @@ class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
     def update_project(self):
         id = self.project["_id"]
         updating = update_project(where={"_id": id}, set={"name": self.name.text(), "comment": self.comment.text()})
-        if updating["n"] == 1:
+        if updating["nModified"] == 1:
             self.project = get_one_project(id=id)
         else:
             create_messageBox("Erreur", "Une erreur est survenue")
@@ -121,7 +124,7 @@ class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
 
     def delete_project(self):
         delete = delete_project(self.project["_id"])
-        if delete["nModified"] == 1:
+        if delete.deleted_count == 1:
             self.project = None
             self.close()
         else:

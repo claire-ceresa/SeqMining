@@ -38,46 +38,51 @@ def find_project(query):
 
 def get_one_project(id=None, name=None):
     if id is not None:
-        return project_collection.find({"id_": id})
+        return project_collection.find_one({"_id": id})
     else:
-        return project_collection.find({"name":name})
+        return project_collection.find_one({"name":name})
 
 
 def get_all_projects():
-    return project_collection.find({})
+    return list(project_collection.find({}))
 
 
 def get_all_projects_for_a_product(id):
     query = {'ids_gb': {'$in': [id]}}
-    commit = project_collection.find(query)
-    return list(commit)
+    result = project_collection.find(query)
+    return list(result)
 
 
 def get_not_project_for_a_product(id):
     query = {'ids_gb': {'$nin': [id]}}
-    commit = project_collection.find(query)
-    return list(commit)
+    result = project_collection.find(query)
+    return list(result)
 
 
 def add_product_to_project(id, project):
     commit = project_collection.update({'name':project}, {'$addToSet':{'ids_gb':id}})
-    print(commit)
+    return commit
 
 
 def update_project(where, set):
-    return project_collection.update(where, set)
+    commit = project_collection.update(where, set)
+    return commit
 
 
 def save_project(query):
-    return project_collection.insert_one(query)
+    commit = project_collection.insert_one(query)
+    return commit
 
 
 def delete_project(id):
-    return project_collection.delete_one({"_id": id})
+    commit = project_collection.delete_one({"_id": id})
+    return commit
 
 
 def delete_product_from_project(id_project, id_product):
-    return project_collection.update({"_id":id_project}, {"$pull":{"ids_gb":id_product}})
+    commit = project_collection.update({"_id":id_project}, {"$pull":{"ids_gb":id_product}})
+    return commit
+
 
 
 connexion.close()
