@@ -1,5 +1,6 @@
 from datetime import datetime
 from functions.db_functions import *
+from functions.other_functions import *
 
 
 class DB_Product:
@@ -42,5 +43,14 @@ class DB_Product:
     def get_species(self):
         if "organism" in self.data["annotations"]:
             return self.data["annotations"]["organism"]
+        else:
+            return None
+
+    def get_projects(self):
+        id = self.get_id()
+        projects = get_all_projects_for_a_product(id)
+        if len(projects) > 0:
+            list_project = extract_list_of_attribute(list_old=projects, attribute="name")
+            return ", ".join(list_project)
         else:
             return None

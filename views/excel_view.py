@@ -13,11 +13,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_excel_window(object):
     def setupUi(self, excel_window):
         excel_window.setObjectName("excel_window")
-        excel_window.resize(427, 165)
+        excel_window.resize(427, 190)
         self.centralwidget = QtWidgets.QWidget(excel_window)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
+        self.checkbox_project = QtWidgets.QCheckBox(self.centralwidget)
+        self.checkbox_project.setObjectName("checkbox_project")
+        self.verticalLayout.addWidget(self.checkbox_project)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.button_add = QtWidgets.QToolButton(self.centralwidget)
@@ -61,6 +64,7 @@ class Ui_excel_window(object):
     def retranslateUi(self, excel_window):
         _translate = QtCore.QCoreApplication.translate
         excel_window.setWindowTitle(_translate("excel_window", "MainWindow"))
+        self.checkbox_project.setText(_translate("excel_window", "Créer une feuille par projet"))
         self.button_add.setText(_translate("excel_window", "Ajouter une colonne"))
         item = self.table.verticalHeaderItem(1)
         item.setText(_translate("excel_window", "1"))

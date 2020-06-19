@@ -26,46 +26,37 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
 
     def button_search_clicked(self):
         """Launch the search on the MongoDB database and open the result window"""
-        try:
-            if self.checkbox_project.isChecked():
-                project_name = self.combobox_project.currentText()
-                project = get_one_project(name = project_name)
-            else:
-                project = None
+        if self.checkbox_project.isChecked():
+            project_name = self.combobox_project.currentText()
+            project = get_one_project(name = project_name)
+        else:
+            project = None
 
-            query = self.construct_query()
-            if query is not None :
-                query_result = find_products(query)
+        query = self.construct_query()
+        if query is not None :
+            query_result = find_products(query)
 
-                if project is None:
-                    results = query_result
-                else:
-                    results = []
-                    for product in query_result:
-                        if product["_id"] in project["ids_gb"]:
-                            results.append(product)
+            if project is None:
+                results = query_result
             else:
-                if project is None:
-                    return
-                else:
-                    results = []
-                    for id in project["ids_gb"]:
-                        product = get_one_product(id)
+                results = []
+                for product in query_result:
+                    if product["_id"] in project["ids_gb"]:
                         results.append(product)
-
-            if len(results) == 1:
-                self.window_result = DB_Product_Window(product=results[0])
+        else:
+            if project is None:
+                return
             else:
-                self.window_result = DB_Results_Window(results=results)
-            self.window_result.show()
+                results = []
+                for id in project["ids_gb"]:
+                    product = get_one_product(id)
+                    results.append(product)
 
-
-
-
-
-
-        except Exception as e:
-            print(e)
+        if len(results) == 1:
+            self.window_result = DB_Product_Window(product=results[0])
+        else:
+            self.window_result = DB_Results_Window(results=results)
+        self.window_result.show()
 
 
     def combobox_date_changed(self, text):

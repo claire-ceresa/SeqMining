@@ -1,5 +1,6 @@
 from views.excel_view import Ui_excel_window
 from functions.graphics_function import *
+from functions.db_functions import *
 from objects.DB_Product import DB_Product
 from objects.Excel import Excel
 
@@ -14,7 +15,8 @@ class Excel_Window(QtWidgets.QMainWindow, Ui_excel_window):
         'Description': 'get_description',
         'Taille': 'get_length',
         'Espèce': 'get_species',
-        'Sequence': 'get_sequence'
+        'Sequence': 'get_sequence',
+        'Projets': 'get_projects'
     }
 
     def __init__(self, parent=None, results=None):
@@ -24,6 +26,8 @@ class Excel_Window(QtWidgets.QMainWindow, Ui_excel_window):
         self.results = results
         self._create_cell_combobox(0)
 
+    # METHODS OF THE CLASS #
+
     def button_add_clicked(self):
         count = self.table.columnCount()
         if count < len(self.corresp_var_method):
@@ -31,17 +35,30 @@ class Excel_Window(QtWidgets.QMainWindow, Ui_excel_window):
             self._create_cell_combobox(column=count)
 
     def button_export_clicked(self):
-        datas_to_export = self.get_data_to_export()
         try:
             filename = get_save_filename("Excel")
             file = Excel(filename)
-            worksheet = file.add_worksheet()
-            file.add_data(worksheet, datas_to_export)
+
+            if self.checkbox_project.isChecked():
+                splitted_results = self.split_results()
+                for project, data in splitted_results.items():
+                    datas_to_export = self.get_data_to_export(data)
+                    worksheet = file.add_worksheet(project)
+                    file.add_data(worksheet, datas_to_export)
+
+            else:
+                datas_to_export = self.get_data_to_export(self.results)
+                worksheet = file.add_worksheet()
+                file.add_data(worksheet, datas_to_export)
+
             file.close()
+
         except Exception as e:
             self.label_created.setText("Le fichier n'a pas été crée !\n" + str(e))
         else:
             self.label_created.setText("Le fichier a été crée !")
+
+    # GRAPHIC METHODS #
 
     def _create_cell_combobox(self, column):
         """Create a QComboBox in the header cell"""
@@ -50,7 +67,9 @@ class Excel_Window(QtWidgets.QMainWindow, Ui_excel_window):
         self.table.setCellWidget(0, column, combobox)
         self.table.resizeColumnsToContents()
 
-    def get_data_to_export(self):
+    # OTHER METHODS #
+
+    def get_data_to_export(self, results):
         headers = []
         nb_columns = self.table.columnCount()
         for column in range(0, nb_columns):
@@ -59,7 +78,7 @@ class Excel_Window(QtWidgets.QMainWindow, Ui_excel_window):
             headers.append(variable_name)
 
         datas = []
-        for result in self.results:
+        for result in results:
             line = []
             product = DB_Product(data=result)
             for header in headers:
@@ -69,3 +88,21 @@ class Excel_Window(QtWidgets.QMainWindow, Ui_excel_window):
             datas.append(line)
 
         return {"column_names":headers, "rows":datas}
+
+    def split_results(self):
+        all_projects = get_all_projects()
+        splitted_results = {"Aucun":[]}
+        for project in all_projects:
+            name = project["name"]
+            splitted_results[name] = []
+
+        for result in self.results:
+            id = result["id"]
+            projects = get_all_projects_for_a_product(id)
+            if len(projects) == 0:
+                splitted_results["Aucun"].append(result)
+            else:
+                for project in projects:
+                    name = project["name"]
+                    splitted_results[name].append(result)
+        return splitted_results
