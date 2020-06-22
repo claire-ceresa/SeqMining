@@ -1,4 +1,5 @@
 import sys
+import subprocess
 from Bio import Entrez, SeqIO, Seq, SeqFeature
 from PyQt5.QtWidgets import *
 from controllers.NCBI_Search_Window import NCBI_Search_Window
@@ -11,11 +12,14 @@ from objects.DB_Product import DB_Product
 from objects.NCBI_Product import NCBI_Product
 from functions.db_functions import *
 
+process = subprocess.Popen('mongod.exe')
 Entrez.email= "claire.ceresa@hotmail.fr"
 app = QApplication(sys.argv)
 
-form = DB_Search_Window()
+product = get_one_product("KU902046.1")
+form = DB_Product_Window(product=product)
 
 form.show()
 app.exec()
+process.terminate()
 

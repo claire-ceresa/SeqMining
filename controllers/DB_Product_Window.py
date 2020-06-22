@@ -1,4 +1,3 @@
-from PyQt5.Qt import *
 from views.db_product_view import Ui_db_product
 from controllers.Project_Widget import Project_Widget
 from widgets.Product_Groupbox import Product_Groupbox
@@ -27,6 +26,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
     ## METHODS OF THE CLASS ##
 
     def button_feature_clicked(self, id):
+        """Set the groupbox with the elements of the feature"""
         if self.groupbox_feature is not None:
             self.groupbox_feature.close()
             self.scroll_area_feature.close()
@@ -34,12 +34,14 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.set_sequence(id)
 
     def action_gen_toggled(self, checked):
+        """Open the groupbox with the elements of the annotations of the product"""
         if checked:
             self.create_annotations()
         else:
             clear_layout(self.layout_gb_1)
 
     def action_ref_toggled(self, checked):
+        """Open the groupbox with the elements of the references of the product (if existed)"""
         if self.action_projet.isChecked() == checked:
             clear_layout(self.layout_gb_2)
             self.action_projet.setChecked(False)
@@ -49,6 +51,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
             clear_layout(self.layout_gb_2)
 
     def action_projet_toggled(self, checked):
+        """Open the groupbox dealing with the project associated to the product"""
         if self.action_ref.isChecked() == checked:
             clear_layout(self.layout_gb_2)
             self.action_ref.setChecked(False)
@@ -57,9 +60,10 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         else:
             clear_layout(self.layout_gb_2)
 
-    ## GRAPHIC METHODS ##
+    ## GRAPHIC INIT METHODS ##
 
     def _init_ui(self):
+        """Initialize the different graphic items"""
         self._init_label_title()
         self._init_features()
         self._init_source()
@@ -67,12 +71,14 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
             self.action_ref.setEnabled(False)
 
     def _init_label_title(self):
+        """Initialize the title of the product"""
         self.label_id.setText(self.product["id"])
         self.label_descr.setText(self.product["description"])
         date_string = get_string(self.product["download_date"])
         self.label_download.setText("Téléchargé le " + date_string)
 
     def _init_features(self):
+        """Initialize the groupbox with the list of all the features of the product"""
         widgets = []
 
         features = self.product["features"]
@@ -86,12 +92,16 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.groupbutton.buttonClicked['int'].connect(self.button_feature_clicked)
 
     def _init_source(self):
+        """Initialize the feature source when the window open"""
         button = self.groupbutton.button(0)
         if button is not None:
             button.setChecked(True)
             self.button_feature_clicked(0)
 
+    ## GRAPHIC METHODS of the groupboxes ##
+
     def creation_groupbox_feature(self, id):
+        """Fill in the groupbox with the elements of the feature selected"""
         self.groupbox_feature = create_groupbox()
 
         feature = self.product["features"][id]
@@ -107,6 +117,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.layout_feature.addWidget(self.scroll_area_feature)
 
     def create_annotations(self):
+        """Fill in the groupbox with the element of the annotations dict of the product"""
         self.groupbox_gen = Product_Groupbox(type="Generalities")
         self.groupbox_org = Product_Groupbox(type="Organism")
         self.layout_gb_1.addWidget(self.groupbox_gen)
@@ -129,11 +140,13 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
                 self.groupbox_gen.add_widget(label)
 
     def create_ref(self):
+        """Fill in the groupbox with the element of the references of the product"""
         datas = self.product["annotations"]
         self.groupbox_ref = Product_Groupbox(datas=datas, type="References")
         self.layout_gb_2.addWidget(self.groupbox_ref)
 
     def create_project(self):
+        """Fill in the groupbox with the list of projects associated to the product"""
         self.groupbox_proj = Product_Groupbox(datas=self.product, type="Projects")
         self.layout_gb_2.addWidget(self.groupbox_proj)
 
@@ -146,7 +159,10 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         spacer = create_spacer(vertical=True)
         self.layout_gb_2.addItem(spacer)
 
+    ## METHODS concerning the sequence ##
+
     def set_sequence(self, id):
+        """Fill in the sequence"""
         sequence = self.product["seq"]["seq"]
         feature = self.product["features"][id]
         location_dict = feature["location"]
@@ -161,13 +177,62 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
             else:
                 self.colore_feature_location(location, sequence)
 
-    def colore_feature_location(self,location, sequence):
+    def cut_sequence(self, extract, sequence):
+        """Cut the part of the sequence concerning by the feature selected"""
+        # middle = "<span style='color:#ff0000;'>" + str(break_seq(extract)) + "</span>"
+        # position_start_feature = sequence.find(extract)
+        # position_end_feature = position_start_feature + len(extract)
+        # begin = sequence[:position_start_feature]
+        # end = sequence[position_end_feature:]
+        # return [break_seq(begin), middle, break_seq(end)]
+
+        middle = "<span style='color:#ff0000;'>" + extract + "</span>"
+        position_start_feature = sequence.find(extract)
+        position_end_feature = position_start_feature + len(extract)
+        begin = sequence[:position_start_feature]
+        end = sequence[position_end_feature:]
+        sequence_color = begin + middle + end
+
+        position_outside = 0
+        parts = []
+        part = ""
+        x = 0
+
+        while x < len(sequence):
+            c = sequence_color[position_outside]
+            if c == "<":
+                position_inside = position_outside
+                while c != ">":
+                    part = part + c
+                    position_inside = position_inside + 1
+                    c = sequence_color[position_inside]
+                else:
+                    part = part + c
+                    position_inside = position_inside + 1
+                    c = sequence_color[position_inside]
+                    position_outside = position_inside
+
+            else:
+                if x % 10 == 0 and x != 0:
+                    parts.append(part)
+                    part = c
+                else:
+                    part = part + c
+                position_outside = position_outside + 1
+                x = x + 1
+
+        parts.append(part)
+        return parts
+
+    def colore_feature_location(self, location, sequence):
+        """Colore in red the part of the sequence concerning by the feature selected"""
         extract = location.extract(sequence)
         cut_sequence = self.cut_sequence(extract, sequence)
         sequence_finale = " ".join(cut_sequence)
         self.label_seq.setText(sequence_finale)
 
     def colore_compound_location(self, location, all_sequence):
+        """Colore in red the part of the sequence concerning by the feature selected"""
         all_cut_part = []
         sequence = all_sequence
         for part in location.parts:
@@ -180,15 +245,11 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         sequence_finale = " ".join(all_cut_part)
         self.label_seq.setText(sequence_finale)
 
-    def cut_sequence(self, extract, sequence):
-        middle = "<span style='color:#ff0000;'>" + str(break_seq(extract)) + "</span>"
-        position_start_feature = sequence.find(extract)
-        position_end_feature = position_start_feature + len(extract)
-        begin = sequence[:position_start_feature]
-        end = sequence[position_end_feature:]
-        return [break_seq(begin), middle, break_seq(end)]
+
+    ## METHODS concerning the project associated ##
 
     def add_to_a_project(self, event):
+        """When button Add clicked, open the combobox to choose the new project"""
         projects = get_not_project_for_a_product(self.product["id"])
         project_name = extract_list_of_attribute(projects, "name")
         self.combobox_project = create_combobox(project_name)
@@ -199,6 +260,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.layout_button.addLayout(layout)
 
     def save_product_in_project(self, event):
+        """When button Saved clicked, save the product to the project selected"""
         name = self.combobox_project.currentText()
         adding = add_product_to_project(id=self.product["id"], project=name)
         if adding["nModified"] != 1:
@@ -207,5 +269,3 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
             project = get_one_project(name=name)
             widget = Project_Widget(project=project, statut="Product", product=self.product)
             self.groupbox_proj.add_widget(widget)
-
-
