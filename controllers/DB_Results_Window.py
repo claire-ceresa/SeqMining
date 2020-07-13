@@ -17,7 +17,7 @@ class DB_Results_Window(QMainWindow, Ui_db_results):
         self.product_windows = []
         self._init_ui()
 
-    # METHODS OF THE CLASS #
+    ## METHODS OF THE CLASS ##
 
     def table_result_clicked(self, line, column):
         """Open the DB window of the product """
@@ -28,14 +28,11 @@ class DB_Results_Window(QMainWindow, Ui_db_results):
 
     def button_extract_clicked(self):
         """Extract the result to an Excel file"""
-        # TODO : extraction to Excel personnalise
-        try:
-            self.excel_window = Excel_Window(results=self.results)
-            self.excel_window.show()
-        except Exception as e:
-            print(e)
+        self.excel_window = Excel_Window(results=self.results)
+        self.excel_window.show()
 
-    # GRAPHIC METHODS #
+
+    ## GRAPHIC METHODS ##
 
     def _init_ui(self):
         """Initialize the user interface"""

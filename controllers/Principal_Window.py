@@ -21,8 +21,6 @@ class Principal(QMainWindow, Ui_Principal_Window):
         self.window_db = None
         self._init_ui()
 
-        #self.mongoDB_connexion = MongoDB_Connexion()
-
     # METHODS OF THE CLASS #
 
     def button_ncbi_clicked(self):
@@ -35,10 +33,6 @@ class Principal(QMainWindow, Ui_Principal_Window):
         self.window_db = DB_Search_Window()
         self.window_db.show()
 
-    def button_analyses_clicked(self):
-        """Open the Analyses window"""
-        # TODO : create the analyses
-        print("analyses")
 
     # GRAPHIC METHODS #
 
@@ -65,7 +59,6 @@ class Principal(QMainWindow, Ui_Principal_Window):
         else:
             self.label_connex_db.setText("Pas connecté à la base de données")
             self.label_connex_db.setStyleSheet("color: rgb(255, 0, 0);")
-
 
     # CONNEXION FUNCTIONS #
 

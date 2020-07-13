@@ -17,7 +17,7 @@ class DB_Download_Window(QDialog, Ui_db_download):
         self._init_properties()
         self._init_ui()
 
-    # GRAPHIC METHODS #
+    ## INIT METHODS ##
 
     def _init_properties(self):
         """Set the number of result saved and the errors"""
@@ -26,6 +26,8 @@ class DB_Download_Window(QDialog, Ui_db_download):
                 self.number_saved = self.number_saved + 1
             else:
                 self.errors.append(result)
+
+    ## GRAPHIC METHODS ##
 
     def _init_ui(self):
         """Initialize the user interface"""

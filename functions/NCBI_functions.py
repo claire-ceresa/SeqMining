@@ -50,21 +50,45 @@ def get_summary(id):
     return record
 
 
-def break_seq(seq, step=10):
-    seqList = []
-    start = 0
-    stop = len(seq)
-    stop += step
+def break_seq(sequence, sequence_color=None, step=10):
+    position_outside = 0
+    parts = []
+    part = ""
+    x = 0
 
-    for index in range(start, stop, step):
-        seqList.append(seq[:step])
-        seq = seq[step:]
+    if sequence_color is None:
+        sequence_color = sequence
 
-    return " ".join(seqList)
+    while x < len(sequence):
+        c = sequence_color[position_outside]
+        if c == "<":
+            position_inside = position_outside
+            while c != ">":
+                part = part + c
+                position_inside = position_inside + 1
+                c = sequence_color[position_inside]
+            else:
+                part = part + c
+                position_inside = position_inside + 1
+                c = sequence_color[position_inside]
+                position_outside = position_inside
+
+        else:
+            if x % step == 0 and x != 0:
+                parts.append(part)
+                part = c
+            else:
+                part = part + c
+            position_outside = position_outside + 1
+            x = x + 1
+
+    parts.append(part)
+    return parts
 
 
 def create_feature_location(dict):
-    if "positions" in dict:
+    if "positions" in dict and len(dict["positions"]) > 1:
+
         positions = []
         for part in dict["positions"]:
             position = create_feature_location(part)
@@ -76,5 +100,6 @@ def create_feature_location(dict):
         end_class = getattr(SeqFeature, dict["end"][1])
         end_position = end_class(dict["end"][0])
         strand = dict["strand"]
-        location = SeqFeature.FeatureLocation(start=start_position, end=end_position, strand=strand)
+        ref = dict["ref"]
+        location = SeqFeature.FeatureLocation(start=start_position, end=end_position, strand=strand, ref=ref)
     return location

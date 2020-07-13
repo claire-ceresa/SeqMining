@@ -13,14 +13,15 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Principal_Window(object):
     def setupUi(self, Principal_Window):
         Principal_Window.setObjectName("Principal_Window")
-        Principal_Window.resize(402, 274)
+        Principal_Window.resize(402, 207)
         self.centralwidget = QtWidgets.QWidget(Principal_Window)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.label_title = QtWidgets.QLabel(self.centralwidget)
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(13)
+        font.setItalic(False)
         self.label_title.setFont(font)
         self.label_title.setAlignment(QtCore.Qt.AlignCenter)
         self.label_title.setObjectName("label_title")
@@ -39,13 +40,6 @@ class Ui_Principal_Window(object):
         self.button_db.setFont(font)
         self.button_db.setObjectName("button_db")
         self.verticalLayout.addWidget(self.button_db)
-        self.button_analyse = QtWidgets.QPushButton(self.centralwidget)
-        self.button_analyse.setMinimumSize(QtCore.QSize(0, 51))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.button_analyse.setFont(font)
-        self.button_analyse.setObjectName("button_analyse")
-        self.verticalLayout.addWidget(self.button_analyse)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.label_connex_internet = QtWidgets.QLabel(self.centralwidget)
@@ -64,7 +58,6 @@ class Ui_Principal_Window(object):
         self.retranslateUi(Principal_Window)
         self.button_ncbi.clicked.connect(Principal_Window.button_ncbi_clicked)
         self.button_db.clicked.connect(Principal_Window.button_db_clicked)
-        self.button_analyse.clicked.connect(Principal_Window.button_analyses_clicked)
         QtCore.QMetaObject.connectSlotsByName(Principal_Window)
 
     def retranslateUi(self, Principal_Window):
@@ -73,7 +66,6 @@ class Ui_Principal_Window(object):
         self.label_title.setText(_translate("Principal_Window", "SeqMining"))
         self.button_ncbi.setText(_translate("Principal_Window", "Accéder à NCBI Nucleotide en ligne"))
         self.button_db.setText(_translate("Principal_Window", "Accéder aux données de la base de données"))
-        self.button_analyse.setText(_translate("Principal_Window", "Analyses"))
 
 
 if __name__ == "__main__":

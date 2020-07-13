@@ -16,8 +16,16 @@ process = subprocess.Popen('mongod.exe')
 Entrez.email= "claire.ceresa@hotmail.fr"
 app = QApplication(sys.argv)
 
-product = get_one_product("KU902046.1")
+id= "AL844605.5"
+ncbi_product = NCBI_Product(id=id)
+
+product = ncbi_product.get_product_as_dict()
+product["_id"] = 0
+product["download_date"] = ""
+
+# product = get_one_product("X94120.1")
 form = DB_Product_Window(product=product)
+
 
 form.show()
 app.exec()

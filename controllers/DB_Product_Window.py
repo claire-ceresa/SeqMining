@@ -27,11 +27,14 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
 
     def button_feature_clicked(self, id):
         """Set the groupbox with the elements of the feature"""
-        if self.groupbox_feature is not None:
-            self.groupbox_feature.close()
-            self.scroll_area_feature.close()
-        self.creation_groupbox_feature(id)
-        self.set_sequence(id)
+        try:
+            if self.groupbox_feature is not None:
+                self.groupbox_feature.close()
+                self.scroll_area_feature.close()
+            self.creation_groupbox_feature(id)
+            self.set_sequence(id)
+        except Exception as e:
+            print(e)
 
     def action_gen_toggled(self, checked):
         """Open the groupbox with the elements of the annotations of the product"""
@@ -107,7 +110,9 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         feature = self.product["features"][id]
         for key, value in feature["qualifiers"].items():
             if key == "translation":
-                label_qualifier = create_label(text = key.capitalize() + " :\n" + break_seq(value[0], step=60), wordwrap=True)
+                cut_sequence = break_seq(sequence=value[0], step=60)
+                label_qualifier = create_label(text = key.capitalize() + " :\n" + " ".join(cut_sequence), wordwrap=True)
+                #label_qualifier = create_label(text = key.capitalize() + " :\n" + break_seq(value[0], step=60), wordwrap=True)
                 label_qualifier.setTextInteractionFlags(Qt.TextSelectableByMouse)
             else:
                 label_qualifier = create_label(text = key.capitalize() + " : " + get_string(value))
@@ -172,63 +177,27 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
             self.colore_compound_location(location, sequence)
         else:
             if location.start == 0 and location.end == len(sequence):
-                cut_sequence = break_seq(sequence)
-                self.label_seq.setText(cut_sequence)
+                break_sequence = break_seq(sequence=sequence)
+                self.label_seq.setText(" ".join(break_sequence))
             else:
                 self.colore_feature_location(location, sequence)
 
     def cut_sequence(self, extract, sequence):
         """Cut the part of the sequence concerning by the feature selected"""
-        # middle = "<span style='color:#ff0000;'>" + str(break_seq(extract)) + "</span>"
-        # position_start_feature = sequence.find(extract)
-        # position_end_feature = position_start_feature + len(extract)
-        # begin = sequence[:position_start_feature]
-        # end = sequence[position_end_feature:]
-        # return [break_seq(begin), middle, break_seq(end)]
-
         middle = "<span style='color:#ff0000;'>" + extract + "</span>"
         position_start_feature = sequence.find(extract)
         position_end_feature = position_start_feature + len(extract)
         begin = sequence[:position_start_feature]
         end = sequence[position_end_feature:]
-        sequence_color = begin + middle + end
+        return [begin, middle, end]
 
-        position_outside = 0
-        parts = []
-        part = ""
-        x = 0
-
-        while x < len(sequence):
-            c = sequence_color[position_outside]
-            if c == "<":
-                position_inside = position_outside
-                while c != ">":
-                    part = part + c
-                    position_inside = position_inside + 1
-                    c = sequence_color[position_inside]
-                else:
-                    part = part + c
-                    position_inside = position_inside + 1
-                    c = sequence_color[position_inside]
-                    position_outside = position_inside
-
-            else:
-                if x % 10 == 0 and x != 0:
-                    parts.append(part)
-                    part = c
-                else:
-                    part = part + c
-                position_outside = position_outside + 1
-                x = x + 1
-
-        parts.append(part)
-        return parts
 
     def colore_feature_location(self, location, sequence):
         """Colore in red the part of the sequence concerning by the feature selected"""
         extract = location.extract(sequence)
-        cut_sequence = self.cut_sequence(extract, sequence)
-        sequence_finale = " ".join(cut_sequence)
+        cut_sequence = "".join(self.cut_sequence(extract, sequence))
+        break_sequence = break_seq(sequence=sequence, sequence_color=cut_sequence)
+        sequence_finale = " ".join(break_sequence)
         self.label_seq.setText(sequence_finale)
 
     def colore_compound_location(self, location, all_sequence):
@@ -236,14 +205,15 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         all_cut_part = []
         sequence = all_sequence
         for part in location.parts:
-            extract = part.extract(all_sequence)
-            cut_sequence = self.cut_sequence(extract, sequence)
-            all_cut_part.append(cut_sequence[0])
-            all_cut_part.append(cut_sequence[1])
-            sequence = cut_sequence[2].replace(" ", "")
+            if part.ref is None:
+                extract = part.extract(all_sequence)
+                cut_sequence = self.cut_sequence(extract, sequence)
+                all_cut_part.append(cut_sequence[0])
+                all_cut_part.append(cut_sequence[1])
         all_cut_part.append(cut_sequence[2])
-        sequence_finale = " ".join(all_cut_part)
-        self.label_seq.setText(sequence_finale)
+        sequence_finale = "".join(all_cut_part)
+        break_seq_finale = break_seq(all_sequence, sequence_finale)
+        self.label_seq.setText( " ".join(break_seq_finale))
 
 
     ## METHODS concerning the project associated ##

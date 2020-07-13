@@ -22,7 +22,7 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
         self.window_result = None
         self._init_ui()
 
-    # METHODS OF THE CLASS #
+    ## METHODS OF THE CLASS ##
 
     def button_search_clicked(self):
         """Launch the search on the MongoDB database and open the result window"""
@@ -83,7 +83,7 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
             self._init_combobox_project()
 
 
-    # GRAPHIC METHODS #
+    ## GRAPHIC METHODS ##
 
     def _init_ui(self):
         """Initialize the user interface"""
@@ -113,7 +113,7 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
                 checked[key] = checkbox_widget
         return checked
 
-    # OTHER FUNCTIONS #
+    ## OTHER FUNCTIONS ##
 
     def get_checkbox_corresp_key(self):
         """

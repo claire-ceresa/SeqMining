@@ -89,7 +89,8 @@ class NCBI_Product:
             start = [int(object.start), object.start.__class__.__name__]
             end = [int(object.end), object.end.__class__.__name__]
             strand = object.strand
-            final = {"start": start, "end": end, "strand": strand}
+            ref = object.ref
+            final = {"start": start, "end": end, "strand": strand, "ref": ref}
 
         elif isinstance(object, SeqFeature.CompoundLocation):
             operator = object.operator
@@ -98,7 +99,7 @@ class NCBI_Product:
             for part in parts:
                 position = self.analyse_object(part)
                 positions.append(position)
-            final = {"positions":positions, "operator":operator}
+            final = {"positions": positions, "operator": operator}
 
         else:
             final = object
