@@ -1,4 +1,5 @@
-from Bio import SeqRecord, Seq
+from Bio import SeqRecord
+from Bio import Seq
 from urllib import error
 from functions.NCBI_functions import *
 from functions.other_functions import *
@@ -44,12 +45,13 @@ class NCBI_Product:
     def get_product_as_dict(self):
         """Transform the product as a dictionnary"""
         product = self.analyse_object(self.sequence)
+        print(product)
         if "date" in product["annotations"]:
             date = product["annotations"]["date"]
             product["annotations"]["date"] = string_to_datetime(date)
         return product
 
-    def analyse_object(self, object):
+    def  analyse_object(self, object):
         """Analyse an object and transform it to simple object (str, int, dict, list)"""
         if isinstance(object, list):
             final = []
@@ -77,7 +79,7 @@ class NCBI_Product:
                 final[name] = self.analyse_object(attribute)
 
         elif isinstance(object, Seq.Seq):
-            final = {"seq": str(object), "alphabet": str(object.alphabet)}
+            final = {"seq": str(object)}
 
         elif isinstance(object, SeqFeature.SeqFeature):
             feature_type = object.type
@@ -105,6 +107,3 @@ class NCBI_Product:
             final = object
 
         return final
-
-
-

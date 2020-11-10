@@ -1,4 +1,5 @@
 from datetime import datetime
+from Bio.SeqUtils.ProtParam import ProteinAnalysis
 from functions.db_functions import *
 from functions.other_functions import *
 
@@ -34,6 +35,13 @@ class DB_Product:
     def get_description(self):
         return self.data["description"]
 
+    def get_protein_name(self):
+        feature_cds = self.get_feature_by_type("CDS")
+        if "qualifiers" in feature_cds:
+            if "product" in feature_cds["qualifiers"]:
+                return feature_cds["qualifiers"]["product"][0]
+        return None
+
     def get_sequence(self):
         return self.data["seq"]["seq"]
 
@@ -43,6 +51,31 @@ class DB_Product:
     def get_species(self):
         if "organism" in self.data["annotations"]:
             return self.data["annotations"]["organism"]
+        else:
+            return None
+
+    def get_molecular_weight(self):
+        translation = self.get_translation()
+        if translation is not None:
+            analysed_seq = ProteinAnalysis(translation)
+            try:
+                return round(analysed_seq.molecular_weight() * 0.001)
+            except:
+                return None
+        return None
+
+    def get_translation(self):
+        feature_cds = self.get_feature_by_type("CDS")
+        if feature_cds is not None:
+            if "qualifiers" in feature_cds:
+                if "translation" in feature_cds["qualifiers"]:
+                    return feature_cds["qualifiers"]["translation"][0]
+        return None
+
+    def get_feature_by_type(self, type):
+        for feature in self.data["features"]:
+            if feature["type"] == type:
+                return feature
         else:
             return None
 

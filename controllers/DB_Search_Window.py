@@ -8,7 +8,6 @@ from functions.graphics_function import *
 from functions.db_functions import *
 
 
-
 class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
     """
     controlling class for db_search_view

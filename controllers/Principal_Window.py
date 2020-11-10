@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QMainWindow
 from views.principal_view import Ui_Principal_Window
 from controllers.NCBI_Search_Window import NCBI_Search_Window
 from controllers.DB_Search_Window import DB_Search_Window
+from controllers.Gestion_Window import Gestion_Window
 from functions.other_functions import *
 from objects.MongoDB_Connexion import MongoDB_Connexion
 
@@ -19,6 +20,7 @@ class Principal(QMainWindow, Ui_Principal_Window):
         self.connected_to_db = self._check_connexion_to_db()
         self.window_ncbi = None
         self.window_db = None
+        self.window_gestion = None
         self._init_ui()
 
     # METHODS OF THE CLASS #
@@ -33,6 +35,10 @@ class Principal(QMainWindow, Ui_Principal_Window):
         self.window_db = DB_Search_Window()
         self.window_db.show()
 
+    def button_gestion_clicked(self):
+        """Open the gestion window"""
+        self.window_gestion = Gestion_Window()
+        self.window_gestion.show()
 
     # GRAPHIC METHODS #
 

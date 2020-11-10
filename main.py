@@ -6,7 +6,7 @@ from Bio import Entrez
 
 Entrez.email = "claire.ceresa@hotmail.fr"
 
-process = subprocess.Popen('mongod.exe')
+process = subprocess.Popen('mongoDB.bat')
 app = QApplication(sys.argv)
 form = Principal()
 form.show()

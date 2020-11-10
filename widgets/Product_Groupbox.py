@@ -31,6 +31,8 @@ class Product_Groupbox(QScrollArea):
             self._version_org()
         elif self.type == "Projects":
             self._version_proj()
+        elif self.type == "Coraliotech":
+            self._version_coraliotech()
 
     def _version_ref(self):
         self.groupbox.setTitle("Références")
@@ -59,6 +61,47 @@ class Product_Groupbox(QScrollArea):
             widget = Project_Widget(project=project, statut="Product", product=self.datas)
             add_widget_to_groupbox(widget=widget, groupbox=self.groupbox)
 
+    def _version_coraliotech(self):
+        self.groupbox.setTitle('Coraliotech')
+        label_function = create_label(self.datas["function"], center=True)
+        set_label_bold(label_function, True)
+        add_widget_to_groupbox(widget=label_function, groupbox=self.groupbox)
+
+        label_subfunction = create_label(self.datas["subfunction"], center=True)
+        set_label_italic(label_subfunction, True)
+        add_widget_to_groupbox(widget=label_subfunction, groupbox=self.groupbox)
+
+        label_length = create_label(text=str(self.datas["taille"]) + " pb", center=True)
+        label_mw = create_label(text=str(self.datas["poids"]) + " kDa", center=True)
+        layout_seq = create_layout(widgets=[label_length, label_mw], horizontal=True)
+        add_widget_to_groupbox(layout_widget=layout_seq, groupbox=self.groupbox)
+
+        spacer = create_spacer(vertical=True)
+        add_widget_to_groupbox(item=spacer, groupbox=self.groupbox)
+
+        groupbox_application = create_groupbox("Domaines d'applications", flat=True)
+        add_widget_to_groupbox(widget=groupbox_application, groupbox=self.groupbox)
+
+        domains = get_all_domains()
+        for domain in domains:
+            label_domain = create_label(domain["name"])
+            add_widget_to_groupbox(label_domain, groupbox=groupbox_application)
+
+        spacer = create_spacer(vertical=True)
+        add_widget_to_groupbox(item=spacer, groupbox=self.groupbox)
+
+        label_web = create_label(text="Internet", wordwrap=False)
+        set_label_clickable(label_web)
+        label_web.mouseReleaseEvent = self.open_web
+        add_widget_to_groupbox(label_web, groupbox=self.groupbox)
 
 
-
+    def open_web(self, event):
+        internet = connected_to_internet("http://www.google.fr")
+        if internet["connected"] and len(self.datas["links"]) > 0:
+            for link in self.datas["links"]:
+                open_internet(link)
+        elif not internet["connected"]:
+            create_messageBox("Attention !", "Aucune connexion à Internet")
+        else:
+            create_messageBox("Attention !", "Aucun lien n'a été enregistré !")

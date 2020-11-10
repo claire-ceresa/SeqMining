@@ -3,23 +3,24 @@ from objects.MongoDB_Connexion import MongoDB_Connexion
 
 
 connexion = MongoDB_Connexion()
-product_collection = connexion.get_collection("Product", "Nucleotide")
-project_collection = connexion.get_collection("Projects", "Nucleotide")
+ncbi_collection = connexion.get_collection("NCBI", "SeqMining")
+project_collection = connexion.get_collection("Projects", "SeqMining")
+domains_collection = connexion.get_collection("Domains", "SeqMining")
+users_collection = connexion.get_collection("Users", "SeqMining")
 
 # DATABASE Product
 
-
 def find_products(query):
-    return list(product_collection.find(query))
+    return list(ncbi_collection.find(query))
 
 
 def get_one_product(id):
-    return product_collection.find_one({"_id": id})
+    return ncbi_collection.find_one({"_id": id})
 
 
 def save_product(datas):
     try:
-        insert = product_collection.insert_one(datas)
+        insert = ncbi_collection.insert_one(datas)
     except DocumentTooLarge:
         return {"id": datas["_id"], "error": "Document trop large"}
     except DuplicateKeyError:
@@ -84,5 +85,15 @@ def delete_product_from_project(id_project, id_product):
     return commit
 
 
+# DATABASE Domaines
+
+def get_all_domains():
+    return list(domains_collection.find({}))
+
+
+# DATABASE Users
+
+def get_all_users():
+    return list(users_collection.find({}))
 
 connexion.close()

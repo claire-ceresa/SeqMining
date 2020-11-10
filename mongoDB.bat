@@ -1,2 +1,2 @@
-cd C:\"Program Files"\MongoDB\Server\4.2\bin
+cd C:\"Program Files"\MongoDB\Server\4.4\bin
 mongod

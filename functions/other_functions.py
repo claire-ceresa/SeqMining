@@ -1,5 +1,6 @@
-import urllib
+from urllib import request
 import calendar
+import webbrowser
 from datetime import datetime
 
 def connected_to_internet(url):
@@ -9,10 +10,20 @@ def connected_to_internet(url):
     :return a dictionnary {'connected':bool, 'error':string}
     """
     try:
-        urllib.request.urlopen(url)
+        request.urlopen(url)
         return {'connected':True, 'error':None}
     except Exception as e:
         return {'connected':False, 'error':str(e)}
+
+
+def open_internet(url):
+    """Open a link on an Internet brower"""
+    try:
+        webbrowser.open(url, new=2)
+    except:
+        return False
+    else:
+        return True
 
 
 def string_to_datetime(date_initial):

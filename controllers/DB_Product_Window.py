@@ -1,6 +1,7 @@
 from views.db_product_view import Ui_db_product
 from controllers.Project_Widget import Project_Widget
 from widgets.Product_Groupbox import Product_Groupbox
+from objects.DB_Product import DB_Product
 from functions.NCBI_functions import *
 from functions.other_functions import *
 from functions.graphics_function import *
@@ -16,7 +17,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         super(DB_Product_Window, self).__init__(parent)
         self.setupUi(self)
         self.setWindowTitle(product["id"])
-        self.product = product
+        self.product = DB_Product(data=product)
         self.groupbox_feature = None
         self.layout_annot = None
         self.layout_ref = None
@@ -38,20 +39,24 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
 
     def action_gen_toggled(self, checked):
         """Open the groupbox with the elements of the annotations of the product"""
+        clear_layout(self.layout_gb_1)
         if checked:
             self.create_annotations()
         else:
-            clear_layout(self.layout_gb_1)
+            self._init_coraliotech()
 
     def action_ref_toggled(self, checked):
         """Open the groupbox with the elements of the references of the product (if existed)"""
-        if self.action_projet.isChecked() == checked:
-            clear_layout(self.layout_gb_2)
-            self.action_projet.setChecked(False)
-        if checked:
-            self.create_ref()
-        else:
-            clear_layout(self.layout_gb_2)
+        try:
+            if self.action_projet.isChecked() == checked:
+                clear_layout(self.layout_gb_2)
+                self.action_projet.setChecked(False)
+            if checked:
+                self.create_ref()
+            # else:
+            #     clear_layout(self.layout_gb_2)
+        except Exception as e:
+            print(e)
 
     def action_projet_toggled(self, checked):
         """Open the groupbox dealing with the project associated to the product"""
@@ -70,21 +75,22 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self._init_label_title()
         self._init_features()
         self._init_source()
-        if "references" not in self.product['annotations']:
+        self._init_coraliotech()
+        if "references" not in self.product.data['annotations']:
             self.action_ref.setEnabled(False)
 
     def _init_label_title(self):
         """Initialize the title of the product"""
-        self.label_id.setText(self.product["id"])
-        self.label_descr.setText(self.product["description"])
-        date_string = get_string(self.product["download_date"])
+        self.label_id.setText(self.product.data["id"])
+        self.label_descr.setText(self.product.data["description"])
+        date_string = get_string(self.product.data["download_date"])
         self.label_download.setText("Téléchargé le " + date_string)
 
     def _init_features(self):
         """Initialize the groupbox with the list of all the features of the product"""
         widgets = []
 
-        features = self.product["features"]
+        features = self.product.data["features"]
         for id, feature in enumerate(features):
             button = create_radio_button(feature["type"])
             widgets.append(button)
@@ -101,13 +107,19 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
             button.setChecked(True)
             self.button_feature_clicked(0)
 
+    def _init_coraliotech(self):
+        datas = self.product.data["coraliotech"]
+        datas["taille"] = self.product.get_length()
+        datas["poids"] = self.product.get_molecular_weight()
+        self.groupbox_coraliotech = Product_Groupbox(datas=datas, type="Coraliotech")
+        self.layout_gb_1.addWidget(self.groupbox_coraliotech)
+
     ## GRAPHIC METHODS of the groupboxes ##
 
     def creation_groupbox_feature(self, id):
         """Fill in the groupbox with the elements of the feature selected"""
         self.groupbox_feature = create_groupbox()
-
-        feature = self.product["features"][id]
+        feature = self.product.data["features"][id]
         for key, value in feature["qualifiers"].items():
             if key == "translation":
                 cut_sequence = break_seq(sequence=value[0], step=60)
@@ -127,7 +139,8 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.groupbox_org = Product_Groupbox(type="Organism")
         self.layout_gb_1.addWidget(self.groupbox_gen)
         self.layout_gb_1.addWidget(self.groupbox_org)
-        annotations = self.product["annotations"]
+        annotations = self.product.data["annotations"]
+
 
         for key, value in annotations.items():
             if key == "references":
@@ -146,13 +159,13 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
 
     def create_ref(self):
         """Fill in the groupbox with the element of the references of the product"""
-        datas = self.product["annotations"]
+        datas = self.product.data["annotations"]
         self.groupbox_ref = Product_Groupbox(datas=datas, type="References")
         self.layout_gb_2.addWidget(self.groupbox_ref)
 
     def create_project(self):
         """Fill in the groupbox with the list of projects associated to the product"""
-        self.groupbox_proj = Product_Groupbox(datas=self.product, type="Projects")
+        self.groupbox_proj = Product_Groupbox(datas=self.product.data, type="Projects")
         self.layout_gb_2.addWidget(self.groupbox_proj)
 
         label_add = create_label("Ajouter à un autre projet")
@@ -168,8 +181,8 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
 
     def set_sequence(self, id):
         """Fill in the sequence"""
-        sequence = self.product["seq"]["seq"]
-        feature = self.product["features"][id]
+        sequence = self.product.data["seq"]["seq"]
+        feature = self.product.data["features"][id]
         location_dict = feature["location"]
         location = create_feature_location(location_dict)
         self.groupbox_feature.setTitle(str(location))
@@ -220,7 +233,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
 
     def add_to_a_project(self, event):
         """When button Add clicked, open the combobox to choose the new project"""
-        projects = get_not_project_for_a_product(self.product["id"])
+        projects = get_not_project_for_a_product(self.product.data["id"])
         project_name = extract_list_of_attribute(projects, "name")
         self.combobox_project = create_combobox(project_name)
         label_ok = create_label("Ok")
@@ -232,10 +245,10 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
     def save_product_in_project(self, event):
         """When button Saved clicked, save the product to the project selected"""
         name = self.combobox_project.currentText()
-        adding = add_product_to_project(id=self.product["id"], project=name)
+        adding = add_product_to_project(id=self.product.data["id"], project=name)
         if adding["nModified"] != 1:
             create_messageBox("Erreur", "Impossible d'ajouter le produit au projet")
         else:
             project = get_one_project(name=name)
-            widget = Project_Widget(project=project, statut="Product", product=self.product)
+            widget = Project_Widget(project=project, statut="Product", product=self.product.data)
             self.groupbox_proj.add_widget(widget)
