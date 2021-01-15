@@ -79,13 +79,13 @@ class Product_Groupbox(QScrollArea):
         spacer = create_spacer(vertical=True)
         add_widget_to_groupbox(item=spacer, groupbox=self.groupbox)
 
-        groupbox_application = create_groupbox("Domaines d'applications", flat=True)
-        add_widget_to_groupbox(widget=groupbox_application, groupbox=self.groupbox)
+        groupbox_comm = create_groupbox("Commentaires", flat=True)
+        add_widget_to_groupbox(widget=groupbox_comm, groupbox=self.groupbox)
 
-        domains = get_all_domains()
-        for domain in domains:
-            label_domain = create_label(domain["name"])
-            add_widget_to_groupbox(label_domain, groupbox=groupbox_application)
+        comments = self.datas["comments"]
+        for comment in comments:
+            label_comment = create_label(comment)
+            add_widget_to_groupbox(label_comment, groupbox=groupbox_comm)
 
         spacer = create_spacer(vertical=True)
         add_widget_to_groupbox(item=spacer, groupbox=self.groupbox)

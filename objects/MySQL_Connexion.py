@@ -135,6 +135,3 @@ class MySQL_Connexion:
 
     def get_all_users(self):
         return self.datas["users"]
-
-
-

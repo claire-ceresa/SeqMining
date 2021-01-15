@@ -22,9 +22,12 @@ class DB_Results_Window(QMainWindow, Ui_db_results):
     def table_result_clicked(self, line, column):
         """Open the DB window of the product """
         product = self.results[line]
-        product_window = DB_Product_Window(product=product)
-        product_window.show()
-        self.product_windows.append(product_window)
+        try:
+            product_window = DB_Product_Window(product=product)
+            product_window.show()
+            self.product_windows.append(product_window)
+        except Exception as e:
+            print(e)
 
     def button_extract_clicked(self):
         """Extract the result to an Excel file"""

@@ -65,8 +65,6 @@ class Gestion_Species(QWidget):
 
     def fill_in(self):
         self.widget.s_edit_name.setText(self.current['name'])
-        self.widget.s_edit_by.setText(self.current['discovered_by'])
-        self.widget.s_edit_in.setText(self.current['discovered_in'])
         self.widget.s_edit_famille.setText(self.current['family'])
         self.widget.s_edit_ordre.setText(self.current['ordo'])
         self.widget.s_edit_classe.setText(self.current['classe'])
@@ -75,27 +73,20 @@ class Gestion_Species(QWidget):
         self.widget.s_edit_morpho.setText(self.current['morpho'])
         self.widget.s_edit_caract.setText(self.current['caracteristics'])
         self.widget.s_edit_behav.setText(self.current['behavior'])
-        self.widget.s_edit_ecosocio.setText(self.current['eco_socio'])
+        self.widget.s_edit_ecosocio.setText(self.current['morpho'])
         self.widget.s_edit_ecology.setText(self.current['ecology'])
         self.widget.s_edit_threat.setText(self.current['threats'])
 
-        if self.current['symbiosis'] == 'oui':
-            self.widget.s_checkbox_symbiose.setChecked(True)
-            set_label_bold(self.widget.s_checkbox_symbiose, True)
-        else:
-            self.widget.s_checkbox_symbiose.setChecked(False)
-            set_label_bold(self.widget.s_checkbox_symbiose, False)
-
-        if self.current['UICN_short'] is not None:
-            self.widget.s_groupbox_uicn.setChecked(True)
-            self.widget.s_edit_uicn_short.setText(self.current['UICN_short'])
-            self.widget.s_edit_uicn_fr.setText(self.current['UICN_fr'])
-            self.widget.s_edit_uicn_long.setText(self.current['UICN_long'])
-        else:
-            self.widget.s_groupbox_uicn.setChecked(False)
-            self.widget.s_edit_uicn_short.clear()
-            self.widget.s_edit_uicn_fr.clear()
-            self.widget.s_edit_uicn_long.clear()
+        # if self.current['UICN_short'] is not None:
+        #     self.widget.s_groupbox_uicn.setChecked(True)
+        #     self.widget.s_edit_uicn_short.setText(self.current['UICN_short'])
+        #     self.widget.s_edit_uicn_fr.setText(self.current['UICN_fr'])
+        #     self.widget.s_edit_uicn_long.setText(self.current['UICN_long'])
+        # else:
+        #     self.widget.s_groupbox_uicn.setChecked(False)
+        #     self.widget.s_edit_uicn_short.clear()
+        #     self.widget.s_edit_uicn_fr.clear()
+        #     self.widget.s_edit_uicn_long.clear()
 
         if self.current['synonym'] is not None:
             self.widget.s_checkbox_synonym.setChecked(True)
@@ -104,12 +95,6 @@ class Gestion_Species(QWidget):
             self.widget.s_checkbox_synonym.setChecked(False)
             self.widget.s_edit_synonym.clear()
 
-        if self.current['CITES'] is not None:
-            self.widget.s_checkbox_cites.setChecked(True)
-            self.widget.s_edit_cites.setText(self.current['CITES'])
-        else:
-            self.widget.s_checkbox_cites.setChecked(False)
-            self.widget.s_edit_cites.clear()
 
     def clear(self):
         self.widget.s_edit_name.clear()

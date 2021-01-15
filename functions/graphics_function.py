@@ -167,7 +167,7 @@ def add_widget_to_groupbox(widget=None, layout_widget=None, groupbox=None, item=
         layout.addItem(item)
 
 
-def get_save_filename(type):
+def get_filename(type, save=False, open=False):
     """Execute a QFileDialog to get a save filename"""
     if type == "Excel":
         filter = "Excel (*.xlsx)"
@@ -178,11 +178,18 @@ def get_save_filename(type):
 
     try:
         desktop_path = os.environ['USERPROFILE'] + '\Desktop\\'
-        name = QtWidgets.QFileDialog.getSaveFileName(caption="Enregistrer", directory=desktop_path, filter=filter)
     except:
-        name = QtWidgets.QFileDialog.getSaveFileName(caption='Enregister', filter=filter)
+        desktop_path = os.environ['USERPROFILE']
 
-    filename = name[0]
+    if save:
+        name = QtWidgets.QFileDialog.getSaveFileName(caption="Enregistrer", directory=desktop_path, filter=filter)
+        filename = name[0]
+    elif open:
+        name = QtWidgets.QFileDialog.getOpenFileName(caption="Choisir un fichier", directory=desktop_path, filter=filter)
+        filename = name[0]
+    else:
+        filename = None
+
     return filename
 
 

@@ -3,6 +3,7 @@ from datetime import datetime
 from controllers.DB_Results_Window import DB_Results_Window
 from controllers.DB_Product_Window import DB_Product_Window
 from controllers.Project_Window import Project_Window
+from controllers.DB_Import_Window import DB_Import_Window
 from views.db_search_view import Ui_DB_Search
 from functions.graphics_function import *
 from functions.db_functions import *
@@ -19,6 +20,7 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
         self.setWindowTitle("Rechercher sur la base de données locale")
         self.window_project = None
         self.window_result = None
+        self.window_import = None
         self._init_ui()
 
     ## METHODS OF THE CLASS ##
@@ -30,33 +32,34 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
             project = get_one_project(name = project_name)
         else:
             project = None
+        try:
+            query = self.construct_query()
+            if query is not None :
+                query_result = find_products(query)
 
-        query = self.construct_query()
-        if query is not None :
-            query_result = find_products(query)
-
-            if project is None:
-                results = query_result
+                if project is None:
+                    results = query_result
+                else:
+                    results = []
+                    for product in query_result:
+                        if product["_id"] in project["ids_gb"]:
+                            results.append(product)
             else:
-                results = []
-                for product in query_result:
-                    if product["_id"] in project["ids_gb"]:
+                if project is None:
+                    results = find_products({})
+                else:
+                    results = []
+                    for id in project["ids_gb"]:
+                        product = get_one_product(id)
                         results.append(product)
-        else:
-            if project is None:
-                return
+
+            if len(results) == 1:
+                self.window_result = DB_Product_Window(product=results[0])
             else:
-                results = []
-                for id in project["ids_gb"]:
-                    product = get_one_product(id)
-                    results.append(product)
-
-        if len(results) == 1:
-            self.window_result = DB_Product_Window(product=results[0])
-        else:
-            self.window_result = DB_Results_Window(results=results)
-        self.window_result.show()
-
+                self.window_result = DB_Results_Window(results=results)
+            self.window_result.show()
+        except Exception as e:
+            print(e)
 
     def combobox_date_changed(self, text):
         """Show a 2nd DateEdit if the combobox is 'entre' for the product date"""
@@ -76,11 +79,28 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
             self.label_download_et.hide()
             self.edit_download_2.hide()
 
+    def combobox_function_changed(self, text):
+        self.combobox_subfunction.clear()
+        subfunctions = get_all_subfunction(text)
+        for subfunction in subfunctions:
+            self.combobox_subfunction.addItem(subfunction)
+
     def action_project_triggered(self):
         self.window_project = Project_Window()
         if self.window_project.exec() == 0:
             self._init_combobox_project()
 
+    def action_non_traitees_triggered(self):
+        try:
+            results = get_products_non_traitees()
+            self.window_result = DB_Results_Window(results=results)
+            self.window_result.show()
+        except Exception as e:
+            print(e)
+
+    def action_completes_triggered(self):
+        self.window_import = DB_Import_Window()
+        self.window_import.show()
 
     ## GRAPHIC METHODS ##
 
@@ -91,12 +111,20 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
         self.label_download_et.hide()
         self.edit_download_2.hide()
         self._init_combobox_project()
+        self._init_combobox_function()
 
     def _init_combobox_project(self):
+        """Initialize the list of projects"""
         self.combobox_project.clear()
         projects = get_all_projects()
         for project in projects:
             self.combobox_project.addItem(project["name"])
+
+    def _init_combobox_function(self):
+        self.combobox_function.clear()
+        functions = get_all_functions()
+        for function in functions:
+            self.combobox_function.addItem(function)
 
     def get_checked_checkboxes(self):
         """
@@ -133,6 +161,8 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
             'checkbox_title': 'annotations.references.title',
             'checkbox_author': 'annotations.references.authors',
             'checkbox_journal': 'annotations.references.journal',
+            'checkbox_function': 'coraliotech.function',
+            'checkbox_subfunction': 'coraliotech.subfunction',
             'checkbox_project': None
         }
         return checkboxes
@@ -169,6 +199,11 @@ class DB_Search_Window(QtWidgets.QMainWindow, Ui_DB_Search):
 
             elif checkbox_name == "checkbox_project":
                 continue
+
+            elif checkbox_name == "checkbox_function" or checkbox_name == "checkbox_subfunction":
+                combobox_name = self.find_associated_widget_name("combobox", checkbox)
+                combobox = getattr(self, combobox_name)
+                value = combobox.currentText()
 
             else:
                 edit = getattr(self, edit_name)

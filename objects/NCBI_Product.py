@@ -45,7 +45,6 @@ class NCBI_Product:
     def get_product_as_dict(self):
         """Transform the product as a dictionnary"""
         product = self.analyse_object(self.sequence)
-        print(product)
         if "date" in product["annotations"]:
             date = product["annotations"]["date"]
             product["annotations"]["date"] = string_to_datetime(date)

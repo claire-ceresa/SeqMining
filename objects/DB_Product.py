@@ -1,4 +1,3 @@
-from datetime import datetime
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 from functions.db_functions import *
 from functions.other_functions import *
@@ -87,3 +86,13 @@ class DB_Product:
             return ", ".join(list_project)
         else:
             return None
+
+    def get_function(self):
+        if "coraliotech" in self.data:
+            return self.data["coraliotech"]["function"]
+        return None
+
+    def get_subfunction(self):
+        if "coraliotech" in self.data:
+            return self.data["coraliotech"]["subfunction"]
+        return None

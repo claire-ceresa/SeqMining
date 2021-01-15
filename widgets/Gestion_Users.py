@@ -18,6 +18,7 @@ class Gestion_Users(QWidget):
 
     def list_users_clicked(self, line):
         all_users = self.connexion.get_all_users()
+        print(all_users)
         if line < len(all_users):
             self.current = all_users[line]
             self.fill_in()
@@ -40,7 +41,6 @@ class Gestion_Users(QWidget):
                 action = self.save_modified_user()
             else:
                 action = self.save_new_user()
-            print(action)
 
     def button_delete_clicked(self):
         message = QtWidgets.QMessageBox.question(self, "Supprimer ?", "Etes vous sur ?", QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
@@ -67,19 +67,16 @@ class Gestion_Users(QWidget):
             self.widget.u_button_verif.setEnabled(True)
 
     def button_pwd_save_clicked(self):
-        try:
-            query = self.connexion.create_query_update(table='users', values={'pwd_new': '"' + self.widget.u_edit_crypt.text() + '"'},
-                                                       where= {'username': '"' + self.current['username'] + '"'})
-            print(query)
-            query_to_send = [{'query': query}]
-            action = self.connexion.run_on_php(query_to_send)
-            if action["sent"]:
-                create_messageBox("Succes !", "Mot de passe modifié !")
-            else:
-                create_messageBox("Erreur !",
-                                "Une erreur est survenue.\n" + str(action['error']))
-        except Exception as e:
-            print(e)
+        query = self.connexion.create_query_update(table='users', values={'pwd_new': '"' + self.widget.u_edit_crypt.text() + '"'},
+                                               where= {'username': '"' + self.current['username'] + '"'})
+        query_to_send = [{'query': query}]
+        action = self.connexion.run_on_php(query_to_send)
+        if action["sent"]:
+            create_messageBox("Succes !", "Mot de passe modifié !")
+        else:
+            create_messageBox("Erreur !",
+                          "Une erreur est survenue.\n" + str(action['error']))
+
 
     def button_verif_clicked(self):
         proposed_pwd = bytes(self.widget.u_edit_pwd.text(), encoding='utf-8')
@@ -172,14 +169,10 @@ class Gestion_Users(QWidget):
         return pwd
 
     def hash_pwd(self, pwd):
-        try:
-            salt = b.gensalt()
-            hashed = b.hashpw(bytes(pwd, encoding='utf-8'), salt)
-            #hashed = bcrypt.using(ident="2y").hash(pwd)
-            print(hashed)
-            return hashed
-        except Exception as e:
-            print(e)
+        salt = b.gensalt()
+        hashed = b.hashpw(bytes(pwd, encoding='utf-8'), salt)
+        #hashed = bcrypt.using(ident="2y").hash(pwd)
+        return hashed
 
 
     def save_new_user(self):

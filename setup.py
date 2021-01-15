@@ -19,7 +19,7 @@ if sys.platform == "win32":
 # 1. Nom du fichier Python qui permet de lancer le script
 # 2. Nom de l'executable qui sera crée
 # Si vous voulez modifier l'icone de l'executable, possibilité d'utiliser le paramètre icon
-executable = [Executable("main.py", targetName="SeqMining.exe", base=base)]
+executable = [Executable("main.py", targetName="SeqMining.exe", base=base, icon="icon.ico")]
 
 # Liste des packages utilise au sein du projet, afin de les compiler
 packages = ["Bio", "os", "re", "math", "urllib","calendar", "datetime", "pymongo", "subprocess", "xlsxwriter"]
@@ -35,7 +35,7 @@ include_files = ["controllers",
                  "functions",
                  "objects",
                  "views",
-                 "mongod.exe"]
+                 "mongoDB.bat"]
 
 # Creation du dictionnaire d'options
 options = {
@@ -47,9 +47,9 @@ options = {
 
 # Fonction de setup
 setup(
-    name = "SeqMining",
+    name="SeqMining",
     options = options,
-    version = "1.0",
-    description = 'Cree par Claire Ceresa. 09 juin 2020.',
+    version = "1.1",
+    description = 'Cree par Claire Ceresa. 09 juin 2020. Version du 16 novembre 2020',
     executables = executable
 )

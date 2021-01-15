@@ -52,13 +52,10 @@ class Project_Widget(QtWidgets.QWidget, Ui_project_widget):
         else:
             question = QtWidgets.QMessageBox.question(self, "Supprimer le projet", "Etes vous sûr ?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
             if question == QtWidgets.QMessageBox.Yes:
-                try:
-                    if self.statut == "Product":
-                        self.delete_id_from_project()
-                    else:
-                        self.delete_project()
-                except Exception as e:
-                    print(e)
+                if self.statut == "Product":
+                    self.delete_id_from_project()
+                else:
+                    self.delete_project()
 
     def version_fix(self):
         self.name.close()

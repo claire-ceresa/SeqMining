@@ -42,12 +42,9 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
         self.table.setRowCount(0)
         request = self.edit_request.text()
         if len(request) > 0:
-            try:
-                self.groupbox_results.show()
-                self.request = request
-                self.set_result_interface()
-            except Exception as e:
-                print(e)
+            self.groupbox_results.show()
+            self.request = request
+            self.set_result_interface()
         else:
             create_messageBox("Attention !", "Remplissez la requête !")
         QtWidgets.QApplication.restoreOverrideCursor()
@@ -258,7 +255,7 @@ class NCBI_Search_Window(QtWidgets.QMainWindow, Ui_NCBI_Result):
         :param datas : dictionnary {'column_names':[], 'rows':[[]]}
         :return: a dictionnary {'done':bool, 'error':string}
         """
-        filename = get_save_filename(type="Excel")
+        filename = get_filename(type="Excel", save=True)
         if len(filename) > 0:
             excel = Excel(title=filename)
             worksheet = excel.add_worksheet("Résultats")

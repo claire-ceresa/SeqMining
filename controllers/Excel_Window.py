@@ -17,6 +17,8 @@ class Excel_Window(QtWidgets.QMainWindow, Ui_excel_window):
         'Taille': 'get_length',
         'Poids': 'get_molecular_weight',
         'Espèce': 'get_species',
+        'Fonction' : 'get_function',
+        'Sous-fonction': 'get_subfunction',
         'Sequence': 'get_sequence',
         'Projets': 'get_projects'
     }
@@ -38,9 +40,8 @@ class Excel_Window(QtWidgets.QMainWindow, Ui_excel_window):
 
     def button_export_clicked(self):
         try:
-            filename = get_save_filename("Excel")
+            filename = get_filename("Excel", save=True)
             file = Excel(filename)
-            print("file OK")
 
             if self.checkbox_project.isChecked():
                 splitted_results = self.split_results()
@@ -50,9 +51,7 @@ class Excel_Window(QtWidgets.QMainWindow, Ui_excel_window):
                     file.add_data(worksheet, datas_to_export)
 
             else:
-                print("not if")
-                datas_to_export = self.get_data_to_export(self.results)
-                print("datas")
+                datas_to_export = self.get_data_to_export()
                 worksheet = file.add_worksheet()
                 file.add_data(worksheet, datas_to_export)
 
@@ -74,18 +73,16 @@ class Excel_Window(QtWidgets.QMainWindow, Ui_excel_window):
 
     # OTHER METHODS #
 
-    def get_data_to_export(self, results):
+    def get_data_to_export(self):
         headers = []
         nb_columns = self.table.columnCount()
-        print("nb col : " + str(nb_columns))
         for column in range(0, nb_columns):
             item = self.table.cellWidget(0, column)
             variable_name = item.currentText()
             headers.append(variable_name)
-        print(headers)
 
         datas = []
-        for result in results:
+        for result in self.results:
             line = []
             product = DB_Product(data=result)
             for header in headers:

@@ -15,7 +15,6 @@ class Gestion_Cross(QWidget):
     # METHODS OF THE BUTTONS
 
     def button_save_clicked(self):
-        print(self.queries)
         action = self.connexion.run_on_php(self.queries)
         if action['sent']:
             create_messageBox("Enregistré !", "Modifications enregistrées !")

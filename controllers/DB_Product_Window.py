@@ -28,14 +28,11 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
 
     def button_feature_clicked(self, id):
         """Set the groupbox with the elements of the feature"""
-        try:
-            if self.groupbox_feature is not None:
-                self.groupbox_feature.close()
-                self.scroll_area_feature.close()
-            self.creation_groupbox_feature(id)
-            self.set_sequence(id)
-        except Exception as e:
-            print(e)
+        if self.groupbox_feature is not None:
+            self.groupbox_feature.close()
+            self.scroll_area_feature.close()
+        self.creation_groupbox_feature(id)
+        self.set_sequence(id)
 
     def action_gen_toggled(self, checked):
         """Open the groupbox with the elements of the annotations of the product"""
@@ -47,16 +44,12 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
 
     def action_ref_toggled(self, checked):
         """Open the groupbox with the elements of the references of the product (if existed)"""
-        try:
-            if self.action_projet.isChecked() == checked:
-                clear_layout(self.layout_gb_2)
-                self.action_projet.setChecked(False)
-            if checked:
-                self.create_ref()
-            # else:
-            #     clear_layout(self.layout_gb_2)
-        except Exception as e:
-            print(e)
+        if self.action_projet.isChecked() == checked:
+            clear_layout(self.layout_gb_2)
+            self.action_projet.setChecked(False)
+        if checked:
+            self.create_ref()
+
 
     def action_projet_toggled(self, checked):
         """Open the groupbox dealing with the project associated to the product"""
@@ -68,14 +61,35 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         else:
             clear_layout(self.layout_gb_2)
 
+    def action_commentaire_clicked(self):
+        text, okPressed = QtWidgets.QInputDialog.getText(self, "Ajouter", "Commentaire:", QtWidgets.QLineEdit.Normal, "")
+        if okPressed and text != '':
+            action = add_value_to_product(where= {'id':self.product.data["id"]},
+                                 array='coraliotech.comments',
+                                 value= text)
+            if action["error"] is not None:
+                create_messageBox("Erreur", "Une erreur est survenue !\n" + str(action['error']))
+
+    def action_lien_clicked(self):
+        text, okPressed = QtWidgets.QInputDialog.getText(self, "Ajouter", "Lien:", QtWidgets.QLineEdit.Normal, "")
+        if okPressed and text != '':
+            action = add_value_to_product(where= {'id':self.product.data["id"]},
+                                 array='coraliotech.links',
+                                 value= text)
+            if action["error"] is not None:
+                create_messageBox("Erreur", "Une erreur est survenue !\n" + str(action['error']))
+
     ## GRAPHIC INIT METHODS ##
 
     def _init_ui(self):
         """Initialize the different graphic items"""
+        self.action_commentaire.triggered.connect(self.action_commentaire_clicked)
+        self.action_lien.triggered.connect(self.action_lien_clicked)
         self._init_label_title()
         self._init_features()
         self._init_source()
-        self._init_coraliotech()
+        if "coraliotech" in self.product.data:
+            self._init_coraliotech()
         if "references" not in self.product.data['annotations']:
             self.action_ref.setEnabled(False)
 
@@ -108,6 +122,7 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
             self.button_feature_clicked(0)
 
     def _init_coraliotech(self):
+        """Initialize Coraliotech caracteristics when the window open"""
         datas = self.product.data["coraliotech"]
         datas["taille"] = self.product.get_length()
         datas["poids"] = self.product.get_molecular_weight()
@@ -124,7 +139,6 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
             if key == "translation":
                 cut_sequence = break_seq(sequence=value[0], step=60)
                 label_qualifier = create_label(text = key.capitalize() + " :\n" + " ".join(cut_sequence), wordwrap=True)
-                #label_qualifier = create_label(text = key.capitalize() + " :\n" + break_seq(value[0], step=60), wordwrap=True)
                 label_qualifier.setTextInteractionFlags(Qt.TextSelectableByMouse)
             else:
                 label_qualifier = create_label(text = key.capitalize() + " : " + get_string(value))
@@ -140,7 +154,6 @@ class DB_Product_Window(QtWidgets.QMainWindow, Ui_db_product):
         self.layout_gb_1.addWidget(self.groupbox_gen)
         self.layout_gb_1.addWidget(self.groupbox_org)
         annotations = self.product.data["annotations"]
-
 
         for key, value in annotations.items():
             if key == "references":

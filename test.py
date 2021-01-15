@@ -9,6 +9,7 @@ from controllers.DB_Search_Window import DB_Search_Window
 from controllers.DB_Product_Window import DB_Product_Window
 from controllers.Project_Window import Project_Window
 from controllers.Gestion_Window import Gestion_Window
+from controllers.DB_Import_Window import DB_Import_Window
 from objects.MongoDB_Connexion import MongoDB_Connexion
 from objects.DB_Product import DB_Product
 from objects.NCBI_Product import NCBI_Product
@@ -19,10 +20,13 @@ import requests
 
 # process = subprocess.Popen('mongoDB.bat')
 # Entrez.email= "claire.ceresa@hotmail.fr"
-app = QApplication(sys.argv)
-form = Gestion_Window()
-form.show()
-app.exec()
+try:
+    app = QApplication(sys.argv)
+    form = Gestion_Window()
+    form.show()
+    app.exec()
+except Exception as e :
+    print(e)
 # process.terminate()
 
 

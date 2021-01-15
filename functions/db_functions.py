@@ -13,9 +13,11 @@ users_collection = connexion.get_collection("Users", "SeqMining")
 def find_products(query):
     return list(ncbi_collection.find(query))
 
-
 def get_one_product(id):
-    return ncbi_collection.find_one({"_id": id})
+    return ncbi_collection.find_one({"id": id})
+
+def get_products_non_traitees():
+    return list(ncbi_collection.find({'coraliotech':{'$exists':False}}))
 
 
 def save_product(datas):
@@ -29,6 +31,31 @@ def save_product(datas):
         return {"id": datas["_id"], "error": "Impossible de télécharger le produit !\n" + str(e)}
     else:
         return {"id": insert.inserted_id, "error": None}
+
+
+def update_one_product(where, new):
+    try:
+        update = ncbi_collection.update_one(where, {"$set":new})
+    except Exception as e:
+        return {"id": where, "error": "Impossible de modifier le produit !\n" + str(e)}
+    else:
+        return {"id": where, "error": None}
+
+
+def add_value_to_product(where, array, value):
+    try:
+        update = ncbi_collection.update_one(where, {"$push":{array:value}})
+    except Exception as e:
+        return {"id": where, "error": "Impossible de modifier le produit !\n" + str(e)}
+    else:
+        return {"id": where, "error": None}
+
+
+def get_all_functions():
+    return ncbi_collection.distinct('coraliotech.function')
+
+def get_all_subfunction(function):
+    return ncbi_collection.distinct("coraliotech.subfunction", {"coraliotech.function": function})
 
 
 # DATABASE Project
